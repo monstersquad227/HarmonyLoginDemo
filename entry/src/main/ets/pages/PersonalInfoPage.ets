@@ -1,3 +1,4 @@
+@Entry
 @Component
 export struct PersonalInfoPage {
   @State username: string = '';

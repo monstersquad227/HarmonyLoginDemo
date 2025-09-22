@@ -1,3 +1,4 @@
+@Entry
 @Component
 export struct HomePage {
   @State currentDate: Date = new Date();

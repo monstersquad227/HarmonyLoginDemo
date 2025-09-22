@@ -1,10 +1,16 @@
-import { LoginManager } from '../common/LoginManager';
+import { LoginManager, UserInfo } from '../common/LoginManager';
+import common from '@ohos.app.ability.common';
+import { PersonalInfoPage } from './PersonalInfoPage';
+import { NoticePage } from './NoticePage';
+import { Want } from '@kit.AbilityKit';
 
+@Entry
 @Component
 export struct ProfilePage {
-  @State userInfo: any = null;
+  @State userInfo: UserInfo | null = null;
   @State remainingDays: number = 0;
   private loginManager: LoginManager = LoginManager.getInstance();
+  private navPathStack: NavPathStack = new NavPathStack();
 
   async aboutToAppear() {
     await this.loadUserInfo();
@@ -17,17 +23,18 @@ export struct ProfilePage {
 
   async handleLogout() {
     await this.loginManager.logout();
-    // 重新加载应用
-    getContext(this).terminateSelf();
+    // 重启应用
+    const context = getContext(this) as common.UIAbilityContext;
+    context.startAbility(Want.prototype);
   }
 
   build() {
-    Navigation() {
+    Navigation(this.navPathStack) {
       Column() {
         // 用户信息区域
         Column() {
           // 头像
-          Image($r('sys.symbol.person_circle'))
+          Image($r('sys.symbol.darkcircles'))
             .width(80)
             .height(80)
             .fillColor('#007DFF')
@@ -60,6 +67,7 @@ export struct ProfilePage {
         Column() {
           this.SettingItem('修改个人信息', () => {
             // 跳转到个人信息页面
+            this.navPathStack.pushPath({ name: 'PersonalInfoPage' });
           })
 
           Divider()
@@ -68,6 +76,7 @@ export struct ProfilePage {
 
           this.SettingItem('注意事项', () => {
             // 跳转到注意事项页面
+            this.navPathStack.pushPath({ name: 'NoticePage' });
           })
 
           Divider()
@@ -89,6 +98,16 @@ export struct ProfilePage {
     }
     .title('我的')
     .titleMode(NavigationTitleMode.Mini)
+    .navDestination(this.navDestinationBuilder)
+  }
+
+  @Builder
+  navDestinationBuilder(name: string, param: Object) {
+    if (name === 'PersonalInfoPage') {
+      PersonalInfoPage()
+    } else if (name === 'NoticePage') {
+      NoticePage()
+    }
   }
 
   @Builder

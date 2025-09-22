@@ -1,4 +1,6 @@
 import { LoginManager, UserInfo } from '../common/LoginManager';
+import { HomePage } from './HomePage';
+import { ProfilePage } from './ProfilePage';
 
 @Entry
 @Component
@@ -6,8 +8,6 @@ struct Index {
     @State username: string = '';
     @State password: string = '';
     @State isLoggedIn: boolean = false;
-    @State userInfo: UserInfo | null = null;
-    @State remainingDays: number = 0;
     @State loginMessage: string = '';
     private loginManager: LoginManager = LoginManager.getInstance();
 
@@ -22,12 +22,6 @@ struct Index {
     async checkLoginStatus() {
         const isLoggedIn = await this.loginManager.isLoggedIn();
         this.isLoggedIn = isLoggedIn;
-
-        if (isLoggedIn) {
-            this.userInfo = await this.loginManager.getUserInfo();
-            this.remainingDays = await this.loginManager.getRemainingDays();
-            this.loginMessage = `欢迎回来，${this.userInfo?.username}！`;
-        }
     }
 
     async handleLogin() {
@@ -45,26 +39,16 @@ struct Index {
         }
     }
 
-    async handleLogout() {
-        await this.loginManager.logout();
-        this.isLoggedIn = false;
-        this.userInfo = null;
-        this.remainingDays = 0;
-        this.username = '';
-        this.password = '';
-        this.loginMessage = '已退出登录';
-    }
-
     build() {
         Column() {
-            Text('HarmonyOS 登录Demo')
-                .fontSize(24)
-                .fontWeight(FontWeight.Bold)
-                .margin({ bottom: 30 })
-
             if (!this.isLoggedIn) {
                 // 登录界面
                 Column() {
+                    Text('HarmonyOS 登录Demo')
+                        .fontSize(24)
+                        .fontWeight(FontWeight.Bold)
+                        .margin({ bottom: 30 })
+
                     Text('用户登录')
                         .fontSize(20)
                         .margin({ bottom: 20 })
@@ -101,69 +85,58 @@ struct Index {
                     }
                 }
                 .width('100%')
+                .height('100%')
+                .justifyContent(FlexAlign.Center)
                 .padding(20)
             } else {
-                // 已登录界面
-                Column() {
-                    Text('登录状态')
-                        .fontSize(20)
-                        .margin({ bottom: 20 })
-
-                    Row() {
-                        Text('用户名：')
-                            .fontSize(16)
-                        Text(this.userInfo?.username || '')
-                            .fontSize(16)
-                            .fontColor(Color.Blue)
-                    }
-                    .width('80%')
-                    .justifyContent(FlexAlign.Start)
-                    .margin({ bottom: 10 })
-
-                    Row() {
-                        Text('登录时间：')
-                            .fontSize(16)
-                        Text(this.userInfo ? new Date(this.userInfo.loginTime).toLocaleString() : '')
-                            .fontSize(16)
-                            .fontColor(Color.Gray)
-                    }
-                    .width('80%')
-                    .justifyContent(FlexAlign.Start)
-                    .margin({ bottom: 10 })
-
-                    Row() {
-                        Text('剩余有效期：')
-                            .fontSize(16)
-                        Text(`${this.remainingDays} 天`)
-                            .fontSize(16)
-                            .fontColor(this.remainingDays > 5 ? Color.Green : Color.Orange)
-                    }
-                    .width('80%')
-                    .justifyContent(FlexAlign.Start)
-                    .margin({ bottom: 20 })
-
-                    Button('退出登录')
-                        .width('80%')
-                        .height(50)
-                        .backgroundColor(Color.Red)
-                        .onClick(() => {
-                            this.handleLogout();
-                        })
-
-                    if (this.loginMessage) {
-                        Text(this.loginMessage)
-                            .fontSize(16)
-                            .fontColor(Color.Green)
-                            .margin({ top: 15 })
-                    }
-                }
-                .width('100%')
-                .padding(20)
+                // 已登录，显示主应用界面
+                MainTabs()
             }
         }
         .width('100%')
         .height('100%')
-        .justifyContent(FlexAlign.Center)
         .backgroundColor('#F5F5F5')
+    }
+}
+
+@Component
+struct MainTabs {
+    @State currentTabIndex: number = 0;
+
+    build() {
+        Tabs({ barPosition: BarPosition.End }) {
+            TabContent() {
+                HomePage()
+            }
+            .tabBar(this.TabBuilder('首页', 0, $r('sys.symbol.house')))
+
+            TabContent() {
+                ProfilePage()
+            }
+            .tabBar(this.TabBuilder('我的', 1, $r('sys.symbol.person')))
+        }
+        .onChange((index: number) => {
+            this.currentTabIndex = index;
+        })
+        .barBackgroundColor('#FFFFFF')
+        .barMode(BarMode.Fixed)
+    }
+
+    @Builder
+    TabBuilder(title: string, index: number, icon: Resource) {
+        Column() {
+            Image(icon)
+                .width(24)
+                .height(24)
+                .fillColor(this.currentTabIndex === index ? '#007DFF' : '#8A8A8A')
+
+            Text(title)
+                .fontSize(12)
+                .fontColor(this.currentTabIndex === index ? '#007DFF' : '#8A8A8A')
+                .margin({ top: 4 })
+        }
+        .width('100%')
+        .height('100%')
+        .justifyContent(FlexAlign.Center)
     }
 }
