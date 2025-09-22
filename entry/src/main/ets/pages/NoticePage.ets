@@ -18,7 +18,7 @@ export struct NoticePage {
           .margin({ bottom: 30 })
 
         Column() {
-          ForEach(this.notices, (notice: string, index: number) => {
+          ForEach(this.notices, (notice: string) => {
             Row() {
               Text(notice)
                 .fontSize(16)

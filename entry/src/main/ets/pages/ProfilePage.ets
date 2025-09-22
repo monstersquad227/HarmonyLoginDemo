@@ -12,17 +12,17 @@ export struct ProfilePage {
   private loginManager: LoginManager = LoginManager.getInstance();
   private navPathStack: NavPathStack = new NavPathStack();
 
-  async aboutToAppear() {
-    await this.loadUserInfo();
+  aboutToAppear() {
+    this.loadUserInfo();
   }
 
-  async loadUserInfo() {
-    this.userInfo = await this.loginManager.getUserInfo();
-    this.remainingDays = await this.loginManager.getRemainingDays();
+  loadUserInfo() {
+    this.userInfo = this.loginManager.getUserInfo();
+    this.remainingDays = this.loginManager.getRemainingDays();
   }
 
-  async handleLogout() {
-    await this.loginManager.logout();
+  handleLogout() {
+    this.loginManager.logout();
     // 重启应用
     const context = getContext(this) as common.UIAbilityContext;
     context.startAbility(Want.prototype);
