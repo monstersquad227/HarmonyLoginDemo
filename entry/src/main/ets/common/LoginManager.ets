@@ -1,5 +1,3 @@
-import preferences from '@ohos.data.preferences';
-
 export interface UserInfo {
   username: string;
   password: string;
@@ -8,9 +6,10 @@ export interface UserInfo {
 
 export class LoginManager {
   private static instance: LoginManager;
-  private preferences: preferences.Preferences | null = null;
   private readonly LOGIN_EXPIRY_DAYS = 20;
-  private readonly PREFERENCES_NAME = 'login_preferences';
+  private readonly USERNAME_KEY = 'login_username';
+  private readonly PASSWORD_KEY = 'login_password';
+  private readonly LOGIN_TIME_KEY = 'login_time';
 
   private constructor() {}
 
@@ -21,36 +20,39 @@ export class LoginManager {
     return LoginManager.instance;
   }
 
-  // 初始化preferences
-  async init(context: Context): Promise<void> {
+  // 初始化PersistentStorage
+  init(): void {
     try {
-      this.preferences = await preferences.getPreferences(context, this.PREFERENCES_NAME);
+      // 初始化PersistentStorage的键值
+      PersistentStorage.persistProp(this.USERNAME_KEY, '');
+      PersistentStorage.persistProp(this.PASSWORD_KEY, '');
+      PersistentStorage.persistProp(this.LOGIN_TIME_KEY, 0);
     } catch (error) {
-      console.error('Failed to initialize preferences:', error);
+      console.error('Failed to initialize PersistentStorage:', error);
     }
   }
 
   // 用户登录
-  async login(username: string, password: string): Promise<boolean> {
+  login(username: string, password: string): boolean {
     // 这里可以添加实际的登录验证逻辑
     // 为了演示，我们假设用户名和密码都不为空就登录成功
     if (username && password) {
-      const userInfo: UserInfo = {
-        username: username,
-        password: password,
-        loginTime: Date.now()
-      };
-      
-      await this.saveUserInfo(userInfo);
+      const loginTime = Date.now();
+
+      // 使用PersistentStorage保存登录信息
+      AppStorage.setOrCreate(this.USERNAME_KEY, username);
+      AppStorage.setOrCreate(this.PASSWORD_KEY, password);
+      AppStorage.setOrCreate(this.LOGIN_TIME_KEY, loginTime);
+
       return true;
     }
     return false;
   }
 
   // 检查是否已登录且未过期
-  async isLoggedIn(): Promise<boolean> {
+  isLoggedIn(): boolean {
     try {
-      const userInfo = await this.getUserInfo();
+      const userInfo = this.getUserInfo();
       if (!userInfo) {
         return false;
       }
@@ -67,15 +69,11 @@ export class LoginManager {
   }
 
   // 获取用户信息
-  async getUserInfo(): Promise<UserInfo | null> {
+  getUserInfo(): UserInfo | null {
     try {
-      if (!this.preferences) {
-        return null;
-      }
-
-      const username = await this.preferences.get('username', '') as string;
-      const password = await this.preferences.get('password', '') as string;
-      const loginTime = await this.preferences.get('loginTime', 0) as number;
+      const username = AppStorage.get<string>(this.USERNAME_KEY) || '';
+      const password = AppStorage.get<string>(this.PASSWORD_KEY) || '';
+      const loginTime = AppStorage.get<number>(this.LOGIN_TIME_KEY) || 0;
 
       if (username && password && loginTime) {
         return {
@@ -91,40 +89,22 @@ export class LoginManager {
     }
   }
 
-  // 保存用户信息
-  private async saveUserInfo(userInfo: UserInfo): Promise<void> {
-    try {
-      if (!this.preferences) {
-        return;
-      }
-
-      await this.preferences.put('username', userInfo.username);
-      await this.preferences.put('password', userInfo.password);
-      await this.preferences.put('loginTime', userInfo.loginTime);
-      await this.preferences.flush();
-    } catch (error) {
-      console.error('Failed to save user info:', error);
-    }
-  }
-
   // 登出
-  async logout(): Promise<void> {
+  logout(): void {
     try {
-      if (!this.preferences) {
-        return;
-      }
-
-      await this.preferences.clear();
-      await this.preferences.flush();
+      // 清除登录信息
+      AppStorage.setOrCreate(this.USERNAME_KEY, '');
+      AppStorage.setOrCreate(this.PASSWORD_KEY, '');
+      AppStorage.setOrCreate(this.LOGIN_TIME_KEY, 0);
     } catch (error) {
       console.error('Failed to logout:', error);
     }
   }
 
   // 获取剩余登录天数
-  async getRemainingDays(): Promise<number> {
+  getRemainingDays(): number {
     try {
-      const userInfo = await this.getUserInfo();
+      const userInfo = this.getUserInfo();
       if (!userInfo) {
         return 0;
       }

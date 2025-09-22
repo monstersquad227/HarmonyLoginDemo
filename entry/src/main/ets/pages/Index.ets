@@ -1,4 +1,4 @@
-import { LoginManager, UserInfo } from '../common/LoginManager';
+import { LoginManager } from '../common/LoginManager';
 import { HomePage } from './HomePage';
 import { ProfilePage } from './ProfilePage';
 
@@ -11,29 +11,29 @@ struct Index {
     @State loginMessage: string = '';
     private loginManager: LoginManager = LoginManager.getInstance();
 
-    async aboutToAppear() {
+    aboutToAppear() {
         // 初始化LoginManager
-        await this.loginManager.init(getContext(this));
+        this.loginManager.init();
 
         // 检查登录状态
-        await this.checkLoginStatus();
+        this.checkLoginStatus();
     }
 
-    async checkLoginStatus() {
-        const isLoggedIn = await this.loginManager.isLoggedIn();
+    checkLoginStatus() {
+        const isLoggedIn = this.loginManager.isLoggedIn();
         this.isLoggedIn = isLoggedIn;
     }
 
-    async handleLogin() {
+    handleLogin() {
         if (!this.username || !this.password) {
             this.loginMessage = '请输入用户名和密码';
             return;
         }
 
-        const success = await this.loginManager.login(this.username, this.password);
+        const success = this.loginManager.login(this.username, this.password);
         if (success) {
             this.loginMessage = '登录成功！';
-            await this.checkLoginStatus();
+            this.checkLoginStatus();
         } else {
             this.loginMessage = '登录失败，请检查用户名和密码';
         }
