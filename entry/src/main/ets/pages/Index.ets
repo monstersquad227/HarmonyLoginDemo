@@ -1,5 +1,6 @@
 import { LoginManager } from '../common/LoginManager';
 import { HomePage } from './HomePage';
+import { PostListPage } from './PostListPage';
 import { ProfilePage } from './ProfilePage';
 
 @Entry
@@ -108,17 +109,27 @@ struct MainTabs {
             TabContent() {
                 HomePage()
             }
-            .tabBar(this.TabBuilder('首页', 0, $r('sys.symbol.house')))
+            .tabBar(this.TabBuilder('首页', 0, $r("app.media.medicine")))
+
+            TabContent() {
+                PostListPage()
+            }
+            .tabBar(this.TabBuilder('方案', 1, $r("app.media.medicine")))
 
             TabContent() {
                 ProfilePage()
             }
-            .tabBar(this.TabBuilder('我的', 1, $r('sys.symbol.person')))
+            .tabBar(this.TabBuilder('记录', 2, $r("app.media.medicine")))
+
+            TabContent() {
+                ProfilePage()
+            }
+            .tabBar(this.TabBuilder('我的', 3, $r("app.media.medicine")))
         }
         .onChange((index: number) => {
             this.currentTabIndex = index;
         })
-        .barBackgroundColor('#FFFFFF')
+        .barBackgroundColor($r('sys.color.comp_background_list_card'))
         .barMode(BarMode.Fixed)
     }
 
