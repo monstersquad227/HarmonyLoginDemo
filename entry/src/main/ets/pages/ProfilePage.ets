@@ -34,28 +34,16 @@ export struct ProfilePage {
         // 用户信息区域
         Column() {
           // 头像
-          Image($r('sys.symbol.darkcircles'))
+          Image($r('app.media.userAvatar'))
             .width(80)
             .height(80)
-            .fillColor('#007DFF')
             .margin({ bottom: 15 })
 
           // 用户名
-          Text(this.userInfo?.username || '用户')
+          Text(this.userInfo?.username || '用户8271034905')
             .fontSize(20)
             .fontWeight(FontWeight.Bold)
             .margin({ bottom: 5 })
-
-          // 登录时间
-          Text(`登录时间: ${this.userInfo ? new Date(this.userInfo.loginTime).toLocaleDateString() : ''}`)
-            .fontSize(14)
-            .fontColor('#666666')
-            .margin({ bottom: 5 })
-
-          // 剩余天数
-          Text(`剩余有效期: ${this.remainingDays} 天`)
-            .fontSize(14)
-            .fontColor(this.remainingDays > 5 ? '#00AA00' : '#FF6600')
         }
         .width('100%')
         .padding(20)
@@ -65,7 +53,7 @@ export struct ProfilePage {
 
         // 设置列表
         Column() {
-          this.SettingItem('修改个人信息', () => {
+          this.SettingItem('个人信息', () => {
             // 跳转到个人信息页面
             this.navPathStack.pushPath({ name: 'PersonalInfoPage' });
           })
@@ -74,7 +62,7 @@ export struct ProfilePage {
             .color('#F0F0F0')
             .margin({ left: 50 })
 
-          this.SettingItem('注意事项', () => {
+          this.SettingItem('常见问题', () => {
             // 跳转到注意事项页面
             this.navPathStack.pushPath({ name: 'NoticePage' });
           })
@@ -83,9 +71,9 @@ export struct ProfilePage {
             .color('#F0F0F0')
             .margin({ left: 50 })
 
-          this.SettingItem('退出登录', () => {
+          this.SettingItem('功能反馈', () => {
             this.handleLogout();
-          }, true)
+          })
         }
         .width('100%')
         .backgroundColor('#FFFFFF')
