@@ -13,10 +13,6 @@ export struct PersonalInfoPage {
   build() {
     NavDestination() {
       Column() {
-        Text('修改个人信息')
-          .fontSize(24)
-          .fontWeight(FontWeight.Bold)
-          .margin({ bottom: 30 })
 
         Column() {
           Text('用户名')
@@ -61,7 +57,7 @@ export struct PersonalInfoPage {
       .backgroundColor('#F5F5F5')
       .padding(20)
     }
-    .title('修改个人信息')
+    .title('个人信息')
     .onBackPressed(() => {
       // 返回上一页的逻辑
       return false; // 返回false表示使用默认的返回行为

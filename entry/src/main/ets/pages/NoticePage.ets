@@ -12,11 +12,6 @@ export struct NoticePage {
   build() {
     NavDestination() {
       Column() {
-        Text('注意事项')
-          .fontSize(24)
-          .fontWeight(FontWeight.Bold)
-          .margin({ bottom: 30 })
-
         Column() {
           ForEach(this.notices, (notice: string) => {
             Row() {
@@ -39,6 +34,6 @@ export struct NoticePage {
       .backgroundColor('#F5F5F5')
       .padding(20)
     }
-    .title('注意事项')
+    .title('常见问题')
   }
 }
