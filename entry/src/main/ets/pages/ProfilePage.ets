@@ -3,6 +3,7 @@ import common from '@ohos.app.ability.common';
 import { PersonalInfoPage } from './PersonalInfoPage';
 import { NoticePage } from './NoticePage';
 import { Want } from '@kit.AbilityKit';
+import { FeedbackPage } from './FeedbackPage';
 
 @Entry
 @Component
@@ -72,7 +73,8 @@ export struct ProfilePage {
             .margin({ left: 50 })
 
           this.SettingItem('功能反馈', () => {
-            this.handleLogout();
+            // 跳转到功能反馈页面
+            this.navPathStack.pushPath({ name: 'FeedbackPage' });
           })
         }
         .width('100%')
@@ -93,6 +95,8 @@ export struct ProfilePage {
       PersonalInfoPage()
     } else if (name === 'NoticePage') {
       NoticePage()
+    } else if (name === 'FeedbackPage') {
+      FeedbackPage()
     }
   }
 
