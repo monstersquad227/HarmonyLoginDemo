@@ -2,6 +2,7 @@ import { LoginManager } from '../common/LoginManager';
 import { HomePage } from './HomePage';
 import { PostListPage } from './PostListPage';
 import { ProfilePage } from './ProfilePage';
+import { RecordPage } from './RecordPage';
 
 @Entry
 @Component
@@ -117,7 +118,7 @@ struct MainTabs {
             .tabBar(this.TabBuilder('方案', 1, $r("app.media.plan")))
 
             TabContent() {
-                ProfilePage()
+                RecordPage()
             }
             .tabBar(this.TabBuilder('记录', 2, $r("app.media.record")))
 

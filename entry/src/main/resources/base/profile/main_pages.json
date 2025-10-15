@@ -5,6 +5,7 @@
     "pages/ProfilePage",
     "pages/PersonalInfoPage",
     "pages/NoticePage",
-    "pages/FeedbackPage"
+    "pages/FeedbackPage",
+    "pages/RecordPage"
   ]
 }
