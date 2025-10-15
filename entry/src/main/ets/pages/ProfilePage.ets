@@ -84,8 +84,6 @@ export struct ProfilePage {
       .padding(20)
       .backgroundColor('#F5F5F5')
     }
-    .title('我的')
-    .titleMode(NavigationTitleMode.Mini)
     .navDestination(this.navDestinationBuilder)
   }
 
