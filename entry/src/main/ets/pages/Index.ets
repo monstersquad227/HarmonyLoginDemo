@@ -109,22 +109,22 @@ struct MainTabs {
             TabContent() {
                 HomePage()
             }
-            .tabBar(this.TabBuilder('首页', 0, $r("app.media.medicine")))
+            .tabBar(this.TabBuilder('首页', 0, $r("app.media.home")))
 
             TabContent() {
                 PostListPage()
             }
-            .tabBar(this.TabBuilder('方案', 1, $r("app.media.medicine")))
+            .tabBar(this.TabBuilder('方案', 1, $r("app.media.plan")))
 
             TabContent() {
                 ProfilePage()
             }
-            .tabBar(this.TabBuilder('记录', 2, $r("app.media.medicine")))
+            .tabBar(this.TabBuilder('记录', 2, $r("app.media.record")))
 
             TabContent() {
                 ProfilePage()
             }
-            .tabBar(this.TabBuilder('我的', 3, $r("app.media.medicine")))
+            .tabBar(this.TabBuilder('我的', 3, $r("app.media.me")))
         }
         .onChange((index: number) => {
             this.currentTabIndex = index;
