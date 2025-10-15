@@ -1,56 +1,21 @@
 @Entry
 @Component
 export struct PersonalInfoPage {
-  @State username: string = '';
-  @State email: string = '';
-
-  aboutToAppear() {
-    // 这里可以加载用户信息
-    this.username = '示例用户';
-    this.email = 'user@example.com';
-  }
 
   build() {
     NavDestination() {
       Column() {
+        this.SettingItem('头像', 'O', {topLeft: 10, topRight: 10, bottomLeft: 0, bottomRight: 0})
+        this.SettingItem('用户名', 'admin', {topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0})
+        this.SettingItem('手机号', '15056332824', {topLeft: 0, topRight: 0, bottomLeft: 10, bottomRight: 10})
 
-        Column() {
-          Text('用户名')
-            .fontSize(16)
-            .alignSelf(ItemAlign.Start)
-            .margin({ bottom: 8 })
+        Blank().layoutWeight(1)
 
-          TextInput({ text: this.username })
-            .width('100%')
-            .height(50)
-            .margin({ bottom: 20 })
-            .onChange((value: string) => {
-              this.username = value;
-            })
-
-          Text('邮箱')
-            .fontSize(16)
-            .alignSelf(ItemAlign.Start)
-            .margin({ bottom: 8 })
-
-          TextInput({ text: this.email })
-            .width('100%')
-            .height(50)
-            .margin({ bottom: 30 })
-            .onChange((value: string) => {
-              this.email = value;
-            })
-
-          Button('保存修改')
-            .width('100%')
-            .height(50)
-            .onClick(() => {
-              // 保存逻辑
-              console.log('保存用户信息');
-            })
-        }
-        .width('100%')
-        .padding(20)
+        Button('退出登录')
+          .width('100%')
+          .borderRadius(10)
+          .backgroundColor('rgba(255, 0, 0, 0.15)')
+          .fontColor('rgba(255, 0, 0, 0.9)')
       }
       .width('100%')
       .height('100%')
@@ -62,5 +27,18 @@ export struct PersonalInfoPage {
       // 返回上一页的逻辑
       return false; // 返回false表示使用默认的返回行为
     })
+  }
+
+  @Builder
+  SettingItem(title: string, value: string, radius: BorderRadiuses) {
+    Row() {
+      Text(title).fontSize(16).alignSelf(ItemAlign.Start).margin({ bottom: 8 })
+      Text(value).fontSize(16).alignSelf(ItemAlign.Start).margin({ bottom: 8 })
+    }
+    .justifyContent(FlexAlign.SpaceBetween)
+    .width('100%')
+    .borderRadius(radius)
+    .padding(20)
+    .backgroundColor('#ffffffff')
   }
 }
