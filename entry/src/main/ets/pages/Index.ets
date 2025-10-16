@@ -1,5 +1,6 @@
 import { LoginManager } from '../common/LoginManager';
 import { HomePage } from './HomePage';
+import { PlanPage } from './PlanPage';
 import { PostListPage } from './PostListPage';
 import { ProfilePage } from './ProfilePage';
 import { RecordPage } from './RecordPage';
@@ -113,7 +114,7 @@ struct MainTabs {
             .tabBar(this.TabBuilder('首页', 0, $r("app.media.home")))
 
             TabContent() {
-                PostListPage()
+                PlanPage()
             }
             .tabBar(this.TabBuilder('方案', 1, $r("app.media.plan")))
 

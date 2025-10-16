@@ -6,6 +6,7 @@
     "pages/PersonalInfoPage",
     "pages/NoticePage",
     "pages/FeedbackPage",
-    "pages/RecordPage"
+    "pages/RecordPage",
+    "pages/PlanPage"
   ]
 }
