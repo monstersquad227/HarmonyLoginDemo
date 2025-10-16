@@ -6,7 +6,7 @@ export struct PersonalInfoPage {
     NavDestination() {
       Column() {
         this.SettingItem('头像', 'O', {topLeft: 10, topRight: 10, bottomLeft: 0, bottomRight: 0})
-        this.SettingItem('用户名', 'admin', {topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0})
+        this.SettingItem('昵称', 'admin', {topLeft: 0, topRight: 0, bottomLeft: 0, bottomRight: 0})
         this.SettingItem('手机号', '15056332824', {topLeft: 0, topRight: 0, bottomLeft: 10, bottomRight: 10})
 
         Blank().layoutWeight(1)
