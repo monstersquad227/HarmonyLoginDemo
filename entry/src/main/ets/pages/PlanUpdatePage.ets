@@ -1,7 +1,3 @@
-interface OptionItem {
-    value: string;
-}
-
 interface GeneratedObjectLiteralInterface_1 {
     medicineName: string;
     mode: number;
@@ -127,13 +123,13 @@ export struct PlanUpdatePage {
             Scroll() {
                 Column() {
                     List({ space: 14 }) {
-                        this.buildMedicineNameCard()
-                        this.buildModeSwitchCard()
+                        this.buildMedicineNameAndModeSwitchCard()
+                        // this.buildModeSwitchCard()
                         this.buildDailyModeCard()
-                        this.buildIntervalModeCard()
+                        // this.buildIntervalModeCard()
                         this.buildDosageCard()
-                        this.buildMedicineTypeCard()
-                        this.buildTimingCard()
+                        this.buildMedicineTypeAndTimingCard()
+                        // this.buildTimingCard()
                         this.buildSaveButton()
                     }
                 }
@@ -147,7 +143,7 @@ export struct PlanUpdatePage {
     }
 
     @Builder
-    buildMedicineNameCard() {
+    buildMedicineNameAndModeSwitchCard() {
         ListItem() {
             Row() {
                 Column({ space: 20 }) {
@@ -164,25 +160,8 @@ export struct PlanUpdatePage {
                         .onChange((value: string) => {
                             this.medicineName = value;
                         })
-                }
-                .width('100%')
-            }
-            .width('100%')
-            .padding(10)
-        }
-        .width('92%')
-        .margin({ left: '4%', right: '4%' })
-        .backgroundColor('#FFFFFF')
-        .borderRadius(12)
-        .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
-    }
 
-    @Builder
-    buildModeSwitchCard() {
-        ListItem() {
-            Row() {
-                Column({ space: 20 }) {
-                    Text('服药频率模式')
+                    Text('服药频率')
                         .fontWeight(FontWeight.Bold)
                         .fontSize(16)
 
@@ -195,13 +174,13 @@ export struct PlanUpdatePage {
                             .border({ width: 1, color: '#2e6ae6', radius: 8 })
                             .onClick(() => { this.mode = 0; })
 
-                        Button('间隔')
-                            .layoutWeight(1)
-                            .stateEffect(this.mode === 1)
-                            .backgroundColor(this.mode === 1 ? '#2e6ae6' : '#FFFFFF')
-                            .fontColor(this.mode === 1 ? '#FFFFFF' : '#2e6ae6')
-                            .border({ width: 1, color: '#2e6ae6', radius: 8 })
-                            .onClick(() => { this.mode = 1; })
+                        // Button('间隔')
+                        //     .layoutWeight(1)
+                        //     .stateEffect(this.mode === 1)
+                        //     .backgroundColor(this.mode === 1 ? '#2e6ae6' : '#FFFFFF')
+                        //     .fontColor(this.mode === 1 ? '#FFFFFF' : '#2e6ae6')
+                        //     .border({ width: 1, color: '#2e6ae6', radius: 8 })
+                        //     .onClick(() => { this.mode = 1; })
                     }
                     .width('100%')
                 }
@@ -212,10 +191,50 @@ export struct PlanUpdatePage {
         }
         .width('92%')
         .margin({ left: '4%', right: '4%' })
-        .backgroundColor('#FFFFFF')
+        .backgroundColor($r('sys.color.comp_background_list_card'))
         .borderRadius(12)
         .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
     }
+
+    // @Builder
+    // buildModeSwitchCard() {
+    //     ListItem() {
+    //         Row() {
+    //             Column({ space: 20 }) {
+    //                 Text('服药频率模式')
+    //                     .fontWeight(FontWeight.Bold)
+    //                     .fontSize(16)
+    //
+    //                 Row() {
+    //                     Button('每日')
+    //                         .layoutWeight(1)
+    //                         .stateEffect(this.mode === 0)
+    //                         .backgroundColor(this.mode === 0 ? '#2e6ae6' : '#FFFFFF')
+    //                         .fontColor(this.mode === 0 ? '#FFFFFF' : '#2e6ae6')
+    //                         .border({ width: 1, color: '#2e6ae6', radius: 8 })
+    //                         .onClick(() => { this.mode = 0; })
+    //
+    //                     Button('间隔')
+    //                         .layoutWeight(1)
+    //                         .stateEffect(this.mode === 1)
+    //                         .backgroundColor(this.mode === 1 ? '#2e6ae6' : '#FFFFFF')
+    //                         .fontColor(this.mode === 1 ? '#FFFFFF' : '#2e6ae6')
+    //                         .border({ width: 1, color: '#2e6ae6', radius: 8 })
+    //                         .onClick(() => { this.mode = 1; })
+    //                 }
+    //                 .width('100%')
+    //             }
+    //             .width('100%')
+    //         }
+    //         .width('100%')
+    //         .padding(10)
+    //     }
+    //     .width('92%')
+    //     .margin({ left: '4%', right: '4%' })
+    //     .backgroundColor('#FFFFFF')
+    //     .borderRadius(12)
+    //     .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
+    // }
 
     @Builder
     buildDailyModeCard() {
@@ -252,7 +271,7 @@ export struct PlanUpdatePage {
                                 Button(time || '请选择时间')
                                     .layoutWeight(2)
                                     .border({ width: 1, color: '#e5e7eb', radius: 8 })
-                                    .fontColor('#000000')
+                                    .fontColor($r('sys.color.black'))
                                     .backgroundColor('#F2F2F2')
                                     .onClick(() => { this.pickTime(index, true); })
                             }
@@ -267,90 +286,90 @@ export struct PlanUpdatePage {
             }
             .width('92%')
             .margin({ left: '4%', right: '4%' })
-            .backgroundColor('#FFFFFF')
+            .backgroundColor($r('sys.color.comp_background_list_card'))
             .borderRadius(12)
             .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
         }
     }
 
-    @Builder
-    buildIntervalModeCard() {
-        if (this.mode === 1) {
-            ListItem() {
-                Row() {
-                    Column({ space: 20 }) {
-                        Row() {
-                            Column({ space: 10 }) {
-                                Text('每隔几天')
-                                    .fontWeight(FontWeight.Bold)
-                                    .fontSize(16)
-
-                                TextInput({
-                                    text: String(this.intervalDays)
-                                })
-                                    .width('100%')
-                                    .border({ width: 1, color: '#e5e7eb', radius: 8 })
-                                    .padding(10)
-                                    .onChange((value: string) => {
-                                        this.intervalDays = parseInt(value) || 1;
-                                    })
-                            }
-                            .layoutWeight(1)
-
-                            Column({ space: 10 }) {
-                                Text('每次次数')
-                                    .fontWeight(FontWeight.Bold)
-                                    .fontSize(16)
-
-                                TextInput({
-                                    text: String(this.intervalCount)
-                                })
-                                    .width('100%')
-                                    .border({ width: 1, color: '#e5e7eb', radius: 8 })
-                                    .padding(10)
-                                    .onChange((value: string) => {
-                                        const count = parseInt(value) || 1;
-                                        this.intervalCount = Math.max(1, count);
-                                        this.updateTimeCount(this.intervalCount, false);
-                                    })
-                            }
-                            .layoutWeight(1)
-                        }
-                        .width('100%')
-
-                        Text('服药时间点')
-                            .fontWeight(FontWeight.Bold)
-                            .fontSize(16)
-
-                        ForEach(this.intervalTimes, (time: string, index: number) => {
-                            Row() {
-                                Text(`第${index + 1}次时间`)
-                                    .fontSize(14)
-                                    .layoutWeight(1)
-
-                                Button(time || '请选择时间')
-                                    .layoutWeight(2)
-                                    .border({ width: 1, color: '#e5e7eb', radius: 8 })
-                                    .fontColor('#000000')
-                                    .backgroundColor('#F2F2F2')
-                                    .onClick(() => { this.pickTime(index, false); })
-                            }
-                            .width('100%')
-                            .margin({ bottom: 10 })
-                        })
-                    }
-                    .width('100%')
-                }
-                .width('100%')
-                .padding(10)
-            }
-            .width('92%')
-            .margin({ left: '4%', right: '4%' })
-            .backgroundColor('#FFFFFF')
-            .borderRadius(12)
-            .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
-        }
-    }
+    // @Builder
+    // buildIntervalModeCard() {
+    //     if (this.mode === 1) {
+    //         ListItem() {
+    //             Row() {
+    //                 Column({ space: 20 }) {
+    //                     Row() {
+    //                         Column({ space: 10 }) {
+    //                             Text('每隔几天')
+    //                                 .fontWeight(FontWeight.Bold)
+    //                                 .fontSize(16)
+    //
+    //                             TextInput({
+    //                                 text: String(this.intervalDays)
+    //                             })
+    //                                 .width('100%')
+    //                                 .border({ width: 1, color: '#e5e7eb', radius: 8 })
+    //                                 .padding(10)
+    //                                 .onChange((value: string) => {
+    //                                     this.intervalDays = parseInt(value) || 1;
+    //                                 })
+    //                         }
+    //                         .layoutWeight(1)
+    //
+    //                         Column({ space: 10 }) {
+    //                             Text('每次次数')
+    //                                 .fontWeight(FontWeight.Bold)
+    //                                 .fontSize(16)
+    //
+    //                             TextInput({
+    //                                 text: String(this.intervalCount)
+    //                             })
+    //                                 .width('100%')
+    //                                 .border({ width: 1, color: '#e5e7eb', radius: 8 })
+    //                                 .padding(10)
+    //                                 .onChange((value: string) => {
+    //                                     const count = parseInt(value) || 1;
+    //                                     this.intervalCount = Math.max(1, count);
+    //                                     this.updateTimeCount(this.intervalCount, false);
+    //                                 })
+    //                         }
+    //                         .layoutWeight(1)
+    //                     }
+    //                     .width('100%')
+    //
+    //                     Text('服药时间点')
+    //                         .fontWeight(FontWeight.Bold)
+    //                         .fontSize(16)
+    //
+    //                     ForEach(this.intervalTimes, (time: string, index: number) => {
+    //                         Row() {
+    //                             Text(`第${index + 1}次时间`)
+    //                                 .fontSize(14)
+    //                                 .layoutWeight(1)
+    //
+    //                             Button(time || '请选择时间')
+    //                                 .layoutWeight(2)
+    //                                 .border({ width: 1, color: '#e5e7eb', radius: 8 })
+    //                                 .fontColor('#000000')
+    //                                 .backgroundColor('#F2F2F2')
+    //                                 .onClick(() => { this.pickTime(index, false); })
+    //                         }
+    //                         .width('100%')
+    //                         .margin({ bottom: 10 })
+    //                     })
+    //                 }
+    //                 .width('100%')
+    //             }
+    //             .width('100%')
+    //             .padding(10)
+    //         }
+    //         .width('92%')
+    //         .margin({ left: '4%', right: '4%' })
+    //         .backgroundColor('#FFFFFF')
+    //         .borderRadius(12)
+    //         .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
+    //     }
+    // }
 
     @Builder
     buildDosageCard() {
@@ -394,13 +413,13 @@ export struct PlanUpdatePage {
         }
         .width('92%')
         .margin({ left: '4%', right: '4%' })
-        .backgroundColor('#FFFFFF')
+        .backgroundColor($r('sys.color.comp_background_list_card'))
         .borderRadius(12)
         .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
     }
 
     @Builder
-    buildMedicineTypeCard() {
+    buildMedicineTypeAndTimingCard() {
         ListItem() {
             Row() {
                 Column({ space: 20 }) {
@@ -428,25 +447,8 @@ export struct PlanUpdatePage {
                             .margin({ left: 5 })
                     }
                     .width('100%')
-                    .justifyContent(FlexAlign.Start)
-                }
-                .width('100%')
-            }
-            .width('100%')
-            .padding(10)
-        }
-        .width('92%')
-        .margin({ left: '4%', right: '4%' })
-        .backgroundColor('#FFFFFF')
-        .borderRadius(12)
-        .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
-    }
+                    .justifyContent(FlexAlign.SpaceBetween)
 
-    @Builder
-    buildTimingCard() {
-        ListItem() {
-            Row() {
-                Column({ space: 20 }) {
                     Text('用药时机')
                         .fontWeight(FontWeight.Bold)
                         .fontSize(16)
@@ -472,31 +474,62 @@ export struct PlanUpdatePage {
         }
         .width('92%')
         .margin({ left: '4%', right: '4%' })
-        .backgroundColor('#FFFFFF')
+        .backgroundColor($r('sys.color.comp_background_list_card'))
         .borderRadius(12)
         .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
     }
 
+    // @Builder
+    // buildTimingCard() {
+    //     ListItem() {
+    //         Row() {
+    //             Column({ space: 20 }) {
+    //                 Text('用药时机')
+    //                     .fontWeight(FontWeight.Bold)
+    //                     .fontSize(16)
+    //
+    //                 Select([
+    //                     { value: '不限' },
+    //                     { value: '饭前用药' },
+    //                     { value: '饭后用药' },
+    //                     { value: '随餐用药' },
+    //                     { value: '睡前用药' }
+    //                 ])
+    //                     .width('100%')
+    //                     .border({ width: 1, color: '#e5e7eb', radius: 8 })
+    //                     .onSelect((index: number) => {
+    //                         this.medicineTiming = index;
+    //                     })
+    //                     .value(this.getTimingOptions()[this.medicineTiming])
+    //             }
+    //             .width('100%')
+    //         }
+    //         .width('100%')
+    //         .padding(10)
+    //     }
+    //     .width('92%')
+    //     .margin({ left: '4%', right: '4%' })
+    //     .backgroundColor('#FFFFFF')
+    //     .borderRadius(12)
+    //     .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
+    // }
+
     @Builder
     buildSaveButton() {
-        ListItem() {
-            Row() {
-                Button('保存')
-                    .width('100%')
-                    .height(42)
-                    .fontSize(15)
-                    .fontWeight(FontWeight.Bold)
-                    .fontColor('#2e6ae6')
-                    .backgroundColor('#FFFFFF')
-                    .border({ width: 1, color: '#2e6ae6', radius: 8 })
-                    .onClick(() => { this.handleSave(); })
-            }
-            .width('100%')
-            .padding(10)
+        Row() {
+            Button('保存')
+                .width('100%')
+                .height(42)
+                .fontSize(15)
+                .fontWeight(FontWeight.Bold)
+                .fontColor('#2e6ae6')
+                .backgroundColor($r('sys.color.comp_background_list_card'))
+                .border({ width: 1, color: '#2e6ae6', radius: 8 })
+                .onClick(() => { this.handleSave(); })
         }
         .width('92%')
+        .padding(10)
         .margin({ left: '4%', right: '4%', bottom: 20 })
-        .backgroundColor('#FFFFFF')
         .borderRadius(12)
         .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
     }
