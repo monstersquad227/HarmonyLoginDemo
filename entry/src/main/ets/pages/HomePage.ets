@@ -1,168 +1,360 @@
+interface ListPlanData {
+    plan_id: number,
+    is_checked: number
+    medicine_name: string,
+    medicine_timing?: number,
+    amount: number,
+    type: string,
+    plan_time: string,
+    record_id: number
+}
+
 @Entry
 @Component
 export struct HomePage {
-  @State currentDate: Date = new Date();
-  @State selectedDate: Date = new Date();
+    @State currentDate: Date = new Date();
+    @State selectedDate: Date = new Date();
 
-  aboutToAppear() {
-    this.selectedDate = new Date(this.currentDate);
-  }
+    @State planData: ListPlanData[] = [
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根xxxxxxxxxxxxuuuuuuuuiiiiiiiuuuuiiiiiuuuuiiiiii',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        }
+    ]
 
-  // 获取月份的天数
-  getDaysInMonth(year: number, month: number): number {
-    return new Date(year, month + 1, 0).getDate();
-  }
-
-  // 获取月份第一天是星期几
-  getFirstDayOfMonth(year: number, month: number): number {
-    return new Date(year, month, 1).getDay();
-  }
-
-  // 格式化日期显示
-  formatDateHeader(): string {
-    const year = this.currentDate.getFullYear();
-    const month = String(this.currentDate.getMonth() + 1).padStart(2, '0');
-    const day = String(this.currentDate.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  // 上一天
-  previousDay() {
-    const newDate = new Date(this.currentDate);
-    newDate.setDate(newDate.getDate() - 1);
-    this.currentDate = newDate;
-  }
-
-  // 下一天
-  nextDay() {
-    const newDate = new Date(this.currentDate);
-    newDate.setDate(newDate.getDate() + 1);
-    this.currentDate = newDate;
-  }
-
-  // 检查是否是今天
-  isToday(day: number): boolean {
-    const today = new Date();
-    return this.currentDate.getFullYear() === today.getFullYear() &&
-           this.currentDate.getMonth() === today.getMonth() &&
-           day === today.getDate();
-  }
-
-  // 检查是否是选中的日期
-  isSelectedDate(day: number): boolean {
-    return this.currentDate.getFullYear() === this.selectedDate.getFullYear() &&
-           this.currentDate.getMonth() === this.selectedDate.getMonth() &&
-           day === this.selectedDate.getDate();
-  }
-
-  // 点击日期
-  onDateClick(day: number) {
-    this.selectedDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), day);
-  }
-
-  build() {
-    Column() {
-      // 日历头部
-      Row() {
-        Button('<')
-          .width(40)
-          .height(40)
-          .backgroundColor('#F0F0F0')
-          .fontColor('#333333')
-          .onClick(() => {
-            this.previousDay();
-          })
-
-        Text(this.formatDateHeader())
-          .fontSize(18)
-          .fontWeight(FontWeight.Medium)
-          .layoutWeight(1)
-          .textAlign(TextAlign.Center)
-
-        Button('>')
-          .width(40)
-          .height(40)
-          .backgroundColor('#F0F0F0')
-          .fontColor('#333333')
-          .onClick(() => {
-            this.nextDay();
-          })
-      }
-      .width('100%')
-      .padding({ left: 20, right: 20, top: 10, bottom: 10 })
-      .justifyContent(FlexAlign.SpaceBetween)
-
-      // 星期标题
-      Row() {
-        ForEach(['日', '一', '二', '三', '四', '五', '六'], (weekDay: string) => {
-          Text(weekDay)
-            .fontSize(14)
-            .fontColor('#666666')
-            .width('14.28%')
-            .textAlign(TextAlign.Center)
-        })
-      }
-      .width('100%')
-      .padding({ left: 20, right: 20, top: 10, bottom: 10 })
-
-      // 日历网格
-      Column() {
-        ForEach(this.generateCalendarWeeks(), (week: number[]) => {
-          Row() {
-            ForEach(week, (day: number) => {
-              Text(day > 0 ? day.toString() : '')
-                .fontSize(16)
-                .width('14.28%')
-                .height(40)
-                .textAlign(TextAlign.Center)
-                .backgroundColor(day > 0 && this.isSelectedDate(day) ? '#007DFF' : 
-                                day > 0 && this.isToday(day) ? '#FFE6E6' : 'transparent')
-                .fontColor(day > 0 && this.isSelectedDate(day) ? '#FFFFFF' : 
-                          day > 0 && this.isToday(day) ? '#FF4444' : '#333333')
-                .borderRadius(4)
-                .onClick(() => {
-                  if (day > 0) {
-                    this.onDateClick(day);
-                  }
-                })
-            })
-          }
-          .width('100%')
-        })
-      }
-      .width('100%')
-      .padding({ left: 20, right: 20 })
-
-      // 底部按钮
-      Column() {
-        Button('今日任务')
-          .width('80%')
-          .height(50)
-          .margin({ top: 30 })
-          .onClick(() => {
-            // 这里可以添加按钮点击逻辑
-          })
-
-        Button('添加事件')
-          .width('80%')
-          .height(50)
-          .margin({ top: 15 })
-          .backgroundColor('#FF6B35')
-          .onClick(() => {
-            // 这里可以添加按钮点击逻辑
-          })
-      }
-      .width('100%')
-      .justifyContent(FlexAlign.Center)
-
+    aboutToAppear() {
+        this.selectedDate = new Date(this.currentDate);
     }
-    .width('100%')
-    .height('100%')
-    .backgroundColor('#FFFFFF')
-  }
 
-  // 生成日历周数据
-  generateCalendarWeeks(): number[][] {
+    // 获取月份的天数
+    getDaysInMonth(year: number, month: number): number {
+        return new Date(year, month + 1, 0).getDate();
+    }
+
+    // 获取月份第一天是星期几
+    getFirstDayOfMonth(year: number, month: number): number {
+        return new Date(year, month, 1).getDay();
+    }
+
+    // 格式化日期显示
+    formatDateHeader(): string {
+        const year = this.selectedDate.getFullYear();
+        const month = String(this.selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(this.selectedDate.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // 上一天
+    previousDay() {
+        const newDate = new Date(this.currentDate);
+        newDate.setDate(newDate.getDate() - 1);
+        this.currentDate = newDate;
+        this.selectedDate = newDate;
+    }
+
+    goToToday() {
+        const today = new Date();
+        this.currentDate = today;
+        this.selectedDate = new Date(today);
+    }
+
+    // 下一天
+    nextDay() {
+        const newDate = new Date(this.currentDate);
+        newDate.setDate(newDate.getDate() + 1);
+        this.currentDate = newDate;
+        this.selectedDate = newDate;
+    }
+
+    // 检查是否是今天
+    isToday(day: number): boolean {
+        const today = new Date();
+        return this.currentDate.getFullYear() === today.getFullYear() &&
+            this.currentDate.getMonth() === today.getMonth() &&
+            day === today.getDate();
+    }
+
+    // 检查是否是选中的日期
+    isSelectedDate(day: number): boolean {
+        return this.currentDate.getFullYear() === this.selectedDate.getFullYear() &&
+            this.currentDate.getMonth() === this.selectedDate.getMonth() &&
+            day === this.selectedDate.getDate();
+    }
+
+    // 点击日期
+    onDateClick(day: number) {
+        this.selectedDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), day);
+    }
+
+    build() {
+        Column() {
+            // 日历头部
+            Row() {
+                Button() {
+                    Image($r('app.media.leftArrow'))
+                        .fillColor('#ff323030')
+                        .height(25)
+                        .width(25)
+                }
+                .width(40)
+                .height(40)
+                .backgroundColor('#F0F0F0')
+                .borderRadius(45)
+                .onClick(() => {
+                    this.previousDay();
+                })
+
+                Text(this.formatDateHeader())
+                    .fontSize(18)
+                    .fontWeight(FontWeight.Medium)
+                    .layoutWeight(1)
+                    .textAlign(TextAlign.Center)
+
+                Button('今日')
+                    .backgroundColor('#F0F0F0')
+                    .fontColor('#333333')
+                    .onClick(() => {
+                        this.goToToday()
+                    })
+
+                Button() {
+                    Image($r('app.media.rightArrow'))
+                        .fillColor('#ff323030')
+                        .height(25)
+                        .width(25)
+                }
+                .width(40)
+                .height(40)
+                .backgroundColor('#F0F0F0')
+                .onClick(() => {
+                    this.nextDay();
+                })
+            }
+            .width('100%')
+            .padding({ left: 20, right: 20, top: 10, bottom: 10 })
+            .justifyContent(FlexAlign.SpaceBetween)
+
+            // 星期标题
+            Row() {
+                ForEach(['日', '一', '二', '三', '四', '五', '六'], (weekDay: string) => {
+                    Text(weekDay)
+                        .fontSize(14)
+                        .fontColor('#666666')
+                        .width('14.28%')
+                        .textAlign(TextAlign.Center)
+                })
+            }
+            .width('100%')
+            .padding({ left: 20, right: 20, top: 10, bottom: 10 })
+
+            // 日历网格
+            Column() {
+                ForEach(this.generateCalendarWeeks(), (week: number[]) => {
+                    Row() {
+                        ForEach(week, (day: number) => {
+                            Text(day > 0 ? day.toString() : '')
+                                .fontSize(16)
+                                .width('14.28%')
+                                .height(40)
+                                .textAlign(TextAlign.Center)
+                                .backgroundColor(day > 0 && this.isSelectedDate(day) ? '#007DFF' :
+                                                day > 0 && this.isToday(day) ? '#FFE6E6' : 'transparent')
+                                .fontColor(day > 0 && this.isSelectedDate(day) ? '#FFFFFF' :
+                                          day > 0 && this.isToday(day) ? '#FF4444' : '#333333')
+                                .borderRadius(4)
+                                .onClick(() => {
+                                  if (day > 0) {
+                                    this.onDateClick(day);
+                                  }
+                                })
+                        })
+                    }
+                    .width('100%')
+                })
+            }
+            .width('100%')
+            .padding({ left: 20, right: 20 })
+
+            // 底部内容
+            // Column() {
+                if (this.planData.length != 0) {
+                    List({ space: '14.00vp' }) {
+                        ForEach(this.planData, (item: ListPlanData) => {
+                            ListItem() {
+                                this.courseItem(item)
+                            }
+                            .width('92%')
+                            .margin({ left: '4%', right: '4%' })
+                            .backgroundColor('#FFFFFF')
+                            .borderRadius(12)
+                            .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
+                        })
+                    }
+                    .layoutWeight(1)
+                    .margin({ top: '8.00vp', bottom: '16.00vp' })
+                } else {
+                    Text('明日再来')
+                }
+            // }
+            // .justifyContent(FlexAlign.Start)
+            // .align(Alignment.TopStart)
+            // .padding(10)
+            // .width('100%')
+            // .backgroundColor('#F7F8FA')
+        }
+        .width('100%')
+        .height('100%')
+        .backgroundColor($r('sys.color.comp_background_list_card'))
+    }
+
+    // 生成日历周数据
+    generateCalendarWeeks(): number[][] {
     const year = this.currentDate.getFullYear();
     const month = this.currentDate.getMonth();
     const daysInMonth = this.getDaysInMonth(year, month);
@@ -197,4 +389,47 @@ export struct HomePage {
     
     return weeks;
   }
+
+    @Builder
+    courseItem(item: ListPlanData) {
+        Column() {
+            Row() {
+                Column() {
+                    Row() {
+                        Text(item.medicine_name)
+                            .fontSize(18)
+                            .fontWeight(600)
+                            .fontColor('#111111')
+                            .maxLines(1)
+                            .width('auto')
+                            .constraintSize({ maxWidth: '50%' })
+                            .textOverflow({ overflow: TextOverflow.Ellipsis })
+
+                        Text(`${item.amount} ${item.type}`)
+                            .margin({ left: '10vp' })
+                            .fontSize(16)
+                            .fontColor('#3A66F5')
+                            .backgroundColor('#ECF2FF')
+                    }
+                    Text(`${item.plan_time} 不限`)
+                        .margin({ top: '6vp' })
+                        .fontSize(16)
+                        .fontColor('#8A8A8E')
+                }
+                .alignItems(HorizontalAlign.Start)
+
+                Button('撤销打卡')
+                    .type(ButtonType.Capsule)
+                    .fontSize(16)
+                    .fontColor('#FFFFFF')
+                    .backgroundColor('#34C759')
+                    .onClick(() => {
+                        // TODO: 打卡逻辑
+                    })
+            }
+            .justifyContent(FlexAlign.SpaceBetween)
+            .width('100%')
+            .padding(15)
+        }
+    }
 }

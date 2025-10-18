@@ -1,6 +1,11 @@
+import { LoginManager } from "../common/LoginManager";
+import { router } from "@kit.ArkUI";
+
 @Entry
 @Component
 export struct PersonalInfoPage {
+
+  private loginManager: LoginManager = LoginManager.getInstance();
 
   build() {
     NavDestination() {
@@ -16,6 +21,10 @@ export struct PersonalInfoPage {
           .borderRadius(10)
           .backgroundColor('rgba(255, 0, 0, 0.15)')
           .fontColor('rgba(255, 0, 0, 0.9)')
+          .onClick(() => {
+              this.loginManager.logout()
+              router.replaceUrl({ url: 'pages/Index' })
+          })
       }
       .width('100%')
       .height('100%')
