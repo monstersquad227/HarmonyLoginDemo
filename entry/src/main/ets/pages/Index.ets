@@ -86,39 +86,47 @@ struct Index {
                 // 登录界面
                 Navigation(this.navPathStack) {
                     Column() {
+                        Blank()
+                            .layoutWeight(1)
+
                         Image($r('app.media.logo'))
                             .borderRadius(24)
-                            .height(100)
-                            .width(100)
+                            .height(80)
+                            .width(80)
+                            .margin({ bottom: 20 })
+
                         Text('按时吃药')
-                            .fontSize(24)
+                            .fontSize(28)
                             .fontWeight(FontWeight.Bold)
-                            .margin({ bottom: 30, top: 30 })
+                            .margin({ bottom: 12 })
 
                         Text('助您养成按时吃药的好习惯')
-                            .fontSize(18)
-                            .margin({ bottom: 20, top: 30 })
+                            .fontSize(16)
+                            .fontColor('#666666')
+                            .margin({ bottom: 40 })
 
-                        TextInput({ placeholder: '请输入用户名' })
-                            .width('80%')
-                            .height(50)
-                            .margin({ bottom: 15 })
-                            .onChange((value: string) => {
-                                this.username = value;
-                            })
-
-                        TextInput({ placeholder: '请输入密码' })
-                            .width('80%')
-                            .height(50)
-                            .type(InputType.Password)
-                            .margin({ bottom: 20 })
-                            .onChange((value: string) => {
-                                this.password = value;
-                            })
+                        // TextInput({ placeholder: '请输入用户名' })
+                        //     .width('80%')
+                        //     .height(50)
+                        //     .margin({ bottom: 15 })
+                        //     .onChange((value: string) => {
+                        //         this.username = value;
+                        //     })
+                        //
+                        // TextInput({ placeholder: '请输入密码' })
+                        //     .width('80%')
+                        //     .height(50)
+                        //     .type(InputType.Password)
+                        //     .margin({ bottom: 20 })
+                        //     .onChange((value: string) => {
+                        //         this.password = value;
+                        //     })
 
                         Button('登录')
-                            .width('80%')
-                            .height(50)
+                            .width('85%')
+                            .height(48)
+                            .fontSize(17)
+                            .borderRadius(24)
                             .onClick(() => {
                                 this.handleLogin('authorizationCode');
                             })
@@ -132,11 +140,12 @@ struct Index {
 
                         Row() {
                             Checkbox({ name: 'privacyCheckbox', group: 'privacyCheckboxGroup' })
-                                .width(24)
-                                .height(24)
+                                .width(20)
+                                .height(20)
                                 .focusable(true)
                                 .focusOnTouch(true)
-                                .margin({ top: 0 })
+                                .margin({ right: 8 })
+                                .flexShrink(0)
                                 .onChange((value: boolean) => {
                                     if (value) {
                                         this.controller.setAgreementStatus(loginComponentManager.AgreementStatus.ACCEPTED)
@@ -175,14 +184,20 @@ struct Index {
                                     }
                                 })
                             }
+                            .layoutWeight(1)
                         }
-                        .width('92%')
-                        .margin({ left: '4%', right: '4%'})
+                        .width('85%')
+                        .alignItems(VerticalAlign.Top)
+                        .margin({ top: 40 })
+
+                        Blank()
+                            .layoutWeight(1.5)
                     }
                     .width('100%')
                     .height('100%')
-                    .justifyContent(FlexAlign.Center)
-                    .padding(20)
+                    .padding({ left: 24, right: 24 })
+                    // .justifyContent(FlexAlign.Center)
+                    // .padding(20)
                 }
                 .navDestination(this.navDestinationBuilder)
             } else {
