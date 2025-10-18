@@ -1,8 +1,172 @@
+interface ListPlanData {
+    plan_id: number,
+    is_checked: number
+    medicine_name: string,
+    medicine_timing?: number,
+    amount: number,
+    type: string,
+    plan_time: string,
+    record_id: number
+}
+
 @Entry
 @Component
 export struct HomePage {
     @State currentDate: Date = new Date();
     @State selectedDate: Date = new Date();
+
+    @State planData: ListPlanData[] = [
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        },
+        {
+            plan_id: 1001,
+            is_checked: 0,
+            medicine_name: '板蓝根xxxxxxxxxxxxuuuuuuuuiiiiiiiuuuuiiiiiuuuuiiiiii',
+            medicine_timing: 0,
+            amount: 1,
+            type: '粒',
+            plan_time: '08:00',
+            record_id: 101,
+        }
+    ]
 
     aboutToAppear() {
         this.selectedDate = new Date(this.currentDate);
@@ -158,28 +322,32 @@ export struct HomePage {
             .padding({ left: 20, right: 20 })
 
             // 底部内容
-            Column() {
-                Button('今日任务')
-                    .width('80%')
-                    .height(50)
-                    .margin({ top: 30 })
-                    .onClick(() => {
-                      // 这里可以添加按钮点击逻辑
-                    })
-
-                Button('添加事件')
-                    .width('80%')
-                    .height(50)
-                    .margin({ top: 15 })
-                    .backgroundColor('#FF6B35')
-                    .onClick(() => {
-                      // 这里可以添加按钮点击逻辑
-                    })
-            }
-            .width('100%')
-            .justifyContent(FlexAlign.Center)
-
-    }
+            // Column() {
+                if (this.planData.length != 0) {
+                    List({ space: '14.00vp' }) {
+                        ForEach(this.planData, (item: ListPlanData) => {
+                            ListItem() {
+                                this.courseItem(item)
+                            }
+                            .width('92%')
+                            .margin({ left: '4%', right: '4%' })
+                            .backgroundColor('#FFFFFF')
+                            .borderRadius(12)
+                            .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
+                        })
+                    }
+                    .layoutWeight(1)
+                    .margin({ top: '8.00vp', bottom: '16.00vp' })
+                } else {
+                    Text('明日再来')
+                }
+            // }
+            // .justifyContent(FlexAlign.Start)
+            // .align(Alignment.TopStart)
+            // .padding(10)
+            // .width('100%')
+            // .backgroundColor('#F7F8FA')
+        }
         .width('100%')
         .height('100%')
         .backgroundColor($r('sys.color.comp_background_list_card'))
@@ -221,4 +389,47 @@ export struct HomePage {
     
     return weeks;
   }
+
+    @Builder
+    courseItem(item: ListPlanData) {
+        Column() {
+            Row() {
+                Column() {
+                    Row() {
+                        Text(item.medicine_name)
+                            .fontSize(18)
+                            .fontWeight(600)
+                            .fontColor('#111111')
+                            .maxLines(1)
+                            .width('auto')
+                            .constraintSize({ maxWidth: '50%' })
+                            .textOverflow({ overflow: TextOverflow.Ellipsis })
+
+                        Text(`${item.amount} ${item.type}`)
+                            .margin({ left: '10vp' })
+                            .fontSize(16)
+                            .fontColor('#3A66F5')
+                            .backgroundColor('#ECF2FF')
+                    }
+                    Text(`${item.plan_time} 不限`)
+                        .margin({ top: '6vp' })
+                        .fontSize(16)
+                        .fontColor('#8A8A8E')
+                }
+                .alignItems(HorizontalAlign.Start)
+
+                Button('撤销打卡')
+                    .type(ButtonType.Capsule)
+                    .fontSize(16)
+                    .fontColor('#FFFFFF')
+                    .backgroundColor('#34C759')
+                    .onClick(() => {
+                        // TODO: 打卡逻辑
+                    })
+            }
+            .justifyContent(FlexAlign.SpaceBetween)
+            .width('100%')
+            .padding(15)
+        }
+    }
 }
