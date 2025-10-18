@@ -131,7 +131,7 @@ export struct UserAgreementPage {
         }
         .width('100%')
         .padding(16)
-        .backgroundColor('#FFFFFF')
+        .backgroundColor($r('sys.color.comp_background_list_card'))
         .borderRadius(12)
         .shadow({ radius: 6, color: '#08000000', offsetX: 0, offsetY: 2 })
         .margin({ bottom: hasMargin ? 0 : 16 })
