@@ -4,6 +4,9 @@ import { PlanPage } from './PlanPage';
 import { PostListPage } from './PostListPage';
 import { ProfilePage } from './ProfilePage';
 import { RecordPage } from './RecordPage';
+import { loginComponentManager } from '@kit.AccountKit';
+import { promptAction } from '@kit.ArkUI';
+import { hilog } from '@kit.PerformanceAnalysisKit';
 
 @Entry
 @Component
@@ -13,6 +16,18 @@ struct Index {
     @State isLoggedIn: boolean = false;
     @State loginMessage: string = '';
     private loginManager: LoginManager = LoginManager.getInstance();
+    // 新增：华为账号一键登录按钮控制器
+    controller: loginComponentManager.LoginWithHuaweiIDButtonController =
+        new loginComponentManager.LoginWithHuaweiIDButtonController()
+            .setAgreementStatus(loginComponentManager.AgreementStatus.NOT_ACCEPTED)
+            .onClickLoginWithHuaweiIDButton(async (error, res) => {
+                if (error) {
+                    promptAction.showToast({ message: '请先阅读并同意隐私协议' })
+                    hilog.error(0x0000, '一键登陆失败', error.message)
+                } else {
+                    this.loginManager.login('', '', res.authorizationCode)
+                }
+            })
 
     aboutToAppear() {
         // 初始化LoginManager
@@ -27,13 +42,13 @@ struct Index {
         this.isLoggedIn = isLoggedIn;
     }
 
-    handleLogin() {
+    handleLogin(authorizationCode: string) {
         if (!this.username || !this.password) {
             this.loginMessage = '请输入用户名和密码';
             return;
         }
 
-        const success = this.loginManager.login(this.username, this.password);
+        const success = this.loginManager.login(this.username, this.password, authorizationCode);
         if (success) {
             this.loginMessage = '登录成功！';
             this.checkLoginStatus();
@@ -77,7 +92,7 @@ struct Index {
                         .width('80%')
                         .height(50)
                         .onClick(() => {
-                            this.handleLogin();
+                            this.handleLogin('authorizationCode');
                         })
 
                     if (this.loginMessage) {

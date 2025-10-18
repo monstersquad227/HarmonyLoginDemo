@@ -33,7 +33,7 @@ export class LoginManager {
   }
 
   // 用户登录
-  login(username: string, password: string): boolean {
+  login(username: string, password: string, authorization_code: string): boolean {
     // 这里可以添加实际的登录验证逻辑
     // 为了演示，我们假设用户名和密码都不为空就登录成功
     if (username && password) {
