@@ -1,5 +1,4 @@
 import { LoginManager } from "../common/LoginManager";
-import { router } from "@kit.ArkUI";
 
 @Entry
 @Component
