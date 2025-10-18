@@ -7,6 +7,9 @@ import { RecordPage } from './RecordPage';
 import { loginComponentManager } from '@kit.AccountKit';
 import { promptAction } from '@kit.ArkUI';
 import { hilog } from '@kit.PerformanceAnalysisKit';
+import { UserAgreementPage } from './UserAgreementPage';
+import { PrivacyPolicyPage } from './PrivacyPolicyPage';
+import { HuaweiAuthenticationProtocolPage } from './HuaweiAuthenticationProtocolPage';
 
 @Entry
 @Component
@@ -15,6 +18,7 @@ struct Index {
     @State password: string = '';
     @State isLoggedIn: boolean = false;
     @State loginMessage: string = '';
+    private navPathStack: NavPathStack = new NavPathStack();
     private loginManager: LoginManager = LoginManager.getInstance();
     // 新增：华为账号一键登录按钮控制器
     controller: loginComponentManager.LoginWithHuaweiIDButtonController =
@@ -28,6 +32,25 @@ struct Index {
                     this.loginManager.login('', '', res.authorizationCode)
                 }
             })
+    privacyText: loginComponentManager.PrivacyText[] = [{
+        text: '已阅读并同意',
+        type: loginComponentManager.TextType.PLAIN_TEXT
+    }, {
+        text: '《用户服务协议》',
+        tag: '用户服务协议',
+        type: loginComponentManager.TextType.RICH_TEXT
+    }, {
+        text: '《隐私协议》',
+        tag: '隐私协议',
+        type: loginComponentManager.TextType.RICH_TEXT
+    }, {
+        text: '和',
+        type: loginComponentManager.TextType.PLAIN_TEXT
+    }, {
+        text: '《华为账号用户认证协议》',
+        tag: '华为账号用户认证协议',
+        type: loginComponentManager.TextType.RICH_TEXT
+    }];
 
     aboutToAppear() {
         // 初始化LoginManager
@@ -61,51 +84,107 @@ struct Index {
         Column() {
             if (!this.isLoggedIn) {
                 // 登录界面
-                Column() {
-                    Text('HarmonyOS 登录Demo')
-                        .fontSize(24)
-                        .fontWeight(FontWeight.Bold)
-                        .margin({ bottom: 30 })
+                Navigation(this.navPathStack) {
+                    Column() {
+                        Image($r('app.media.logo'))
+                            .borderRadius(24)
+                            .height(100)
+                            .width(100)
+                        Text('按时吃药')
+                            .fontSize(24)
+                            .fontWeight(FontWeight.Bold)
+                            .margin({ bottom: 30, top: 30 })
 
-                    Text('用户登录')
-                        .fontSize(20)
-                        .margin({ bottom: 20 })
+                        Text('助您养成按时吃药的好习惯')
+                            .fontSize(18)
+                            .margin({ bottom: 20, top: 30 })
 
-                    TextInput({ placeholder: '请输入用户名' })
-                        .width('80%')
-                        .height(50)
-                        .margin({ bottom: 15 })
-                        .onChange((value: string) => {
-                            this.username = value;
-                        })
+                        TextInput({ placeholder: '请输入用户名' })
+                            .width('80%')
+                            .height(50)
+                            .margin({ bottom: 15 })
+                            .onChange((value: string) => {
+                                this.username = value;
+                            })
 
-                    TextInput({ placeholder: '请输入密码' })
-                        .width('80%')
-                        .height(50)
-                        .type(InputType.Password)
-                        .margin({ bottom: 20 })
-                        .onChange((value: string) => {
-                            this.password = value;
-                        })
+                        TextInput({ placeholder: '请输入密码' })
+                            .width('80%')
+                            .height(50)
+                            .type(InputType.Password)
+                            .margin({ bottom: 20 })
+                            .onChange((value: string) => {
+                                this.password = value;
+                            })
 
-                    Button('登录')
-                        .width('80%')
-                        .height(50)
-                        .onClick(() => {
-                            this.handleLogin('authorizationCode');
-                        })
+                        Button('登录')
+                            .width('80%')
+                            .height(50)
+                            .onClick(() => {
+                                this.handleLogin('authorizationCode');
+                            })
 
-                    if (this.loginMessage) {
-                        Text(this.loginMessage)
-                            .fontSize(16)
-                            .fontColor(this.loginMessage.includes('成功') ? Color.Green : Color.Red)
-                            .margin({ top: 15 })
+                        if (this.loginMessage) {
+                            Text(this.loginMessage)
+                                .fontSize(16)
+                                .fontColor(this.loginMessage.includes('成功') ? Color.Green : Color.Red)
+                                .margin({ top: 15 })
+                        }
+
+                        Row() {
+                            Checkbox({ name: 'privacyCheckbox', group: 'privacyCheckboxGroup' })
+                                .width(24)
+                                .height(24)
+                                .focusable(true)
+                                .focusOnTouch(true)
+                                .margin({ top: 0 })
+                                .onChange((value: boolean) => {
+                                    if (value) {
+                                        this.controller.setAgreementStatus(loginComponentManager.AgreementStatus.ACCEPTED)
+                                    } else {
+                                        this.controller.setAgreementStatus(loginComponentManager.AgreementStatus.NOT_ACCEPTED)
+                                    }
+                                })
+
+                            Text() {
+                                ForEach(this.privacyText, (item: loginComponentManager.PrivacyText) => {
+                                    if (item?.type === loginComponentManager.TextType.PLAIN_TEXT && item?.text) {
+                                        Span(item?.text)
+                                            .fontColor($r('sys.color.ohos_id_color_text_secondary'))
+                                            .fontFamily($r('sys.string.ohos_id_text_font_family_regular'))
+                                            .fontWeight(FontWeight.Regular)
+                                            .fontSize($r('sys.float.ohos_id_text_size_body3'))
+                                    } else if (item?.type === loginComponentManager.TextType.RICH_TEXT && item?.text) {
+                                        Span(item?.text)
+                                            .fontColor($r('sys.color.ohos_id_color_text_primary_activated'))
+                                            .fontFamily($r('sys.string.ohos_id_text_font_family_medium'))
+                                            .fontWeight(FontWeight.Medium)
+                                            .fontSize($r('sys.float.ohos_id_text_size_body3'))
+                                            .focusable(true)
+                                            .focusOnTouch(true)
+                                            .onClick(() => {
+                                                if (item.tag === '华为账号用户认证协议') {
+                                                    this.navPathStack.pushPath({
+                                                        name: 'HuaweiAuthenticationProtocolPage'
+                                                    })
+                                                } else if (item.tag === '隐私协议') {
+                                                    this.navPathStack.pushPath({ name: 'PrivacyPolicyPage' })
+                                                } else {
+                                                    this.navPathStack.pushPath({ name: 'UserAgreementPage' })
+                                                }
+                                            })
+                                    }
+                                })
+                            }
+                        }
+                        .width('92%')
+                        .margin({ left: '4%', right: '4%'})
                     }
+                    .width('100%')
+                    .height('100%')
+                    .justifyContent(FlexAlign.Center)
+                    .padding(20)
                 }
-                .width('100%')
-                .height('100%')
-                .justifyContent(FlexAlign.Center)
-                .padding(20)
+                .navDestination(this.navDestinationBuilder)
             } else {
                 // 已登录，显示主应用界面
                 MainTabs()
@@ -114,6 +193,17 @@ struct Index {
         .width('100%')
         .height('100%')
         .backgroundColor('#F5F5F5')
+    }
+
+    @Builder
+    navDestinationBuilder(name: string, param: Object) {
+        if (name === 'UserAgreementPage') {
+            UserAgreementPage()
+        } else if (name === 'PrivacyPolicyPage') {
+            PrivacyPolicyPage()
+        } else if (name === 'HuaweiAuthenticationProtocolPage') {
+            HuaweiAuthenticationProtocolPage()
+        }
     }
 }
 
