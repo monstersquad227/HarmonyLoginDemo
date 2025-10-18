@@ -4,7 +4,7 @@ import { PlanPage } from './PlanPage';
 import { PostListPage } from './PostListPage';
 import { ProfilePage } from './ProfilePage';
 import { RecordPage } from './RecordPage';
-import { loginComponentManager } from '@kit.AccountKit';
+import { loginComponentManager, LoginWithHuaweiIDButton } from '@kit.AccountKit';
 import { promptAction } from '@kit.ArkUI';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { UserAgreementPage } from './UserAgreementPage';
@@ -122,14 +122,32 @@ struct Index {
                         //         this.password = value;
                         //     })
 
-                        Button('登录')
+                        LoginWithHuaweiIDButton({
+                            params: {
+                                style: loginComponentManager.Style.BUTTON_RED,
+                                extraStyle: {
+                                    buttonStyle: new loginComponentManager.ButtonStyle().loadingStyle({
+                                        show: true
+                                    })
+                                },
+                                borderRadius: 24,
+                                loginType: loginComponentManager.LoginType.QUICK_LOGIN,
+                                supportDarkMode: true,
+                                verifyPhoneNumber: true
+                            },
+                            controller: this.controller
+                        })
                             .width('85%')
                             .height(48)
-                            .fontSize(17)
                             .borderRadius(24)
-                            .onClick(() => {
-                                this.handleLogin('authorizationCode');
-                            })
+                        // Button('登录')
+                        //     .width('85%')
+                        //     .height(48)
+                        //     .fontSize(17)
+                        //     .borderRadius(24)
+                        //     .onClick(() => {
+                        //         this.handleLogin('authorizationCode');
+                        //     })
 
                         if (this.loginMessage) {
                             Text(this.loginMessage)
