@@ -35,56 +35,23 @@ export struct PlanPage {
             amount: '每次2片'
         },
         {
-            course_id: 1001,
-            medicine_name: '板蓝根',
-            frequency: 2,
-            medicine_timing: '不限',
+            course_id: 1002,
+            medicine_name: '阿莫西林胶囊',
+            frequency: 3,
+            medicine_timing: '饭后',
             medicine_type: '内服',
-            course_start_time: '2025-06-29',
+            course_start_time: '2025-06-25',
             plan_times: 0,
             type: 'default',
-            amount: '每次2片'
+            amount: '每次1粒'
         },
         {
-            course_id: 1001,
-            medicine_name: '板蓝根',
-            frequency: 2,
+            course_id: 1003,
+            medicine_name: '维生素C',
+            frequency: 1,
             medicine_timing: '不限',
             medicine_type: '内服',
-            course_start_time: '2025-06-29',
-            plan_times: 0,
-            type: 'default',
-            amount: '每次2片'
-        },
-        {
-            course_id: 1001,
-            medicine_name: '板蓝根',
-            frequency: 2,
-            medicine_timing: '不限',
-            medicine_type: '内服',
-            course_start_time: '2025-06-29',
-            plan_times: 0,
-            type: 'default',
-            amount: '每次2片'
-        },
-        {
-            course_id: 1001,
-            medicine_name: '板蓝根',
-            frequency: 2,
-            medicine_timing: '不限',
-            medicine_type: '内服',
-            course_start_time: '2025-06-29',
-            plan_times: 0,
-            type: 'default',
-            amount: '每次2片'
-        },
-        {
-            course_id: 1001,
-            medicine_name: '板蓝根',
-            frequency: 2,
-            medicine_timing: '不限',
-            medicine_type: '内服',
-            course_start_time: '2025-06-29',
+            course_start_time: '2025-06-20',
             plan_times: 0,
             type: 'default',
             amount: '每次2片'
@@ -95,14 +62,11 @@ export struct PlanPage {
 
     // 刷新数据（示例）
     async refreshCourseData() {
-        // 这里可以调用Manager层重新拉取数据
-        // 目前做一个简单提示或日志
         console.log('refreshCourseData called');
     }
 
     // 文案转换（可按业务调整）
     translateMedicineTime(value: string): string {
-        // 可根据业务枚举做更完整映射
         return value;
     }
 
@@ -111,7 +75,6 @@ export struct PlanPage {
     }
 
     splitDate(dateStr: string): string {
-        // 传入 'YYYY-MM-DD'，直接展示或做格式化
         return dateStr;
     }
 
@@ -128,7 +91,6 @@ export struct PlanPage {
             buttons: [
                 { value: '取消', action: () => {} },
                 { value: '确定', action: async () => {
-                    // TODO: 调用删除接口或Manager逻辑
                     console.log('结束用药: ', item.course_id);
                     if (onDeleted) {
                         await onDeleted.callback();
@@ -141,10 +103,9 @@ export struct PlanPage {
 
     build() {
         Navigation(this.navPathStack) {
-            // 页面容器
-            Scroll() {
-                Column() {
-                    // 列表区域
+            Column() {
+                // 列表区域
+                if (this.courseData.length > 0) {
                     List({ space: '14.00vp' }) {
                         ForEach(this.courseData, (item: ListCourseData) => {
                             ListItem() {
@@ -157,24 +118,38 @@ export struct PlanPage {
                             .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
                         })
                     }
-                    .margin({ top: '8.00vp', bottom: '16.00vp' })
+                    .layoutWeight(1)
+                    .margin({ top: '12.00vp' })
+                } else {
+                    Column() {
+                        Text('暂无用药方案')
+                            .fontSize(16)
+                            .fontColor('#999999')
+                        Text('点击下方按钮添加')
+                            .fontSize(14)
+                            .fontColor('#CCCCCC')
+                            .margin({ top: 8 })
+                    }
+                    .layoutWeight(1)
+                    .justifyContent(FlexAlign.Center)
                 }
-                .justifyContent(FlexAlign.Start)
-                .align(Alignment.TopStart)
-                .padding(10)
-                .width('100%')
-                .backgroundColor('#F7F8FA')
-            }
-            .height('92%')
 
-            Column() {
+                // 底部按钮
                 Button('添加方案')
-                    .width('100%')
+                    .width('92%')
+                    .height(48)
+                    .margin({ left: '4%', right: '4%', top: 12, bottom: 16 })
+                    .backgroundColor('#007DFF')
+                    .fontColor('#FFFFFF')
+                    .fontSize(16)
+                    .borderRadius(24)
+                    .onClick(() => {
+                        // TODO: 添加方案逻辑
+                        console.log('添加方案');
+                    })
             }
-            .height('8%')
-            .width('92%')
-            .margin({ left: '4%', right: '4%' })
-            .padding(10)
+            .width('100%')
+            .height('100%')
             .backgroundColor('#F7F8FA')
         }
         .navDestination(this.navDestinationBuilder)
@@ -187,81 +162,84 @@ export struct PlanPage {
             // 顶部标题与副标题
             Column() {
                 Text(item.medicine_name)
-                    .fontSize('18.00vp')
-                    .fontWeight(FontWeight.Medium)
-                    .fontColor('#1F2329')
+                    .fontSize(18)
+                    .fontWeight(FontWeight.Bold)
+                    .fontColor('#111111')
                     .alignSelf(ItemAlign.Start)
 
                 Text(this.splitDate(item.course_start_time) + ' 开始')
-                    .fontSize('16.00vp')
-                    .fontColor('#8A8F98')
+                    .fontSize(14)
+                    .fontColor('#999999')
                     .alignSelf(ItemAlign.Start)
-                    .margin({ top: '4.00vp' })
+                    .margin({ top: 6 })
             }
             .width('100%')
-            .padding({ top: '14.00vp', left: '16.00vp', right: '16.00vp' })
+            .padding({ top: 16, left: 16, right: 16 })
 
             // 信息标签区
             Row() {
-                // 次数 + 时机标签
+                // 次数标签
                 Text('每日 ' + item.frequency + ' 次')
-                    .fontSize('14.00vp')
-                    .fontColor('#2E6AE6')
-                    .backgroundColor('#EEF5FF')
-                    .borderRadius(12)
-                    .padding({ left: '8.00vp', right: '8.00vp', top: '4.00vp', bottom: '4.00vp' })
+                    .fontSize(14)
+                    .fontColor('#007DFF')
+                    .backgroundColor('#E6F3FF')
+                    .borderRadius(4)
+                    .padding({ left: 8, right: 8, top: 4, bottom: 4 })
 
+                // 时机标签
                 Text(this.translateMedicineTime(item.medicine_timing))
-                    .fontSize('14.00vp')
-                    .fontColor('#6B7280')
-                    .backgroundColor('#F0F2F5')
-                    .borderRadius(12)
-                    .padding({ left: '8.00vp', right: '8.00vp', top: '4.00vp', bottom: '4.00vp' })
-                    .margin({ left: '8.00vp' })
+                    .fontSize(14)
+                    .fontColor('#666666')
+                    .backgroundColor('#F5F5F5')
+                    .borderRadius(4)
+                    .padding({ left: 8, right: 8, top: 4, bottom: 4 })
+                    .margin({ left: 8 })
 
                 Blank().layoutWeight(1)
 
                 // 类型标签右侧展示
                 Text(this.translateType(item.medicine_type))
-                    .fontSize('14.00vp')
-                    .fontColor('#10B981')
-                    .backgroundColor('#E8FBF4')
-                    .borderRadius(12)
-                    .padding({ left: '8.00vp', right: '8.00vp', top: '4.00vp', bottom: '4.00vp' })
+                    .fontSize(14)
+                    .fontColor('#34C759')
+                    .backgroundColor('#E8F8ED')
+                    .borderRadius(4)
+                    .padding({ left: 8, right: 8, top: 4, bottom: 4 })
             }
             .width('100%')
-            .padding({ left: '16.00vp', right: '16.00vp', top: '8.00vp' })
+            .padding({ left: 16, right: 16, top: 12 })
 
-            // 分隔线（微弱）
+            // 分隔线
             Divider()
-                .color('#F0F2F5')
-                .margin({ left: '16.00vp', right: '16.00vp', top: '10.00vp', bottom: '8.00vp' })
+                .color('#F0F0F0')
+                .margin({ left: 16, right: 16, top: 14, bottom: 12 })
 
             // 按钮区
             Row() {
                 Button('修改方案')
-                    .height('34.00vp')
-                    .width('50%')
+                    .height(38)
+                    .layoutWeight(1)
                     .backgroundColor('#FFFFFF')
-                    .border({ width: 1, color: '#E5E7EB', radius: 8 })
-                    .fontColor('#2E6AE6')
+                    .border({ width: 1, color: '#E0E0E0', radius: 8 })
+                    .fontColor('#007DFF')
+                    .fontSize(15)
                     .onClick(() => {
                         this.onModifyScheme(item);
                     })
 
                 Button('结束用药')
-                    .height('34.00vp')
-                    .width('50%')
+                    .height(38)
+                    .layoutWeight(1)
                     .backgroundColor('#FFFFFF')
-                    .border({ width: 1, color: '#E5E7EB', radius: 8 })
-                    .fontColor('#EF4444')
+                    .border({ width: 1, color: '#E0E0E0', radius: 8 })
+                    .fontColor('#FF3B30')
+                    .fontSize(15)
                     .onClick(async () => {
                         await this.onEndMedicine(item, onDeletedWrapper);
                     })
-                    .margin({ left: '10.00vp' })
+                    .margin({ left: 12 })
             }
             .width('100%')
-            .padding({ left: '16.00vp', right: '16.00vp', bottom: '14.00vp' })
+            .padding({ left: 16, right: 16, bottom: 16 })
         }
     }
 
