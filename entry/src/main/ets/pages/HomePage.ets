@@ -27,144 +27,24 @@ export struct HomePage {
             record_id: 101,
         },
         {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
+            plan_id: 1002,
+            is_checked: 1,
+            medicine_name: '维生素C',
             medicine_timing: 0,
-            amount: 1,
+            amount: 2,
             type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
+            plan_time: '12:00',
+            record_id: 102,
         },
         {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1001,
+            plan_id: 1003,
             is_checked: 0,
             medicine_name: '板蓝根xxxxxxxxxxxxuuuuuuuuiiiiiiiuuuuiiiiiuuuuiiiiii',
             medicine_timing: 0,
             amount: 1,
             type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
+            plan_time: '18:00',
+            record_id: 103,
         }
     ]
 
@@ -238,14 +118,14 @@ export struct HomePage {
             Row() {
                 Button() {
                     Image($r('app.media.leftArrow'))
-                        .fillColor('#ff323030')
+                        .fillColor('#666666')
                         .height(25)
                         .width(25)
                 }
                 .width(40)
                 .height(40)
-                .backgroundColor('#F0F0F0')
-                .borderRadius(45)
+                .backgroundColor('#F5F5F5')
+                .borderRadius(20)
                 .onClick(() => {
                     this.previousDay();
                 })
@@ -257,21 +137,23 @@ export struct HomePage {
                     .textAlign(TextAlign.Center)
 
                 Button('今日')
-                    .backgroundColor('#F0F0F0')
+                    .backgroundColor('#F5F5F5')
                     .fontColor('#333333')
+                    .borderRadius(20)
                     .onClick(() => {
                         this.goToToday()
                     })
 
                 Button() {
                     Image($r('app.media.rightArrow'))
-                        .fillColor('#ff323030')
+                        .fillColor('#666666')
                         .height(25)
                         .width(25)
                 }
                 .width(40)
                 .height(40)
-                .backgroundColor('#F0F0F0')
+                .backgroundColor('#F5F5F5')
+                .borderRadius(20)
                 .onClick(() => {
                     this.nextDay();
                 })
@@ -285,7 +167,7 @@ export struct HomePage {
                 ForEach(['日', '一', '二', '三', '四', '五', '六'], (weekDay: string) => {
                     Text(weekDay)
                         .fontSize(14)
-                        .fontColor('#666666')
+                        .fontColor('#999999')
                         .width('14.28%')
                         .textAlign(TextAlign.Center)
                 })
@@ -304,14 +186,15 @@ export struct HomePage {
                                 .height(40)
                                 .textAlign(TextAlign.Center)
                                 .backgroundColor(day > 0 && this.isSelectedDate(day) ? '#007DFF' :
-                                                day > 0 && this.isToday(day) ? '#FFE6E6' : 'transparent')
+                                    day > 0 && this.isToday(day) ? '#E6F3FF' : 'transparent')
                                 .fontColor(day > 0 && this.isSelectedDate(day) ? '#FFFFFF' :
-                                          day > 0 && this.isToday(day) ? '#FF4444' : '#333333')
-                                .borderRadius(4)
+                                    day > 0 && this.isToday(day) ? '#007DFF' : '#333333')
+                                .borderRadius(8)
+                                .fontWeight(day > 0 && (this.isSelectedDate(day) || this.isToday(day)) ? FontWeight.Bold : FontWeight.Normal)
                                 .onClick(() => {
-                                  if (day > 0) {
-                                    this.onDateClick(day);
-                                  }
+                                    if (day > 0) {
+                                        this.onDateClick(day);
+                                    }
                                 })
                         })
                     }
@@ -319,34 +202,30 @@ export struct HomePage {
                 })
             }
             .width('100%')
-            .padding({ left: 20, right: 20 })
+            .padding({ left: 20, right: 20, bottom: 10 })
 
             // 底部内容
-            // Column() {
-                if (this.planData.length != 0) {
-                    List({ space: '14.00vp' }) {
-                        ForEach(this.planData, (item: ListPlanData) => {
-                            ListItem() {
-                                this.courseItem(item)
-                            }
-                            .width('92%')
-                            .margin({ left: '4%', right: '4%' })
-                            .backgroundColor('#FFFFFF')
-                            .borderRadius(12)
-                            .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
-                        })
-                    }
-                    .layoutWeight(1)
-                    .margin({ top: '8.00vp', bottom: '16.00vp' })
-                } else {
-                    Text('明日再来')
+            if (this.planData.length != 0) {
+                List({ space: '14.00vp' }) {
+                    ForEach(this.planData, (item: ListPlanData) => {
+                        ListItem() {
+                            this.courseItem(item)
+                        }
+                        .width('92%')
+                        .margin({ left: '4%', right: '4%' })
+                        .backgroundColor('#FFFFFF')
+                        .borderRadius(12)
+                        .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
+                    })
                 }
-            // }
-            // .justifyContent(FlexAlign.Start)
-            // .align(Alignment.TopStart)
-            // .padding(10)
-            // .width('100%')
-            // .backgroundColor('#F7F8FA')
+                .layoutWeight(1)
+                .margin({ top: '8.00vp', bottom: '16.00vp' })
+            } else {
+                Text('明日再来')
+                    .fontSize(16)
+                    .fontColor('#999999')
+                    .margin({ top: 40 })
+            }
         }
         .width('100%')
         .height('100%')
@@ -355,40 +234,40 @@ export struct HomePage {
 
     // 生成日历周数据
     generateCalendarWeeks(): number[][] {
-    const year = this.currentDate.getFullYear();
-    const month = this.currentDate.getMonth();
-    const daysInMonth = this.getDaysInMonth(year, month);
-    const firstDay = this.getFirstDayOfMonth(year, month);
-    
-    const weeks: number[][] = [];
-    let currentWeek: number[] = [];
-    
-    // 填充第一周的空白天数
-    for (let i = 0; i < firstDay; i++) {
-      currentWeek.push(0);
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
+        const daysInMonth = this.getDaysInMonth(year, month);
+        const firstDay = this.getFirstDayOfMonth(year, month);
+
+        const weeks: number[][] = [];
+        let currentWeek: number[] = [];
+
+        // 填充第一周的空白天数
+        for (let i = 0; i < firstDay; i++) {
+            currentWeek.push(0);
+        }
+
+        // 填充月份的天数
+        for (let day = 1; day <= daysInMonth; day++) {
+            currentWeek.push(day);
+
+            if (currentWeek.length === 7) {
+                weeks.push(currentWeek);
+                currentWeek = [];
+            }
+        }
+
+        // 填充最后一周的空白天数
+        while (currentWeek.length < 7 && currentWeek.length > 0) {
+            currentWeek.push(0);
+        }
+
+        if (currentWeek.length > 0) {
+            weeks.push(currentWeek);
+        }
+
+        return weeks;
     }
-    
-    // 填充月份的天数
-    for (let day = 1; day <= daysInMonth; day++) {
-      currentWeek.push(day);
-      
-      if (currentWeek.length === 7) {
-        weeks.push(currentWeek);
-        currentWeek = [];
-      }
-    }
-    
-    // 填充最后一周的空白天数
-    while (currentWeek.length < 7 && currentWeek.length > 0) {
-      currentWeek.push(0);
-    }
-    
-    if (currentWeek.length > 0) {
-      weeks.push(currentWeek);
-    }
-    
-    return weeks;
-  }
 
     @Builder
     courseItem(item: ListPlanData) {
@@ -407,24 +286,29 @@ export struct HomePage {
 
                         Text(`${item.amount} ${item.type}`)
                             .margin({ left: '10vp' })
-                            .fontSize(16)
-                            .fontColor('#3A66F5')
-                            .backgroundColor('#ECF2FF')
+                            .fontSize(14)
+                            .fontColor('#007DFF')
+                            .backgroundColor('#E6F3FF')
+                            .padding({ left: 8, right: 8, top: 4, bottom: 4 })
+                            .borderRadius(4)
                     }
+
                     Text(`${item.plan_time} 不限`)
                         .margin({ top: '6vp' })
-                        .fontSize(16)
-                        .fontColor('#8A8A8E')
+                        .fontSize(14)
+                        .fontColor('#999999')
                 }
                 .alignItems(HorizontalAlign.Start)
 
-                Button('撤销打卡')
+                Button(item.is_checked ? '撤销打卡' : '打卡')
                     .type(ButtonType.Capsule)
-                    .fontSize(16)
+                    .fontSize(15)
                     .fontColor('#FFFFFF')
-                    .backgroundColor('#34C759')
+                    .backgroundColor(item.is_checked ? '#FF9500' : '#34C759')
+                    .padding({ left: 20, right: 20 })
                     .onClick(() => {
                         // TODO: 打卡逻辑
+                        item.is_checked = item.is_checked ? 0 : 1;
                     })
             }
             .justifyContent(FlexAlign.SpaceBetween)

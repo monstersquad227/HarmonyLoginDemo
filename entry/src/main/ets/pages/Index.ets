@@ -105,49 +105,46 @@ struct Index {
                             .fontColor('#666666')
                             .margin({ bottom: 40 })
 
-                        // TextInput({ placeholder: '请输入用户名' })
-                        //     .width('80%')
-                        //     .height(50)
-                        //     .margin({ bottom: 15 })
-                        //     .onChange((value: string) => {
-                        //         this.username = value;
-                        //     })
-                        //
-                        // TextInput({ placeholder: '请输入密码' })
-                        //     .width('80%')
-                        //     .height(50)
-                        //     .type(InputType.Password)
-                        //     .margin({ bottom: 20 })
-                        //     .onChange((value: string) => {
-                        //         this.password = value;
-                        //     })
+                        TextInput({ placeholder: '请输入用户名' })
+                            .width('80%')
+                            .height(50)
+                            .margin({ bottom: 15 })
+                            .onChange((value: string) => {
+                                this.username = value;
+                            })
 
-                        LoginWithHuaweiIDButton({
-                            params: {
-                                style: loginComponentManager.Style.BUTTON_RED,
-                                extraStyle: {
-                                    buttonStyle: new loginComponentManager.ButtonStyle().loadingStyle({
-                                        show: true
-                                    })
-                                },
-                                borderRadius: 24,
-                                loginType: loginComponentManager.LoginType.QUICK_LOGIN,
-                                supportDarkMode: true,
-                                verifyPhoneNumber: true
-                            },
-                            controller: this.controller
-                        })
+                        TextInput({ placeholder: '请输入密码' })
+                            .width('80%')
+                            .height(50)
+                            .type(InputType.Password)
+                            .margin({ bottom: 20 })
+                            .onChange((value: string) => {
+                                this.password = value;
+                            })
+                        Button('登录')
                             .width('85%')
                             .height(48)
+                            .fontSize(17)
                             .borderRadius(24)
-                        // Button('登录')
-                        //     .width('85%')
-                        //     .height(48)
-                        //     .fontSize(17)
-                        //     .borderRadius(24)
-                        //     .onClick(() => {
-                        //         this.handleLogin('authorizationCode');
-                        //     })
+                            .onClick(() => {
+                                this.handleLogin('authorizationCode');
+                            })
+
+                        // LoginWithHuaweiIDButton({
+                        //     params: {
+                        //         style: loginComponentManager.Style.BUTTON_RED,
+                        //         extraStyle: {
+                        //             buttonStyle: new loginComponentManager.ButtonStyle().loadingStyle({
+                        //                 show: true
+                        //             })
+                        //         },
+                        //         borderRadius: 24,
+                        //         loginType: loginComponentManager.LoginType.QUICK_LOGIN,
+                        //         supportDarkMode: true,
+                        //         verifyPhoneNumber: true
+                        //     },
+                        //     controller: this.controller
+                        // }).width('85%').height(48).borderRadius(24)
 
                         if (this.loginMessage) {
                             Text(this.loginMessage)
