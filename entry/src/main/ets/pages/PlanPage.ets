@@ -165,7 +165,17 @@ export struct PlanPage {
                 .width('100%')
                 .backgroundColor('#F7F8FA')
             }
-            .height('100%')
+            .height('92%')
+
+            Column() {
+                Button('添加方案')
+                    .width('100%')
+            }
+            .height('8%')
+            .width('92%')
+            .margin({ left: '4%', right: '4%' })
+            .padding(10)
+            .backgroundColor('#F7F8FA')
         }
         .navDestination(this.navDestinationBuilder)
     }
