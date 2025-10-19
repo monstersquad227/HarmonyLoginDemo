@@ -1,12 +1,10 @@
 import { LoginManager } from '../common/LoginManager';
 import { HomePage } from './HomePage';
 import { PlanPage } from './PlanPage';
-import { PostListPage } from './PostListPage';
 import { ProfilePage } from './ProfilePage';
 import { RecordPage } from './RecordPage';
 import { loginComponentManager, LoginWithHuaweiIDButton } from '@kit.AccountKit';
 import { promptAction } from '@kit.ArkUI';
-import { hilog } from '@kit.PerformanceAnalysisKit';
 import { UserAgreementPage } from './UserAgreementPage';
 import { PrivacyPolicyPage } from './PrivacyPolicyPage';
 import { HuaweiAuthenticationProtocolPage } from './HuaweiAuthenticationProtocolPage';
@@ -27,9 +25,9 @@ struct Index {
             .onClickLoginWithHuaweiIDButton(async (error, res) => {
                 if (error) {
                     promptAction.showToast({ message: '请先阅读并同意隐私协议' })
-                    hilog.error(0x0000, '一键登陆失败', error.message)
+                    console.error('一键登陆失败: '+ error.message)
                 } else {
-                    this.loginManager.login('', '', res.authorizationCode)
+                    this.loginManager.login(res.authorizationCode)
                 }
             })
     privacyText: loginComponentManager.PrivacyText[] = [{
@@ -71,13 +69,13 @@ struct Index {
             return;
         }
 
-        const success = this.loginManager.login(this.username, this.password, authorizationCode);
-        if (success) {
+        const success = this.loginManager.login(authorizationCode);
+        // if (success) {
             this.loginMessage = '登录成功！';
             this.checkLoginStatus();
-        } else {
-            this.loginMessage = '登录失败，请检查用户名和密码';
-        }
+        // } else {
+        //     this.loginMessage = '登录失败，请检查用户名和密码';
+        // }
     }
 
     build() {
@@ -105,46 +103,46 @@ struct Index {
                             .fontColor('#666666')
                             .margin({ bottom: 40 })
 
-                        TextInput({ placeholder: '请输入用户名' })
-                            .width('80%')
-                            .height(50)
-                            .margin({ bottom: 15 })
-                            .onChange((value: string) => {
-                                this.username = value;
-                            })
+                        // TextInput({ placeholder: '请输入用户名' })
+                        //     .width('80%')
+                        //     .height(50)
+                        //     .margin({ bottom: 15 })
+                        //     .onChange((value: string) => {
+                        //         this.username = value;
+                        //     })
+                        //
+                        // TextInput({ placeholder: '请输入密码' })
+                        //     .width('80%')
+                        //     .height(50)
+                        //     .type(InputType.Password)
+                        //     .margin({ bottom: 20 })
+                        //     .onChange((value: string) => {
+                        //         this.password = value;
+                        //     })
+                        // Button('登录')
+                        //     .width('85%')
+                        //     .height(48)
+                        //     .fontSize(17)
+                        //     .borderRadius(24)
+                        //     .onClick(() => {
+                        //         this.handleLogin('authorizationCode');
+                        //     })
 
-                        TextInput({ placeholder: '请输入密码' })
-                            .width('80%')
-                            .height(50)
-                            .type(InputType.Password)
-                            .margin({ bottom: 20 })
-                            .onChange((value: string) => {
-                                this.password = value;
-                            })
-                        Button('登录')
-                            .width('85%')
-                            .height(48)
-                            .fontSize(17)
-                            .borderRadius(24)
-                            .onClick(() => {
-                                this.handleLogin('authorizationCode');
-                            })
-
-                        // LoginWithHuaweiIDButton({
-                        //     params: {
-                        //         style: loginComponentManager.Style.BUTTON_RED,
-                        //         extraStyle: {
-                        //             buttonStyle: new loginComponentManager.ButtonStyle().loadingStyle({
-                        //                 show: true
-                        //             })
-                        //         },
-                        //         borderRadius: 24,
-                        //         loginType: loginComponentManager.LoginType.QUICK_LOGIN,
-                        //         supportDarkMode: true,
-                        //         verifyPhoneNumber: true
-                        //     },
-                        //     controller: this.controller
-                        // }).width('85%').height(48).borderRadius(24)
+                        LoginWithHuaweiIDButton({
+                            params: {
+                                style: loginComponentManager.Style.BUTTON_RED,
+                                extraStyle: {
+                                    buttonStyle: new loginComponentManager.ButtonStyle().loadingStyle({
+                                        show: true
+                                    })
+                                },
+                                borderRadius: 24,
+                                loginType: loginComponentManager.LoginType.QUICK_LOGIN,
+                                supportDarkMode: true,
+                                verifyPhoneNumber: true
+                            },
+                            controller: this.controller
+                        }).width('85%').height(48).borderRadius(24)
 
                         if (this.loginMessage) {
                             Text(this.loginMessage)

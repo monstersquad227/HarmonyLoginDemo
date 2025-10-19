@@ -1,42 +1,56 @@
 {
     "app": {
-        "signingConfigs": [],
-        "products": [
-            {
-                "name": "default",
-                "signingConfig": "default",
-                "targetSdkVersion": "5.0.5(17)",
-                "compatibleSdkVersion": "5.0.5(17)",
-                "runtimeOS": "HarmonyOS",
-                "buildOption": {
-                    "strictMode": {
-                        "caseSensitiveCheck": true,
-                        "useNormalizedOHMUrl": true
-                    }
-                }
-            }
-        ],
-        "buildModeSet": [
-            {
-                "name": "debug",
-            },
-            {
-                "name": "release"
-            }
-        ]
+	"signingConfigs": [
+	    {
+		"name": "default",
+		"type": "HarmonyOS",
+		"material": {
+		    "certpath": "/Users/monstersquad/.ohos/config/default_HarmonyLoginDemo_EeKxepej1L9Tidj37zVU927bPTdpuoFuEuBw73Jx_to=.cer",
+		    "keyAlias": "debugKey",
+		    "keyPassword": "0000001B91DDA84B52F4F3C104AD48C1061EA4704C94F6803CBFBFF469116C7B36607F281A975020FEC4F1",
+		    "profile": "/Users/monstersquad/.ohos/config/default_HarmonyLoginDemo_EeKxepej1L9Tidj37zVU927bPTdpuoFuEuBw73Jx_to=.p7b",
+		    "signAlg": "SHA256withECDSA",
+		    "storeFile": "/Users/monstersquad/.ohos/config/default_HarmonyLoginDemo_EeKxepej1L9Tidj37zVU927bPTdpuoFuEuBw73Jx_to=.p12",
+		    "storePassword": "0000001BDC0807FC129F4B20F135D26DE01706957ADD2945BEF4243B6091FBDA442C908674C6DEB5E3A5FB"
+		}
+	    }
+	],
+	"products": [
+	    {
+		"name": "default",
+		"signingConfig": "default",
+		"targetSdkVersion": "5.0.5(17)",
+		"compatibleSdkVersion": "5.0.5(17)",
+		"runtimeOS": "HarmonyOS",
+		"buildOption": {
+		    "strictMode": {
+			"caseSensitiveCheck": true,
+			"useNormalizedOHMUrl": true
+		    }
+		}
+	    }
+	],
+	"buildModeSet": [
+	    {
+		"name": "debug",
+	    },
+	    {
+		"name": "release"
+	    }
+	]
     },
     "modules": [
-        {
-            "name": "entry",
-            "srcPath": "./entry",
-            "targets": [
-                {
-                    "name": "default",
-                    "applyToProducts": [
-                        "default"
-                    ]
-                }
-            ]
-        }
+	{
+	    "name": "entry",
+	    "srcPath": "./entry",
+	    "targets": [
+		{
+		    "name": "default",
+		    "applyToProducts": [
+			"default"
+		    ]
+		}
+	    ]
+	}
     ]
 }
