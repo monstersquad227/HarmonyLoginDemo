@@ -24,10 +24,12 @@ struct Index {
             .setAgreementStatus(loginComponentManager.AgreementStatus.NOT_ACCEPTED)
             .onClickLoginWithHuaweiIDButton(async (error, res) => {
                 if (error) {
-                    promptAction.showToast({ message: '请先阅读并同意隐私协议' })
+                    promptAction.showToast({ message: error.message })
                     console.error('一键登陆失败: '+ error.message)
                 } else {
-                    this.loginManager.login(res.authorizationCode)
+                    // console.info('华为登录成功');
+                    // console.info('res.authorizationCode: ' + res.authorizationCode);
+                    await this.handleLogin(res.authorizationCode);
                 }
             })
     privacyText: loginComponentManager.PrivacyText[] = [{
@@ -63,19 +65,20 @@ struct Index {
         this.isLoggedIn = isLoggedIn;
     }
 
-    handleLogin(authorizationCode: string) {
-        if (!this.username || !this.password) {
-            this.loginMessage = '请输入用户名和密码';
-            return;
+    async handleLogin(authorizationCode: string) {
+        // console.info('handleLogin called with code:', authorizationCode); // 添加这个日志
+        try {
+            const ok = await this.loginManager.login(authorizationCode);
+            if (ok) {
+                this.loginMessage = '登录成功！';
+                this.checkLoginStatus();
+            } else {
+                this.loginMessage = '登录失败，请检查用户名和密码';
+            }
+        } catch (error) {
+            console.error('Login error in handleLogin:', error);
+            this.loginMessage = '登录失败：' + error.message;
         }
-
-        const success = this.loginManager.login(authorizationCode);
-        // if (success) {
-            this.loginMessage = '登录成功！';
-            this.checkLoginStatus();
-        // } else {
-        //     this.loginMessage = '登录失败，请检查用户名和密码';
-        // }
     }
 
     build() {

@@ -1,13 +1,28 @@
-import { HttpClient, httpClient, HttpClientApiResponse } from '../common/HttpClient';
+import { httpClient } from '../common/HttpClient';
 
 // 创建登陆请求接口
 export interface CreateLoginRequest {
     authorization_code: string
 }
 
-//
-export interface LoginResponse {
-
+// 后端返回的结构
+interface ApiResponse {
+    code: number;
+    message: string;
+    result: LoginResponse;
+}
+interface LoginResponse {
+    token: string;
+    user: LoginUserInfo;
+}
+// LoginUserInfo
+interface LoginUserInfo {
+    id: number;
+    phone_num: string;
+    huawei_id: string;
+    password: string;
+    created_at: string;
+    updated_at: string
 }
 
 export class LoginApiService {
@@ -24,13 +39,20 @@ export class LoginApiService {
 
     /**
      * 用户登录
-     * @param authorizationCode 华为授权码
+     * @param data 登录请求数据
      * @returns Promise<LoginResponse>
      */
-    async login(data: CreateLoginRequest): Promise<HttpClientApiResponse> {
-        return httpClient.post('/user/loginV2', data)
+    async login(data: CreateLoginRequest): Promise<LoginResponse> {
+        const res = await httpClient.post('/user/loginV2', data);
+        console.info('Login API raw response:', JSON.stringify(res));
+        // HttpClient 的 result 里包含了实际的 API 响应
+        const apiResponse = res.result as ApiResponse;
+        if (apiResponse && apiResponse.code === 0 && apiResponse.result) {
+            // 返回 API 响应中的 result
+            return apiResponse.result as LoginResponse;
+        }
+        throw new Error('登录失败: ' + (apiResponse?.message || 'Unknown error'));
     }
-
 }
 
 // 导出单例实例
