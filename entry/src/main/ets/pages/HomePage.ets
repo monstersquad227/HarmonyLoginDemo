@@ -38,7 +38,7 @@ export struct HomePage {
         },
         {
             plan_id: 1003,
-            is_checked: 0,
+            is_checked: 1,
             medicine_name: '板蓝根xxxxxxxxxxxxuuuuuuuuiiiiiiiuuuuiiiiiuuuuiiiiii',
             medicine_timing: 0,
             amount: 1,

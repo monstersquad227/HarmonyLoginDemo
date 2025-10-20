@@ -2,15 +2,15 @@
     "string": [
         {
             "name": "module_desc",
-            "value": "HarmonyOS登录Demo模块"
+            "value": "按时吃药"
         },
         {
             "name": "EntryAbility_desc",
-            "value": "登录Demo主入口"
+            "value": "按时吃药登录主入口"
         },
         {
             "name": "EntryAbility_label",
-            "value": "登录Demo"
+            "value": "按时吃药"
         }
     ]
 }
