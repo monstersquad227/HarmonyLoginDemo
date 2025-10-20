@@ -12,16 +12,15 @@ export interface UserInfo {
  */
 export class LoginManager {
     private static instance: LoginManager;
-    private readonly LOGIN_TOKEN = '';
-    private readonly LOGIN_USER_ID = '';
-    private readonly LOGIN_HUAWEI_ID = '';
-    private  readonly LOGIN_PHONE = '';
+    private readonly LOGIN_TOKEN = 'login_token';
+    private readonly LOGIN_USER_ID = 'login_user_id';
+    private readonly LOGIN_HUAWEI_ID = 'login_huawei_id';
+    private  readonly LOGIN_PHONE = 'login_phone';
 
     private readonly LOGIN_EXPIRY_DAYS = 20;
     private readonly USERNAME_KEY = 'login_username';
     private readonly PASSWORD_KEY = 'login_password';
     private readonly LOGIN_TIME_KEY = 'login_time';
-
 
     private constructor() {}
 
@@ -51,31 +50,36 @@ export class LoginManager {
 
     // 用户登录
     async login(authorizationCode: string): Promise<boolean> {
-        // 这里可以添加实际的登录验证逻辑
-        // 为了演示，我们假设用户名和密码都不为空就登录成功
-        console.info("authorizationCode: "+ authorizationCode)
-
-        // if (authorizationCode) {
-        //     const postData: CreateLoginRequest = {
-        //         authorization_code: authorizationCode
-        //     }
-        //     const response = await loginApiService.login(postData);
-        //     if (response.data) {
-        //         return true
-        //     }
-        //     return true
-        // }
-        if (authorizationCode) {
-            const loginTime = Date.now();
-
-            // 使用PersistentStorage保存登录信息
-            AppStorage.setOrCreate(this.USERNAME_KEY, 'username');
-            AppStorage.setOrCreate(this.PASSWORD_KEY, 'password');
-            AppStorage.setOrCreate(this.LOGIN_TIME_KEY, loginTime);
-
-            return true;
+        // console.info("authorizationCode: "+ authorizationCode)
+        const postData: CreateLoginRequest = {
+            authorization_code: authorizationCode
         }
-        return false;
+        try {
+            // console.info("Calling loginApiService.login...");
+            const data = await loginApiService.login(postData);
+
+            // console.info('Login API response:', JSON.stringify(data));
+            if (data) {
+                // 保存数据
+                AppStorage.setOrCreate(this.LOGIN_TOKEN, data.token);
+                AppStorage.setOrCreate(this.LOGIN_USER_ID, data.user.id.toString());
+                AppStorage.setOrCreate(this.LOGIN_HUAWEI_ID, data.user.huawei_id)
+                AppStorage.setOrCreate(this.LOGIN_PHONE, data.user.phone_num)
+
+                AppStorage.setOrCreate(this.USERNAME_KEY, data.user.phone_num);
+                AppStorage.setOrCreate(this.PASSWORD_KEY, data.user.id.toString());
+                AppStorage.setOrCreate(this.LOGIN_TIME_KEY, Date.now());
+
+                // console.info('Login data saved successfully');
+                return true;
+            } else {
+                // console.error('Login response data invalid');
+                return false;
+            }
+        } catch (error) {
+            console.error('Login failed with error:', error);
+            return false; // 确保返回 false 而不是抛出异常
+        }
     }
 
     // 检查是否已登录且未过期

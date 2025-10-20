@@ -4,8 +4,7 @@ import http from '@ohos.net.http';
 export interface HttpClientApiResponse {
     code: number;
     message: string;
-    data: Object | null;
-    // success: boolean;
+    result: Object | null;
 }
 
 // 简单的HTTP客户端
@@ -113,7 +112,7 @@ export class HttpClient {
         return {
             code: responseCode,
             message: success ? 'Success' : 'Request failed',
-            data: success ? data : null,
+            result: success ? data : null,
             // success
         };
     }
@@ -123,7 +122,7 @@ export class HttpClient {
         return {
             code: -1,
             message: 'Network error',
-            data: null,
+            result: null,
             // success: false
         };
     }
