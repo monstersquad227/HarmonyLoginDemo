@@ -1,4 +1,4 @@
-import { LoginManager, UserInfo } from '../common/LoginManager';
+import { LoginManager, UserInfo } from '../manager/LoginManager';
 import { PersonalInfoPage } from './PersonalInfoPage';
 import { NoticePage } from './NoticePage';
 import { FeedbackPage } from './FeedbackPage';
