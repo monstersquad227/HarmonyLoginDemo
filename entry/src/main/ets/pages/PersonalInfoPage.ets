@@ -1,5 +1,4 @@
-import { LoginManager } from "../common/LoginManager";
-import { router } from "@kit.ArkUI";
+import { LoginManager } from "../manager/LoginManager";
 import { notificationManager } from '@kit.NotificationKit';
 import { bundleManager } from '@kit.AbilityKit';
 import { common } from '@kit.AbilityKit';

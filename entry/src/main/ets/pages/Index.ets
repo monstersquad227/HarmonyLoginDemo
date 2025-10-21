@@ -1,4 +1,4 @@
-import { LoginManager } from '../common/LoginManager';
+import { LoginManager } from '../manager/LoginManager';
 import { HomePage } from './HomePage';
 import { PlanPage } from './PlanPage';
 import { ProfilePage } from './ProfilePage';
