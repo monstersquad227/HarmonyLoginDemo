@@ -6,7 +6,7 @@ export interface RecordResponse {
     contents: RecordResponseContents[]
 }
 
-interface RecordResponseContents {
+export interface RecordResponseContents {
     id: number,
     medicine_name: string,
     memo?: string,

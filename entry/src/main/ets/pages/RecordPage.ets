@@ -1,8 +1,12 @@
+import { RecordResponse, RecordResponseContents } from "../api/RecordApiService"
+import { recordManager } from "../manager/RecordManager"
+
 @Entry
 @Component
 export struct RecordPage {
 
   // 示例数据：接入真实数据时替换为你的数据源（recordListData[]）
+    @State recordData: RecordResponse[] = []
     @State recordIterm: recordListData[] = [
         {
             actual_time: '2025-09-03 08:00:00',
@@ -65,13 +69,26 @@ export struct RecordPage {
         }
     }
 
+    async aboutToAppear() {
+        await this.loadData();
+    }
+
+    async loadData() {
+        try {
+            this.recordData = await recordManager.getRecordList()
+        } catch (error) {
+            console.error('Failed to load plan data:', error);
+            this.recordData = [];
+        }
+    }
+
     build() {
         Column() {
             if (this.recordIterm.length > 0) {
                 Scroll() {
                     Column({ space: 12 }) {
                         // 每个日期一组
-                        ForEach(this.recordIterm, (group: recordListData) => {
+                        ForEach(this.recordData, (group: RecordResponse) => {
                             Column() {
                                 // 顶部日期行
                                 Row() {
@@ -97,7 +114,7 @@ export struct RecordPage {
                                     .strokeWidth(1)
 
                                 // 内容条目行
-                                ForEach(group.contents, (item: recordListDataContents, idx: number) => {
+                                ForEach(group.contents, (item: RecordResponseContents, idx: number) => {
                                     Column() {
                                         Row() {
                                             Text(item.medicine_name)
