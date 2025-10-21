@@ -1,4 +1,6 @@
 import http from '@ohos.net.http';
+import { loginApiService } from '../api/LoginApiService';
+import { LoginManager } from '../manager/LoginManager';
 
 // 简单的HTTP响应接口
 export interface HttpClientApiResponse {
@@ -11,6 +13,7 @@ export interface HttpClientApiResponse {
 export class HttpClient {
     private static instance: HttpClient;
     private baseURL: string = 'http://api.monstersquad.cn:15080/medicine';
+    // private loginManager: LoginManager = LoginManager.getInstance();
 
     private constructor() {}
 
@@ -21,6 +24,11 @@ export class HttpClient {
         return HttpClient.instance;
     }
 
+    // 添加一个私有方法获取 LoginManager
+    private getLoginManager(): LoginManager {
+        return LoginManager.getInstance();
+    }
+
     // 设置基础URL
     setBaseURL(url: string): void {
         this.baseURL = url;
@@ -29,7 +37,9 @@ export class HttpClient {
   // GET请求
     async get(url: string): Promise<HttpClientApiResponse> {
         const httpRequest = http.createHttp();
-    
+        const token = this.getLoginManager().getterToken();
+        console.log(`[HTTP] Using Token: ${token}`);
+
         try {
             const fullUrl = url.startsWith('http') ? url : `${this.baseURL}${url}`;
       
@@ -38,7 +48,8 @@ export class HttpClient {
             const response = await httpRequest.request(fullUrl, {
                 method: http.RequestMethod.GET,
                 header: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': this.getLoginManager().getterToken()
                 },
                 connectTimeout: 10000,
                 readTimeout: 10000
@@ -70,7 +81,8 @@ export class HttpClient {
             const response = await httpRequest.request(fullUrl, {
                 method: http.RequestMethod.POST,
                 header: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'token': this.getLoginManager().getterToken()
                 },
                 extraData: JSON.stringify(data),
                 connectTimeout: 10000,

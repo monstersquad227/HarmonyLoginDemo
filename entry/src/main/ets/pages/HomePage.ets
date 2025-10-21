@@ -1,3 +1,6 @@
+import { PlanResponse } from "../api/PlanApiService";
+import { planManager, PlanManager } from "../manager/PlanManager";
+
 interface ListPlanData {
     plan_id: number,
     is_checked: number
@@ -15,41 +18,11 @@ export struct HomePage {
     @State currentDate: Date = new Date();
     @State selectedDate: Date = new Date();
 
-    @State planData: ListPlanData[] = [
-        {
-            plan_id: 1001,
-            is_checked: 0,
-            medicine_name: '板蓝根',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '08:00',
-            record_id: 101,
-        },
-        {
-            plan_id: 1002,
-            is_checked: 1,
-            medicine_name: '维生素C',
-            medicine_timing: 0,
-            amount: 2,
-            type: '粒',
-            plan_time: '12:00',
-            record_id: 102,
-        },
-        {
-            plan_id: 1003,
-            is_checked: 1,
-            medicine_name: '板蓝根xxxxxxxxxxxxuuuuuuuuiiiiiiiuuuuiiiiiuuuuiiiiii',
-            medicine_timing: 0,
-            amount: 1,
-            type: '粒',
-            plan_time: '18:00',
-            record_id: 103,
-        }
-    ]
+    @State planData: PlanResponse[] = [];
 
-    aboutToAppear() {
+    async aboutToAppear() {
         this.selectedDate = new Date(this.currentDate);
+        await this.loadData();
     }
 
     // 获取月份的天数
@@ -64,32 +37,41 @@ export struct HomePage {
 
     // 格式化日期显示
     formatDateHeader(): string {
-        const year = this.selectedDate.getFullYear();
-        const month = String(this.selectedDate.getMonth() + 1).padStart(2, '0');
-        const day = String(this.selectedDate.getDate()).padStart(2, '0');
+        return this.formatDateForAPI(this.selectedDate);
+    }
+
+    // 格式化日期为 YYYY-MM-DD
+    formatDateForAPI(date: Date): string {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
 
     // 上一天
-    previousDay() {
+    async previousDay() {
         const newDate = new Date(this.currentDate);
         newDate.setDate(newDate.getDate() - 1);
         this.currentDate = newDate;
         this.selectedDate = newDate;
+        await this.loadData();
     }
 
-    goToToday() {
+    // 今天
+    async goToToday() {
         const today = new Date();
         this.currentDate = today;
         this.selectedDate = new Date(today);
+        await this.loadData();
     }
 
     // 下一天
-    nextDay() {
+    async nextDay() {
         const newDate = new Date(this.currentDate);
         newDate.setDate(newDate.getDate() + 1);
         this.currentDate = newDate;
         this.selectedDate = newDate;
+        await this.loadData();
     }
 
     // 检查是否是今天
@@ -108,8 +90,22 @@ export struct HomePage {
     }
 
     // 点击日期
-    onDateClick(day: number) {
+    async onDateClick(day: number) {
         this.selectedDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), day);
+        await this.loadData();
+    }
+
+    async loadData() {
+        try {
+            // 使用格式化后的日期
+            const formattedDate = this.formatDateForAPI(this.selectedDate);
+            console.info('Loading plan data for date:', formattedDate);
+            this.planData = await planManager.getPlanList(formattedDate);
+            console.info('Plan data loaded:', this.planData.length);
+        } catch (error) {
+            console.error('Failed to load plan data:', error);
+            this.planData = [];
+        }
     }
 
     build() {
@@ -126,8 +122,8 @@ export struct HomePage {
                 .height(40)
                 .backgroundColor('#F5F5F5')
                 .borderRadius(20)
-                .onClick(() => {
-                    this.previousDay();
+                .onClick(async () => {
+                    await this.previousDay();
                 })
 
                 Text(this.formatDateHeader())
@@ -140,8 +136,8 @@ export struct HomePage {
                     .backgroundColor('#F5F5F5')
                     .fontColor('#333333')
                     .borderRadius(20)
-                    .onClick(() => {
-                        this.goToToday()
+                    .onClick(async () => {
+                        await this.goToToday()
                     })
 
                 Button() {
@@ -154,8 +150,8 @@ export struct HomePage {
                 .height(40)
                 .backgroundColor('#F5F5F5')
                 .borderRadius(20)
-                .onClick(() => {
-                    this.nextDay();
+                .onClick(async () => {
+                    await this.nextDay();
                 })
             }
             .width('100%')
@@ -191,9 +187,9 @@ export struct HomePage {
                                     day > 0 && this.isToday(day) ? '#007DFF' : '#333333')
                                 .borderRadius(8)
                                 .fontWeight(day > 0 && (this.isSelectedDate(day) || this.isToday(day)) ? FontWeight.Bold : FontWeight.Normal)
-                                .onClick(() => {
+                                .onClick(async () => {
                                     if (day > 0) {
-                                        this.onDateClick(day);
+                                        await this.onDateClick(day);
                                     }
                                 })
                         })

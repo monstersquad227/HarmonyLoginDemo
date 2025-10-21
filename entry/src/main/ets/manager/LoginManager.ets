@@ -48,6 +48,16 @@ export class LoginManager {
         }
     }
 
+    // 获取登录Token
+    getterToken(): string {
+        try {
+            return AppStorage.get(this.LOGIN_TOKEN) || ''
+        } catch (err) {
+            console.error('Failed to get token:', err);
+            return '';
+        }
+    }
+
     // 用户登录
     async login(authorizationCode: string): Promise<boolean> {
         // console.info("authorizationCode: "+ authorizationCode)
