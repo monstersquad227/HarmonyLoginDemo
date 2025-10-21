@@ -43,7 +43,7 @@ export class RecordApiService {
             console.error('User ID not found in AppStorage');
             throw new Error('用户未登录');
         }
-        const res = await httpClient.get('/plan/'+ userId);
+        const res = await httpClient.get('/record/'+ userId);
         const apiResponse = res.result as ApiResponse;
         if (apiResponse && apiResponse.code === 0 && apiResponse.result) {
             // 返回 API 响应中的 result
