@@ -3,12 +3,28 @@ import { notificationManager } from '@kit.NotificationKit';
 import { bundleManager } from '@kit.AbilityKit';
 import { common } from '@kit.AbilityKit';
 
+export interface PersonalInfoParam {
+    avatar: string;
+    nickname: string;
+    email: string;
+}
+
 @Entry
 @Component
 export struct PersonalInfoPage {
-
+    @State avatar: string = '';
+    @State nickname: string = '';
+    @State email: string = '';
     private loginManager: LoginManager = LoginManager.getInstance();
     @State isNotificationEnabled: boolean = false;
+
+    onInit(params?: PersonalInfoParam) {
+        if (params) {
+            this.avatar = params.avatar;
+            this.nickname = params.nickname;
+            this.email = params.email;
+        }
+    }
 
     async aboutToAppear() {
         await this.checkNotificationEnabled();
@@ -67,6 +83,11 @@ export struct PersonalInfoPage {
         });
     }
 
+    // 隐私手机号处理
+    anonymousPhone(phone: string): string {
+        return phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
+    }
+
     build() {
         NavDestination() {
             Column() {
@@ -80,7 +101,7 @@ export struct PersonalInfoPage {
                             .layoutWeight(1)
 
                         Row() {
-                            Image($r('app.media.userAvatar'))
+                            Image(this.avatar ? this.avatar : $r('app.media.userAvatar'))
                                 .width(50)
                                 .height(50)
                                 .borderRadius(25)
@@ -108,7 +129,7 @@ export struct PersonalInfoPage {
                             .layoutWeight(1)
 
                         Row() {
-                            Text('admin')
+                            Text(this.nickname ? this.nickname : 'admin')
                                 .fontSize(16)
                                 .fontColor('#999999')
                                 .margin({ right: 8 })
@@ -135,7 +156,30 @@ export struct PersonalInfoPage {
                             .layoutWeight(1)
 
                         Row() {
-                            Text('150****2824')
+                            Text(this.anonymousPhone(AppStorage.get('login_phone') || '15056332824'))
+                                .fontSize(16)
+                                .fontColor('#999999')
+                                .margin({ right: 8 })
+
+                            Image($r('sys.symbol.chevron_right'))
+                                .width(20)
+                                .height(20)
+                                .fillColor('#CCCCCC')
+                        }
+                    }
+                    .width('100%')
+                    .height(56)
+                    .padding({ left: 16, right: 16 })
+
+                    // 邮箱
+                    Row() {
+                        Text('邮箱')
+                            .fontSize(16)
+                            .fontColor('#333333')
+                            .layoutWeight(1)
+
+                        Row() {
+                            Text(this.email)
                                 .fontSize(16)
                                 .fontColor('#999999')
                                 .margin({ right: 8 })
