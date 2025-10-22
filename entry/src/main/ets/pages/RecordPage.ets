@@ -1,43 +1,14 @@
 import { RecordResponse, RecordResponseContents } from "../api/RecordApiService"
 import { recordManager } from "../manager/RecordManager"
+import { emitter } from "@kit.BasicServicesKit"
 
 @Entry
 @Component
 export struct RecordPage {
-
-  // 示例数据：接入真实数据时替换为你的数据源（recordListData[]）
     @State recordData: RecordResponse[] = []
-    @State recordIterm: recordListData[] = [
-        {
-            actual_time: '2025-09-03 08:00:00',
-            contents: [
-                { id: 1, medicine_name: '人参', memo: '', status: 0, is_checked: 1 },
-                { id: 2, medicine_name: '鹿茸', memo: '', status: 1, is_checked: 1 },
-                { id: 3, medicine_name: '板蓝根', memo: '', status: 0, is_checked: 0 },
-                { id: 4, medicine_name: '维生素C', memo: '', status: 0, is_checked: 0 },
-                { id: 5, medicine_name: '阿莫西林', memo: '', status: 0, is_checked: 0 },
-            ]
-        },
-        {
-            actual_time: '2025-09-04 08:00:00',
-            contents: [
-                { id: 4, medicine_name: '人参', memo: '', status: 0, is_checked: 1 },
-                { id: 5, medicine_name: '鹿茸', memo: '', status: 0, is_checked: 1 },
-                { id: 6, medicine_name: '板蓝根', memo: '', status: 1, is_checked: 1 },
-            ]
-        },
-        {
-            actual_time: '2025-09-05 08:00:00',
-            contents: [
-                { id: 4, medicine_name: '人参', memo: '', status: 0, is_checked: 1 },
-                { id: 5, medicine_name: '鹿茸', memo: '', status: 0, is_checked: 1 },
-                { id: 6, medicine_name: '板蓝根', memo: '', status: 1, is_checked: 1 },
-                { id: 6, medicine_name: '板蓝根', memo: '', status: 1, is_checked: 1 },
-                { id: 6, medicine_name: '板蓝根', memo: '', status: 1, is_checked: 1 },
-                { id: 6, medicine_name: '板蓝根', memo: '', status: 1, is_checked: 1 },
-            ]
-        }
-    ]
+
+    // 定义事件 ID（与 MainTabs 中一致）
+    private readonly SWITCH_TAB_EVENT_ID = 1001;
 
     private translateStatusAndIsChecked(status: number, isChecked: number): string {
         if (isChecked === 1 && status === 0) {
@@ -82,9 +53,27 @@ export struct RecordPage {
         }
     }
 
+    // 切换到首页 Tab 并传递日期
+    switchToHomeTab(dateStr: string) {
+        try {
+            const dateOnly = dateStr.split(' ')[0];
+
+            // 发送事件
+            emitter.emit({ eventId: this.SWITCH_TAB_EVENT_ID }, {
+                data: {
+                    targetDate: dateOnly
+                }
+            });
+
+            console.info('Emitted switch tab event with date:', dateOnly);
+        } catch (error) {
+            console.error('Switch tab error:', error);
+        }
+    }
+
     build() {
         Column() {
-            if (this.recordIterm.length > 0) {
+            if (this.recordData.length > 0) {
                 Scroll() {
                     Column({ space: 12 }) {
                         // 每个日期一组
@@ -105,8 +94,11 @@ export struct RecordPage {
                                 .justifyContent(FlexAlign.SpaceBetween)
                                 .width('100%')
                                 .padding({ left: 16, right: 16, top: 14, bottom: 14 })
-                                .backgroundColor('#FFFFFF')
+                                .backgroundColor($r('sys.color.comp_background_list_card'))
                                 .borderRadius({ topLeft: 12, topRight: 12 })
+                                .onClick(() => {
+                                    this.switchToHomeTab(group.actual_time)
+                                })
 
                                 // 分隔线
                                 Divider()
@@ -131,7 +123,7 @@ export struct RecordPage {
                                         }
                                         .width('100%')
                                         .padding({ left: 16, right: 16, top: 12, bottom: 12 })
-                                        .backgroundColor('#FFFFFF')
+                                        .backgroundColor($r('sys.color.comp_background_list_card'))
 
                                         // 非最后一项添加分隔线
                                         if (idx < group.contents.length - 1) {
@@ -147,7 +139,7 @@ export struct RecordPage {
                                 Row()
                                     .width('100%')
                                     .height(0)
-                                    .backgroundColor('#FFFFFF')
+                                    .backgroundColor($r('sys.color.comp_background_list_card'))
                                     .borderRadius({ bottomLeft: 12, bottomRight: 12 })
                             }
                             .width('92%')
@@ -188,17 +180,4 @@ export struct RecordPage {
 
         return `${year}年${month}月${day}日 ${hour}:${minute}`;
     }
-}
-
-export interface recordListData {
-    actual_time: string,
-    contents: recordListDataContents[]
-}
-
-export interface recordListDataContents {
-    id: number,
-    medicine_name: string,
-    memo?: string,
-    status: number,
-    is_checked: number,
 }

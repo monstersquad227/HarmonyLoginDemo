@@ -8,6 +8,7 @@ import { promptAction } from '@kit.ArkUI';
 import { UserAgreementPage } from './UserAgreementPage';
 import { PrivacyPolicyPage } from './PrivacyPolicyPage';
 import { HuaweiAuthenticationProtocolPage } from './HuaweiAuthenticationProtocolPage';
+import { emitter } from '@kit.BasicServicesKit';
 
 @Entry
 @Component
@@ -240,10 +241,30 @@ struct Index {
 
 @Component
 struct MainTabs {
+    private tabsController: TabsController = new TabsController()
     @State currentTabIndex: number = 0;
+    private readonly SWITCH_TAB_EVENT_ID = 1001;
+
+    aboutToAppear(): void {
+        // 订阅切换 Tab 的事件
+        emitter.on({ eventId: this.SWITCH_TAB_EVENT_ID }, (data) => {
+            if (data?.data) {
+                const targetDate = data.data.targetDate as string;
+                console.info('Received switch tab event with date:', targetDate);
+
+                // 切换到首页
+                this.currentTabIndex = 0;
+                this.tabsController.changeIndex(0);
+            }
+        });
+    }
+    aboutToDisappear(): void {
+        // 取消订阅
+        emitter.off(this.SWITCH_TAB_EVENT_ID);
+    }
 
     build() {
-        Tabs({ barPosition: BarPosition.End }) {
+        Tabs({ barPosition: BarPosition.End, controller: this.tabsController }) {
             TabContent() {
                 HomePage()
             }

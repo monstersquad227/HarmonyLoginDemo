@@ -1,5 +1,6 @@
 import { PlanResponse } from "../api/PlanApiService";
-import { planManager, PlanManager } from "../manager/PlanManager";
+import { planManager } from "../manager/PlanManager";
+import { emitter } from "@kit.BasicServicesKit";
 
 interface ListPlanData {
     plan_id: number,
@@ -17,12 +18,42 @@ interface ListPlanData {
 export struct HomePage {
     @State currentDate: Date = new Date();
     @State selectedDate: Date = new Date();
-
     @State planData: PlanResponse[] = [];
 
+    // 定义事件 ID（与 MainTabs 中一致）
+    private readonly SWITCH_TAB_EVENT_ID = 1001;
+
     async aboutToAppear() {
+        // 订阅切换事件，直接在 HomePage 接收
+        emitter.on({ eventId: this.SWITCH_TAB_EVENT_ID }, async (data) => {
+            if (data?.data) {
+                const targetDate = data.data.targetDate as string;
+                console.info('HomePage received target date:', targetDate);
+
+                // 解析并设置日期
+                const dateParts = targetDate.split('-');
+                if (dateParts.length === 3) {
+                    const date = new Date(
+                        parseInt(dateParts[0]),
+                        parseInt(dateParts[1]) - 1,
+                        parseInt(dateParts[2])
+                    );
+                    this.currentDate = date;
+                    this.selectedDate = new Date(date);
+
+                    // 重新加载数据
+                    await this.loadData();
+                }
+            }
+        });
+        // 初始加载
         this.selectedDate = new Date(this.currentDate);
         await this.loadData();
+    }
+
+    aboutToDisappear() {
+        // 取消订阅
+        emitter.off(this.SWITCH_TAB_EVENT_ID);
     }
 
     // 获取月份的天数
