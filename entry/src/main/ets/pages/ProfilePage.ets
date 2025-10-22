@@ -1,14 +1,20 @@
 import { LoginManager, UserInfo } from '../manager/LoginManager';
-import { PersonalInfoPage } from './PersonalInfoPage';
+import { PersonalInfoPage, PersonalInfoParam } from './PersonalInfoPage';
 import { NoticePage } from './NoticePage';
 import { FeedbackPage } from './FeedbackPage';
 import { router } from '@kit.ArkUI';
+import { authentication } from '@kit.AccountKit';
+import { util } from '@kit.ArkTS';
 
 @Entry
 @Component
 export struct ProfilePage {
-    @State userInfo: UserInfo | null = null;
-    @State remainingDays: number = 0;
+    @State avatar: string | undefined = '';
+    @State nickname: string | undefined = '';
+    @State openID: string | undefined = '';
+    @State email: string | undefined = '';
+    // @State userInfo: UserInfo | null = null;
+    // @State remainingDays: number = 0;
     private loginManager: LoginManager = LoginManager.getInstance();
     private navPathStack: NavPathStack = new NavPathStack();
 
@@ -17,8 +23,32 @@ export struct ProfilePage {
     }
 
     loadUserInfo() {
-        this.userInfo = this.loginManager.getUserInfo();
-        this.remainingDays = this.loginManager.getRemainingDays();
+        const authRequest = new authentication.HuaweiIDProvider().createAuthorizationWithHuaweiIDRequest();
+        authRequest.scopes = ['profile', 'email', 'openid'];
+        authRequest.forceAuthorization = true;
+        authRequest.state = util.generateRandomUUID();
+
+        const controller =
+            new authentication.AuthenticationController(this.getUIContext().getHostContext());
+        controller.executeRequest(authRequest).then((data) => {
+            const authorizationWithHuaweiIDResponse =
+                data as authentication.AuthorizationWithHuaweiIDResponse;
+            const state = authorizationWithHuaweiIDResponse?.state;
+            if (state && authRequest.state !== state) {
+                console.error('Failed to authorize. The state is different, response state:', state);
+                return;
+            }
+            const authorizationWithHuaweiIDCredential = authorizationWithHuaweiIDResponse?.data;
+            this.avatar = authorizationWithHuaweiIDCredential?.avatarUri;
+            this.nickname = authorizationWithHuaweiIDCredential?.nickName;
+            this.openID = authorizationWithHuaweiIDCredential?.openID;
+            this.email = authorizationWithHuaweiIDCredential?.email;
+            // console.info('profileInfo email: ', authorizationWithHuaweiIDCredential?.email)
+            // console.info('profileInfo idToken: ', authorizationWithHuaweiIDCredential?.idToken)
+            // console.info('profileInfo unionID: ', authorizationWithHuaweiIDCredential?.unionID)
+            // console.info('profileInfo extraInfo: ', authorizationWithHuaweiIDCredential?.extraInfo)
+            // console.info('profileInfo openID: ', authorizationWithHuaweiIDCredential?.openID)
+        })
     }
 
     handleLogout() {
@@ -35,7 +65,7 @@ export struct ProfilePage {
                 // 用户信息卡片
                 Column() {
                     // 头像
-                    Image($r('app.media.userAvatar'))
+                    Image(this.avatar ? this.avatar : $r('app.media.userAvatar'))
                         .width(80)
                         .height(80)
                         .borderRadius(40)
@@ -43,16 +73,17 @@ export struct ProfilePage {
                         .border({ width: 3, color: '#E6F3FF' })
 
                     // 用户名
-                    Text(this.userInfo?.username || '用户8271034905')
+                    // Text(this.userInfo?.username || '用户8271034905')
+                    Text(this.nickname? this.nickname : '用户8271034905')
                         .fontSize(20)
                         .fontWeight(FontWeight.Bold)
                         .fontColor('#111111')
                         .margin({ bottom: 8 })
 
                     // 用户ID或其他信息（可选）
-                    Text('ID: 8271034905')
-                        .fontSize(14)
-                        .fontColor('#999999')
+                    // Text(this.email ? this.email : 'ID: 8271034905')
+                    //     .fontSize(14)
+                    //     .fontColor('#999999')
                 }
                 .width('92%')
                 .margin({ left: '4%', right: '4%', top: 12, bottom: 16 })
@@ -64,7 +95,11 @@ export struct ProfilePage {
                 // 设置列表
                 Column() {
                     this.SettingItem('个人信息', () => {
-                        this.navPathStack.pushPath({ name: 'PersonalInfoPage' });
+                        this.navPathStack.pushPath({ name: 'PersonalInfoPage', param: {
+                            avatar: this.avatar,
+                            nickname: this.nickname,
+                            email: this.email
+                        } as PersonalInfoParam });
                     })
 
                     Divider()
@@ -127,7 +162,7 @@ export struct ProfilePage {
     @Builder
     navDestinationBuilder(name: string, param: Object) {
         if (name === 'PersonalInfoPage') {
-            PersonalInfoPage()
+            PersonalInfoPage(param)
         } else if (name === 'NoticePage') {
             NoticePage()
         } else if (name === 'FeedbackPage') {
