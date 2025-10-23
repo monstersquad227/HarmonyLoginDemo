@@ -1,3 +1,5 @@
+import { CourseResponse } from "../api/CourseApiService";
+import { courseManager } from "../manager/CourseManager";
 import { PlanUpdatePage } from "./PlanUpdatePage";
 
 // 计划页数据类型定义
@@ -22,44 +24,59 @@ interface DeletedWrapper {
 @Component
 export struct PlanPage {
     // 示例数据；实际项目中可通过API/Manager加载
-    @State courseData: ListCourseData[] = [
-        {
-            course_id: 1001,
-            medicine_name: '板蓝根',
-            frequency: 2,
-            medicine_timing: '不限',
-            medicine_type: '内服',
-            course_start_time: '2025-06-29',
-            plan_times: 0,
-            type: 'default',
-            amount: '每次2片'
-        },
-        {
-            course_id: 1002,
-            medicine_name: '阿莫西林胶囊',
-            frequency: 3,
-            medicine_timing: '饭后',
-            medicine_type: '内服',
-            course_start_time: '2025-06-25',
-            plan_times: 0,
-            type: 'default',
-            amount: '每次1粒'
-        },
-        {
-            course_id: 1003,
-            medicine_name: '维生素C',
-            frequency: 1,
-            medicine_timing: '不限',
-            medicine_type: '内服',
-            course_start_time: '2025-06-20',
-            plan_times: 0,
-            type: 'default',
-            amount: '每次2片'
-        }
-    ];
+    @State courseData: CourseResponse[] = [];
+    // @State courseData: ListCourseData[] = [
+    //     {
+    //         course_id: 1001,
+    //         medicine_name: '板蓝根',
+    //         frequency: 2,
+    //         medicine_timing: '不限',
+    //         medicine_type: '内服',
+    //         course_start_time: '2025-06-29',
+    //         plan_times: 0,
+    //         type: 'default',
+    //         amount: '每次2片'
+    //     },
+    //     {
+    //         course_id: 1002,
+    //         medicine_name: '阿莫西林胶囊',
+    //         frequency: 3,
+    //         medicine_timing: '饭后',
+    //         medicine_type: '内服',
+    //         course_start_time: '2025-06-25',
+    //         plan_times: 0,
+    //         type: 'default',
+    //         amount: '每次1粒'
+    //     },
+    //     {
+    //         course_id: 1003,
+    //         medicine_name: '维生素C',
+    //         frequency: 1,
+    //         medicine_timing: '不限',
+    //         medicine_type: '内服',
+    //         course_start_time: '2025-06-20',
+    //         plan_times: 0,
+    //         type: 'default',
+    //         amount: '每次2片'
+    //     }
+    // ];
     @StorageLink('editingCourse') editingCourse: Object | null = null;
     private navPathStack: NavPathStack = new NavPathStack();
 
+
+    async aboutToAppear() {
+        await this.loadData();
+    }
+
+    async loadData() {
+        try {
+            this.courseData = await courseManager.getCourseList();
+            console.info('Plan data loaded:', this.courseData.length);
+        } catch (error) {
+            console.error('Failed to load course data:', error);
+            this.courseData = [];
+        }
+    }
     // 刷新数据（示例）
     async refreshCourseData() {
         console.log('refreshCourseData called');
@@ -67,11 +84,27 @@ export struct PlanPage {
 
     // 文案转换（可按业务调整）
     translateMedicineTime(value: string): string {
-        return value;
+        switch (value) {
+            case '1':
+                return '饭前用药';
+            case '2':
+                return '饭后用药';
+            case '3':
+                return '随餐用药';
+            case '4':
+                return '睡前用药';
+            default:
+                return '不限';
+        }
     }
 
     translateType(value: string): string {
-        return value;
+        switch (value) {
+            case '1':
+                return '外服';
+            default:
+                return '内服';
+        }
     }
 
     splitDate(dateStr: string): string {
