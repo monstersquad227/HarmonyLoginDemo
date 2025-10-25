@@ -102,6 +102,74 @@ export class HttpClient {
         }
     }
 
+    // PUT请求
+    async put(url: string, data: Object): Promise<HttpClientApiResponse> {
+        const httpRequest = http.createHttp();
+
+        try {
+            const fullUrl = url.startsWith('http') ? url : `${this.baseURL}${url}`;
+
+            console.log(`[HTTP PUT] ${fullUrl}`);
+            console.log(`[HTTP] Data:`, data);
+
+            const response = await httpRequest.request(fullUrl, {
+                method: http.RequestMethod.PUT,
+                header: {
+                    'Content-Type': 'application/json',
+                    'token': this.getLoginManager().getterToken()
+                },
+                extraData: JSON.stringify(data),
+                connectTimeout: 10000,
+                readTimeout: 10000
+            });
+
+            console.log(`[HTTP] Response Status: ${response.responseCode}`);
+            console.log(`[HTTP] Response Data:`, response.result);
+
+            return this.handleResponse(response);
+
+        } catch (error) {
+            console.error('[HTTP] POST request failed:', error);
+            return this.handleError(error);
+        } finally {
+            httpRequest.destroy();
+        }
+    }
+
+    // DELETE请求
+    async delete(url: string, data?: Object): Promise<HttpClientApiResponse> {
+        const httpRequest = http.createHttp();
+
+        try {
+            const fullUrl = url.startsWith('http') ? url : `${this.baseURL}${url}`;
+
+            console.log(`[HTTP PUT] ${fullUrl}`);
+            console.log(`[HTTP] Data:`, data);
+
+            const response = await httpRequest.request(fullUrl, {
+                method: http.RequestMethod.DELETE,
+                header: {
+                    'Content-Type': 'application/json',
+                    'token': this.getLoginManager().getterToken()
+                },
+                extraData: JSON.stringify(data),
+                connectTimeout: 10000,
+                readTimeout: 10000
+            });
+
+            console.log(`[HTTP] Response Status: ${response.responseCode}`);
+            console.log(`[HTTP] Response Data:`, response.result);
+
+            return this.handleResponse(response);
+
+        } catch (error) {
+            console.error('[HTTP] POST request failed:', error);
+            return this.handleError(error);
+        } finally {
+            httpRequest.destroy();
+        }
+    }
+
   // 处理响应
     private handleResponse(response: http.HttpResponse): HttpClientApiResponse {
         // const { responseCode, result } = response;
