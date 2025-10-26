@@ -1,4 +1,4 @@
-import { CourseResponse } from "../api/CourseApiService";
+import { CourseResponse, PutCourseRequest } from "../api/CourseApiService";
 import { courseManager } from "../manager/CourseManager";
 import { PlanUpdatePage } from "./PlanUpdatePage";
 
@@ -214,7 +214,7 @@ export struct PlanPage {
                 // 次数标签
                 Text('每日 ' + item.frequency + ' 次')
                     .fontSize(14)
-                    .fontColor('#007DFF')
+                    .fontColor($r('sys.color.brand'))
                     .backgroundColor('#E6F3FF')
                     .borderRadius(4)
                     .padding({ left: 8, right: 8, top: 4, bottom: 4 })
@@ -251,18 +251,29 @@ export struct PlanPage {
                 Button('修改方案')
                     .height(38)
                     .layoutWeight(1)
-                    .backgroundColor('#FFFFFF')
+                    .backgroundColor($r('sys.color.comp_background_list_card'))
                     .border({ width: 1, color: '#E0E0E0', radius: 8 })
-                    .fontColor('#007DFF')
+                    .fontColor($r('sys.color.brand'))
                     .fontSize(15)
                     .onClick(() => {
-                        this.onModifyScheme(item);
+                        // this.onModifyScheme(item);
+                        this.navPathStack.pushPath({ name: 'PlanUpdatePage', param: {
+                            course_id: item.course_id,
+                            medicine_name: item.medicine_name,
+                            medicine_type: parseInt(item.medicine_type),
+                            medicine_timing: parseInt(item.medicine_timing),
+                            course_start_time: item.course_start_time,
+                            amount: parseInt(item.amount),
+                            type: item.type,
+                            plan_time: item.plan_times.toString(),
+                            frequency: item.frequency
+                        } as PutCourseRequest });
                     })
 
                 Button('结束用药')
                     .height(38)
                     .layoutWeight(1)
-                    .backgroundColor('#FFFFFF')
+                    .backgroundColor($r('sys.color.comp_background_list_card'))
                     .border({ width: 1, color: '#E0E0E0', radius: 8 })
                     .fontColor('#FF3B30')
                     .fontSize(15)
@@ -279,7 +290,7 @@ export struct PlanPage {
     @Builder
     navDestinationBuilder(name: string, param: Object) {
         if (name === 'PlanUpdatePage') {
-            PlanUpdatePage()
+            PlanUpdatePage(param)
         }
     }
 }
