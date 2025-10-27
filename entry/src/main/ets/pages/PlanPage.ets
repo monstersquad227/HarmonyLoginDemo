@@ -40,7 +40,7 @@ export struct PlanPage {
         }
     }
 
-    // 文案转换（可按业务调整）
+    // 文案转换
     translateMedicineTime(value: string): string {
         switch (value) {
             case '1':
@@ -70,10 +70,9 @@ export struct PlanPage {
     }
 
     // 修改方案：写入AppStorage并导航到编辑页
-    onModifyScheme(item: CourseResponse) {
-        AppStorage.setOrCreate('editingCourse', item as Object);
-        this.navPathStack.pushPath({ name: 'PlanUpdatePage' });
-    }
+    // onModifyScheme(item: CourseResponse) {
+    //     this.navPathStack.pushPath({ name: 'PlanUpdatePage' });
+    // }
 
     // 结束用药（示例）
     async onEndMedicine(item: CourseResponse) {
