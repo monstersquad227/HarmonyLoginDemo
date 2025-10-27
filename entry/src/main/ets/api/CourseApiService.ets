@@ -5,7 +5,7 @@ export interface CourseResponse {
     medicine_name: string
     medicine_image: string
     medicine_type: number
-    medicine_timing?: number
+    medicine_timing: number
     course_start_time: string
     frequency: number,
     plan_times: string,

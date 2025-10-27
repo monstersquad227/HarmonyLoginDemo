@@ -29,16 +29,6 @@ export struct PlanUpdatePage {
     @State intervalTimes: string[] = ['08:00'];
     @StorageProp('planNavStack') planNavStackObj: Object | null = null;
 
-    onInit(params?: PutCourseRequest) {
-        if (params) {
-            this.medicineName = params.medicine_name;
-            this.dailyCount = params.frequency;
-            this.amount = params.amount.toString();
-            this.medicineType = params.medicine_type;
-            this.medicineTiming = params.medicine_timing;
-        }
-    }
-
 
     private updateTimeCount(count: number, isDaily: boolean = true): void {
         if (isDaily) {
@@ -118,12 +108,10 @@ export struct PlanUpdatePage {
     }
 
     private popBack(): void {
-        // const stack = this.planNavStackObj as any;
-        // if (stack && stack.pop) {
-        //     stack.pop();
-        // } else {
-        //     router.back();
-        // }
+        const stack = AppStorage.get<NavPathStack>('planNavStack');
+        if (stack) {
+            stack.pop();
+        }
     }
 
     build() {
@@ -151,6 +139,35 @@ export struct PlanUpdatePage {
             .backgroundColor('#F7F8FA')
         }
         .title('修改用药方案')
+        .onReady((context: NavDestinationContext) => {
+            // 正确的方式：直接从 pathStack 获取参数
+            const params = context.pathStack.getParamByName('PlanUpdatePage') as PutCourseRequest[];
+
+            console.info("PlanUpdatePage: received params", JSON.stringify(params));
+
+            // params 是数组，取第一个元素
+            if (params && params.length > 0) {
+                const data = params[0];
+
+                this.medicineName = data.medicine_name || '';
+                this.dailyCount = data.frequency || 0;
+                this.amount = data.amount?.toString() || '';
+                this.medicineType = data.medicine_type || 0;
+                this.medicineTiming = data.medicine_timing || 0;
+                this.unit = data.type;
+
+                // 根据 dailyCount 更新时间数组
+                if (this.dailyCount > 0) {
+                    this.updateTimeCount(this.dailyCount, true);
+                }
+
+                console.info("PlanUpdatePage: medicineName", this.medicineName);
+                console.info("PlanUpdatePage: dailyCount", this.dailyCount);
+                console.info("PlanUpdatePage: amount", this.amount);
+                console.info("PlanUpdatePage: medicineType", this.medicineType);
+                console.info("PlanUpdatePage: medicineTiming", this.medicineTiming);
+            }
+        })
     }
 
     @Builder
