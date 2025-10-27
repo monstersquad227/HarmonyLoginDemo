@@ -1,11 +1,7 @@
 import { CourseResponse, PutCourseRequest } from "../api/CourseApiService";
 import { courseManager } from "../manager/CourseManager";
 import { PlanUpdatePage } from "./PlanUpdatePage";
-
-// 删除回调包装类型
-interface DeletedWrapper {
-    callback: () => Promise<void> | void;
-}
+import { promptAction } from "@kit.ArkUI";
 
 @Entry
 @Component
@@ -42,11 +38,6 @@ export struct PlanPage {
             console.error('Failed to load course data:', error);
             this.courseData = [];
         }
-    }
-    // 刷新数据（示例）
-    async refreshCourseData() {
-        console.log('refreshCourseData called');
-        await this.loadData();
     }
 
     // 文案转换（可按业务调整）
@@ -85,15 +76,29 @@ export struct PlanPage {
     }
 
     // 结束用药（示例）
-    async onEndMedicine(item: CourseResponse, onDeleted?: DeletedWrapper) {
+    async onEndMedicine(item: CourseResponse) {
         AlertDialog.show({
             message: '确定结束 ' + item.medicine_name + ' 用药吗？',
             buttons: [
-                { value: '取消', action: () => {} },
-                { value: '确定', action: async () => {
-                    console.log('结束用药: ', item.course_id);
-                    if (onDeleted) {
-                        await onDeleted.callback();
+                { value: '取消', action: () => { console.log('取消结束用药'); } },
+                { value: '确定', fontColor: '#FF3B30', action: async () => {
+                    try {
+                        console.log('结束用药: ', item.course_id);
+                        // 调用 API 删除/结束用药
+                        // await courseManager.deleteCourse(item.course_id);
+                        // 刷新列表
+                        await this.loadData();
+                        // 提示成功
+                        promptAction.showToast({
+                            message: '已结束用药',
+                            duration: 2000
+                        });
+                    } catch (error) {
+                        console.error('结束用药失败:', error);
+                        promptAction.showToast({
+                            message: '操作失败，请重试',
+                            duration: 2000
+                        });
                     }
                 }
                 }
@@ -109,11 +114,11 @@ export struct PlanPage {
                     List({ space: '14.00vp' }) {
                         ForEach(this.courseData, (item: CourseResponse) => {
                             ListItem() {
-                                this.PlanItem(item, { callback: async () => await this.refreshCourseData() })
+                                this.PlanItem(item)
                             }
                             .width('92%')
                             .margin({ left: '4%', right: '4%' })
-                            .backgroundColor('#FFFFFF')
+                            .backgroundColor($r('sys.color.comp_background_list_card'))
                             .borderRadius(12)
                             .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
                         })
@@ -139,8 +144,8 @@ export struct PlanPage {
                     .width('92%')
                     .height(48)
                     .margin({ left: '4%', right: '4%', top: 12, bottom: 16 })
-                    .backgroundColor('#007DFF')
-                    .fontColor('#FFFFFF')
+                    .backgroundColor($r('sys.color.brand'))
+                    .fontColor($r('sys.color.comp_background_list_card'))
                     .fontSize(16)
                     .borderRadius(24)
                     .onClick(() => {
@@ -157,7 +162,7 @@ export struct PlanPage {
 
     // 子项UI构建器
     @Builder
-    PlanItem(item: CourseResponse, onDeletedWrapper?: DeletedWrapper) {
+    PlanItem(item: CourseResponse) {
         Column() {
             // 顶部标题与副标题
             Column() {
@@ -245,7 +250,7 @@ export struct PlanPage {
                     .fontColor('#FF3B30')
                     .fontSize(15)
                     .onClick(async () => {
-                        await this.onEndMedicine(item, onDeletedWrapper);
+                        await this.onEndMedicine(item);
                     })
                     .margin({ left: 12 })
             }
