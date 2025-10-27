@@ -2,19 +2,6 @@ import { CourseResponse, PutCourseRequest } from "../api/CourseApiService";
 import { courseManager } from "../manager/CourseManager";
 import { PlanUpdatePage } from "./PlanUpdatePage";
 
-// 计划页数据类型定义
-interface ListCourseData {
-    course_id: number;
-    medicine_name: string;
-    frequency: number;                 // 每日次数
-    medicine_timing: string;           // 用药时机（如不限/饭前/饭后）
-    medicine_type: string;             // 用药类型（如内服/外用）
-    course_start_time: string;         // 开始日期（YYYY-MM-DD）
-    plan_times: number;                // 计划总次数（如需）
-    type: string;                      // 方案类型（备用字段）
-    amount: string;                    // 每次用量描述
-}
-
 // 删除回调包装类型
 interface DeletedWrapper {
     callback: () => Promise<void> | void;
@@ -23,49 +10,28 @@ interface DeletedWrapper {
 @Entry
 @Component
 export struct PlanPage {
-    // 示例数据；实际项目中可通过API/Manager加载
     @State courseData: CourseResponse[] = [];
-    // @State courseData: ListCourseData[] = [
-    //     {
-    //         course_id: 1001,
-    //         medicine_name: '板蓝根',
-    //         frequency: 2,
-    //         medicine_timing: '不限',
-    //         medicine_type: '内服',
-    //         course_start_time: '2025-06-29',
-    //         plan_times: 0,
-    //         type: 'default',
-    //         amount: '每次2片'
-    //     },
-    //     {
-    //         course_id: 1002,
-    //         medicine_name: '阿莫西林胶囊',
-    //         frequency: 3,
-    //         medicine_timing: '饭后',
-    //         medicine_type: '内服',
-    //         course_start_time: '2025-06-25',
-    //         plan_times: 0,
-    //         type: 'default',
-    //         amount: '每次1粒'
-    //     },
-    //     {
-    //         course_id: 1003,
-    //         medicine_name: '维生素C',
-    //         frequency: 1,
-    //         medicine_timing: '不限',
-    //         medicine_type: '内服',
-    //         course_start_time: '2025-06-20',
-    //         plan_times: 0,
-    //         type: 'default',
-    //         amount: '每次2片'
-    //     }
-    // ];
+    @StorageLink('shouldRefreshCourse') @Watch('onShouldRefreshChanged') shouldRefreshCourse: boolean = false;
     @StorageLink('editingCourse') editingCourse: Object | null = null;
     private navPathStack: NavPathStack = new NavPathStack();
 
 
     async aboutToAppear() {
+        // 初始化时存储 navPathStack
+        AppStorage.setOrCreate('planNavStack', this.navPathStack);
         await this.loadData();
+    }
+
+    // 监听刷新标记变化
+    async onShouldRefreshChanged() {
+        console.info('shouldRefreshCourse changed to:', this.shouldRefreshCourse);
+        if (this.shouldRefreshCourse) {
+            await this.loadData();
+            // 延迟重置，确保刷新完成
+            setTimeout(() => {
+                this.shouldRefreshCourse = false;
+            }, 3000);
+        }
     }
 
     async loadData() {
@@ -80,6 +46,7 @@ export struct PlanPage {
     // 刷新数据（示例）
     async refreshCourseData() {
         console.log('refreshCourseData called');
+        await this.loadData();
     }
 
     // 文案转换（可按业务调整）
@@ -112,13 +79,13 @@ export struct PlanPage {
     }
 
     // 修改方案：写入AppStorage并导航到编辑页
-    onModifyScheme(item: ListCourseData) {
+    onModifyScheme(item: CourseResponse) {
         AppStorage.setOrCreate('editingCourse', item as Object);
         this.navPathStack.pushPath({ name: 'PlanUpdatePage' });
     }
 
     // 结束用药（示例）
-    async onEndMedicine(item: ListCourseData, onDeleted?: DeletedWrapper) {
+    async onEndMedicine(item: CourseResponse, onDeleted?: DeletedWrapper) {
         AlertDialog.show({
             message: '确定结束 ' + item.medicine_name + ' 用药吗？',
             buttons: [
@@ -140,7 +107,7 @@ export struct PlanPage {
                 // 列表区域
                 if (this.courseData.length > 0) {
                     List({ space: '14.00vp' }) {
-                        ForEach(this.courseData, (item: ListCourseData) => {
+                        ForEach(this.courseData, (item: CourseResponse) => {
                             ListItem() {
                                 this.PlanItem(item, { callback: async () => await this.refreshCourseData() })
                             }
@@ -190,7 +157,7 @@ export struct PlanPage {
 
     // 子项UI构建器
     @Builder
-    PlanItem(item: ListCourseData, onDeletedWrapper?: DeletedWrapper) {
+    PlanItem(item: CourseResponse, onDeletedWrapper?: DeletedWrapper) {
         Column() {
             // 顶部标题与副标题
             Column() {
@@ -220,7 +187,7 @@ export struct PlanPage {
                     .padding({ left: 8, right: 8, top: 4, bottom: 4 })
 
                 // 时机标签
-                Text(this.translateMedicineTime(item.medicine_timing))
+                Text(this.translateMedicineTime(item.medicine_timing?.toString()))
                     .fontSize(14)
                     .fontColor('#666666')
                     .backgroundColor('#F5F5F5')
@@ -231,7 +198,7 @@ export struct PlanPage {
                 Blank().layoutWeight(1)
 
                 // 类型标签右侧展示
-                Text(this.translateType(item.medicine_type))
+                Text(this.translateType(item.medicine_type.toString()))
                     .fontSize(14)
                     .fontColor('#34C759')
                     .backgroundColor('#E8F8ED')
@@ -260,10 +227,10 @@ export struct PlanPage {
                         this.navPathStack.pushPath({ name: 'PlanUpdatePage', param: {
                             course_id: item.course_id,
                             medicine_name: item.medicine_name,
-                            medicine_type: parseInt(item.medicine_type),
-                            medicine_timing: parseInt(item.medicine_timing),
+                            medicine_type: item.medicine_type,
+                            medicine_timing: item.medicine_timing,
                             course_start_time: item.course_start_time,
-                            amount: parseInt(item.amount),
+                            amount: item.amount,
                             type: item.type,
                             plan_time: item.plan_times.toString(),
                             frequency: item.frequency
@@ -288,9 +255,9 @@ export struct PlanPage {
     }
 
     @Builder
-    navDestinationBuilder(name: string, param: Object) {
+    navDestinationBuilder(name: string) {
         if (name === 'PlanUpdatePage') {
-            PlanUpdatePage(param)
+            PlanUpdatePage()
         }
     }
 }
