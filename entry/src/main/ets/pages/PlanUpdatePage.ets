@@ -1,3 +1,5 @@
+import { PutCourseRequest } from "../api/CourseApiService";
+
 interface GeneratedObjectLiteralInterface_1 {
     medicineName: string;
     mode: number;
@@ -14,9 +16,9 @@ interface GeneratedObjectLiteralInterface_1 {
 
 @Component
 export struct PlanUpdatePage {
-    @State medicineName: string = '板蓝根';
+    @State medicineName: string = '';
     @State mode: number = 0; // 0:每日, 1:间隔
-    @State dailyCount: number = 3;
+    @State dailyCount: number = 0;
     @State intervalDays: number = 2;
     @State intervalCount: number = 1;
     @State amount: string = '';
@@ -26,6 +28,16 @@ export struct PlanUpdatePage {
     @State dailyTimes: string[] = ['08:00', '12:00', '18:00'];
     @State intervalTimes: string[] = ['08:00'];
     @StorageProp('planNavStack') planNavStackObj: Object | null = null;
+
+    onInit(params?: PutCourseRequest) {
+        if (params) {
+            this.medicineName = params.medicine_name;
+            this.dailyCount = params.frequency;
+            this.amount = params.amount.toString();
+            this.medicineType = params.medicine_type;
+            this.medicineTiming = params.medicine_timing;
+        }
+    }
 
 
     private updateTimeCount(count: number, isDaily: boolean = true): void {
