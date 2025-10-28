@@ -1,6 +1,7 @@
-import { PutCourseRequest } from "../api/CourseApiService";
+import { promptAction } from "@kit.ArkUI";
+import { JSON } from "@kit.ArkTS";
 
-interface GeneratedObjectLiteralInterface_1 {
+interface SaveData {
     medicineName: string;
     mode: number;
     dailyCount: number;
@@ -15,10 +16,10 @@ interface GeneratedObjectLiteralInterface_1 {
 }
 
 @Component
-export struct PlanUpdatePage {
+export struct PlanAddPage {
     @State medicineName: string = '';
     @State mode: number = 0; // 0:每日, 1:间隔
-    @State dailyCount: number = 0;
+    @State dailyCount: number = 3;
     @State intervalDays: number = 2;
     @State intervalCount: number = 1;
     @State amount: string = '';
@@ -53,6 +54,14 @@ export struct PlanUpdatePage {
         this.getUIContext().showTimePickerDialog({
             useMilitaryTime: true,
             selected: date,
+            onAccept: (value: TimePickerResult) => {
+                const time = `${String(value.hour).padStart(2, '0')}:${String(value.minute).padStart(2, '0')}`;
+                if (isDaily) {
+                    this.dailyTimes[index] = time;
+                } else {
+                    this.intervalTimes[index] = time;
+                }
+            }
         });
     }
 
@@ -70,11 +79,19 @@ export struct PlanUpdatePage {
             return false;
         }
         if (this.mode === 0) {
+            if (this.dailyCount < 1) {
+                AlertDialog.show({ message: '每日次数至少为1次' });
+                return false;
+            }
             if (this.dailyTimes.some((time: string) => !time)) {
                 AlertDialog.show({ message: '请设置所有服药时间点' });
                 return false;
             }
         } else {
+            if (this.intervalCount < 1) {
+                AlertDialog.show({ message: '间隔次数至少为1次' });
+                return false;
+            }
             if (this.intervalTimes.some((time: string) => !time)) {
                 AlertDialog.show({ message: '请设置所有服药时间点' });
                 return false;
@@ -83,28 +100,56 @@ export struct PlanUpdatePage {
         return true;
     }
 
-    private handleSave(): void {
+    private async handleSave(): Promise<void> {
         if (!this.validate()) {
             return;
         }
 
-        const saveData: GeneratedObjectLiteralInterface_1 = {
-            medicineName: this.medicineName,
-            mode: this.mode,
-            dailyCount: this.dailyCount,
-            intervalDays: this.intervalDays,
-            intervalCount: this.intervalCount,
-            amount: this.amount,
-            unit: this.unit,
-            medicineType: this.medicineType,
-            medicineTiming: this.medicineTiming,
-            dailyTimes: this.dailyTimes,
-            intervalTimes: this.intervalTimes
-        };
+        try {
+            const saveData: SaveData = {
+                medicineName: this.medicineName,
+                mode: this.mode,
+                dailyCount: this.dailyCount,
+                intervalDays: this.intervalDays,
+                intervalCount: this.intervalCount,
+                amount: this.amount,
+                unit: this.unit,
+                medicineType: this.medicineType,
+                medicineTiming: this.medicineTiming,
+                dailyTimes: this.dailyTimes,
+                intervalTimes: this.intervalTimes
+            };
 
-        console.log('保存数据:', saveData);
-        AppStorage.setOrCreate('shouldRefreshCourse', true);
-        this.popBack();
+            console.log('添加用药方案数据:', JSON.stringify(saveData));
+
+            // TODO: 调用 API 添加用药方案
+            // const request: PostCourseRequest = {
+            //     medicine_name: this.medicineName,
+            //     frequency: this.dailyCount,
+            //     medicine_type: this.medicineType,
+            //     medicine_timing: this.medicineTiming,
+            //     amount: parseFloat(this.amount),
+            //     type: this.unit,
+            //     plan_times: this.dailyTimes.join(',')
+            // };
+            // await courseManager.addCourse(request);
+
+            // 设置刷新标记
+            AppStorage.setOrCreate('shouldRefreshCourse', true);
+
+            promptAction.showToast({
+                message: '添加成功',
+                duration: 2000
+            });
+
+            this.popBack();
+        } catch (error) {
+            console.error('添加用药方案失败:', error);
+            promptAction.showToast({
+                message: '添加失败，请重试',
+                duration: 2000
+            });
+        }
     }
 
     private popBack(): void {
@@ -122,6 +167,7 @@ export struct PlanUpdatePage {
                         List({ space: 14 }) {
                             this.buildMedicineNameAndModeSwitchCard()
                             this.buildDailyModeCard()
+                            this.buildIntervalModeCard()
                             this.buildDosageCard()
                             this.buildMedicineTypeAndTimingCard()
                         }
@@ -138,36 +184,7 @@ export struct PlanUpdatePage {
             .height('100%')
             .backgroundColor('#F7F8FA')
         }
-        .title('修改用药方案')
-        .onReady((context: NavDestinationContext) => {
-            // 正确的方式：直接从 pathStack 获取参数
-            const params = context.pathStack.getParamByName('PlanUpdatePage') as PutCourseRequest[];
-
-            console.info("PlanUpdatePage: received params", JSON.stringify(params));
-
-            // params 是数组，取第一个元素
-            if (params && params.length > 0) {
-                const data = params[0];
-
-                this.medicineName = data.medicine_name || '';
-                this.dailyCount = data.frequency || 0;
-                this.amount = data.amount?.toString() || '';
-                this.medicineType = data.medicine_type || 0;
-                this.medicineTiming = data.medicine_timing || 0;
-                this.unit = data.type;
-
-                // 根据 dailyCount 更新时间数组
-                if (this.dailyCount > 0) {
-                    this.updateTimeCount(this.dailyCount, true);
-                }
-
-                console.info("PlanUpdatePage: medicineName", this.medicineName);
-                console.info("PlanUpdatePage: dailyCount", this.dailyCount);
-                console.info("PlanUpdatePage: amount", this.amount);
-                console.info("PlanUpdatePage: medicineType", this.medicineType);
-                console.info("PlanUpdatePage: medicineTiming", this.medicineTiming);
-            }
-        })
+        .title('添加用药方案')
     }
 
     @Builder
@@ -203,7 +220,7 @@ export struct PlanUpdatePage {
                         .fontColor('#111111')
                         .alignSelf(ItemAlign.Start)
 
-                    Row() {
+                    Row({ space: 12 }) {
                         Button('每日')
                             .layoutWeight(1)
                             .height(42)
@@ -212,7 +229,29 @@ export struct PlanUpdatePage {
                             .fontColor(this.mode === 0 ? '#FFFFFF' : '#007DFF')
                             .fontSize(15)
                             .border({ width: 1, color: '#007DFF', radius: 8 })
-                            .onClick(() => { this.mode = 0; })
+                            .onClick(() => {
+                                this.mode = 0;
+                                if (this.dailyCount < 1) {
+                                    this.dailyCount = 3;
+                                    this.updateTimeCount(this.dailyCount, true);
+                                }
+                            })
+
+                        Button('间隔')
+                            .layoutWeight(1)
+                            .height(42)
+                            .stateEffect(this.mode === 1)
+                            .backgroundColor(this.mode === 1 ? '#007DFF' : '#FFFFFF')
+                            .fontColor(this.mode === 1 ? '#FFFFFF' : '#007DFF')
+                            .fontSize(15)
+                            .border({ width: 1, color: '#007DFF', radius: 8 })
+                            .onClick(() => {
+                                this.mode = 1;
+                                if (this.intervalCount < 1) {
+                                    this.intervalCount = 1;
+                                    this.updateTimeCount(this.intervalCount, false);
+                                }
+                            })
                     }
                     .width('100%')
                 }
@@ -241,6 +280,7 @@ export struct PlanUpdatePage {
                             .alignSelf(ItemAlign.Start)
 
                         TextInput({
+                            placeholder: '请输入每日服药次数',
                             text: String(this.dailyCount)
                         })
                             .width('100%')
@@ -278,6 +318,97 @@ export struct PlanUpdatePage {
                                     .fontSize(15)
                                     .backgroundColor('#FAFAFA')
                                     .onClick(() => { this.pickTime(index, true); })
+                            }
+                            .width('100%')
+                        })
+                    }
+                }
+                .width('100%')
+                .padding(16)
+            }
+            .width('92%')
+            .margin({ left: '4%', right: '4%' })
+            .backgroundColor($r('sys.color.comp_background_list_card'))
+            .borderRadius(12)
+            .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
+        }
+    }
+
+    @Builder
+    buildIntervalModeCard() {
+        if (this.mode === 1) {
+            ListItem() {
+                Column({ space: 16 }) {
+                    // 间隔天数
+                    Column({ space: 8 }) {
+                        Text('间隔天数')
+                            .fontWeight(FontWeight.Bold)
+                            .fontSize(16)
+                            .fontColor('#111111')
+                            .alignSelf(ItemAlign.Start)
+
+                        TextInput({
+                            placeholder: '请输入间隔天数',
+                            text: String(this.intervalDays)
+                        })
+                            .width('100%')
+                            .border({ width: 1, color: '#E0E0E0', radius: 8 })
+                            .backgroundColor('#FAFAFA')
+                            .padding({ left: 12, right: 12, top: 10, bottom: 10 })
+                            .type(InputType.Number)
+                            .onChange((value: string) => {
+                                const days = parseInt(value) || 1;
+                                this.intervalDays = Math.max(1, days);
+                            })
+                    }
+
+                    // 每次次数
+                    Column({ space: 8 }) {
+                        Text('每次次数')
+                            .fontWeight(FontWeight.Bold)
+                            .fontSize(16)
+                            .fontColor('#111111')
+                            .alignSelf(ItemAlign.Start)
+
+                        TextInput({
+                            placeholder: '请输入每次服药次数',
+                            text: String(this.intervalCount)
+                        })
+                            .width('100%')
+                            .border({ width: 1, color: '#E0E0E0', radius: 8 })
+                            .backgroundColor('#FAFAFA')
+                            .padding({ left: 12, right: 12, top: 10, bottom: 10 })
+                            .type(InputType.Number)
+                            .onChange((value: string) => {
+                                const count = parseInt(value) || 1;
+                                this.intervalCount = Math.max(1, count);
+                                this.updateTimeCount(this.intervalCount, false);
+                            })
+                    }
+
+                    // 服药时间点
+                    Column({ space: 10 }) {
+                        Text('服药时间点')
+                            .fontWeight(FontWeight.Bold)
+                            .fontSize(16)
+                            .fontColor('#111111')
+                            .alignSelf(ItemAlign.Start)
+
+                        ForEach(this.intervalTimes, (time: string, index: number) => {
+                            Row() {
+                                Text(`第 ${index + 1} 次`)
+                                    .fontSize(15)
+                                    .fontColor('#666666')
+                                    .width(70)
+
+                                Button(time || '请选择时间')
+                                    .layoutWeight(1)
+                                    .height(40)
+                                    .border({ width: 1, color: '#E0E0E0', radius: 8 })
+                                    .fontColor('#333333')
+                                    .fontSize(15)
+                                    .backgroundColor('#FAFAFA')
+                                    .onClick(() => { this.pickTime(index, false); })
                             }
                             .width('100%')
                         })
@@ -416,7 +547,7 @@ export struct PlanUpdatePage {
 
     @Builder
     buildSaveButton() {
-        Button('保存')
+        Button('添加方案')
             .width('92%')
             .height(48)
             .margin({ left: '4%', right: '4%', top: 12, bottom: 16 })

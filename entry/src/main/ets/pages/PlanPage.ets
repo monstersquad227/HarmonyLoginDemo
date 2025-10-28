@@ -2,6 +2,7 @@ import { CourseResponse, PutCourseRequest } from "../api/CourseApiService";
 import { courseManager } from "../manager/CourseManager";
 import { PlanUpdatePage } from "./PlanUpdatePage";
 import { promptAction } from "@kit.ArkUI";
+import { PlanAddPage } from "./PlanAddPage";
 
 @Entry
 @Component
@@ -150,6 +151,7 @@ export struct PlanPage {
                     .onClick(() => {
                         // TODO: 添加方案逻辑
                         console.log('添加方案');
+                        this.navPathStack.pushPath({ name: 'PlanAddPage' })
                     })
             }
             .width('100%')
@@ -262,6 +264,8 @@ export struct PlanPage {
     navDestinationBuilder(name: string) {
         if (name === 'PlanUpdatePage') {
             PlanUpdatePage()
+        } else if (name === 'PlanAddPage') {
+            PlanAddPage()
         }
     }
 }
