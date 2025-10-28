@@ -2,16 +2,14 @@ import { httpClient } from "../common/HttpClient"
 
 // 用药方案数据
 export interface PlanResponse {
-    course_id: number,
-    medicine_name: string
-    medicine_image: string
-    medicine_type: number
-    medicine_timing?: number
-    course_start_time: string
-    frequency: number,
-    plan_times: string,
+    plan_id: number,
+    is_checked: number
+    medicine_name: string,
+    medicine_timing?: number,
+    amount: number,
     type: string,
-    amount: number
+    plan_time: string,
+    record_id: number
 }
 
 // Api接口返回数据
