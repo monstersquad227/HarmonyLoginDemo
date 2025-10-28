@@ -1,17 +1,11 @@
 import { PlanResponse } from "../api/PlanApiService";
 import { planManager } from "../manager/PlanManager";
 import { emitter } from "@kit.BasicServicesKit";
+import { recordManager } from "../manager/RecordManager";
+import { PutRecordRequest } from "../api/RecordApiService";
+import { promptAction } from "@kit.ArkUI";
+import { JSON } from "@kit.ArkTS";
 
-interface ListPlanData {
-    plan_id: number,
-    is_checked: number
-    medicine_name: string,
-    medicine_timing?: number,
-    amount: number,
-    type: string,
-    plan_time: string,
-    record_id: number
-}
 
 @Entry
 @Component
@@ -64,6 +58,19 @@ export struct HomePage {
     // 获取月份第一天是星期几
     getFirstDayOfMonth(year: number, month: number): number {
         return new Date(year, month, 1).getDay();
+    }
+
+    // 格式化日期时间为 YYYY-MM-DD HH:mm (使用selectedDate的日期 + 当前时间)
+    formatDateTimeWithSelectedDate(): string {
+        const year = this.selectedDate.getFullYear();
+        const month = String(this.selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(this.selectedDate.getDate()).padStart(2, '0');
+
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
     }
 
     // 格式化日期显示
@@ -234,13 +241,13 @@ export struct HomePage {
             // 底部内容
             if (this.planData.length != 0) {
                 List({ space: '14.00vp' }) {
-                    ForEach(this.planData, (item: ListPlanData) => {
+                    ForEach(this.planData, (item: PlanResponse) => {
                         ListItem() {
                             this.courseItem(item)
                         }
                         .width('92%')
                         .margin({ left: '4%', right: '4%' })
-                        .backgroundColor('#FFFFFF')
+                        .backgroundColor($r('sys.color.comp_background_list_card'))
                         .borderRadius(12)
                         .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
                     })
@@ -297,7 +304,7 @@ export struct HomePage {
     }
 
     @Builder
-    courseItem(item: ListPlanData) {
+    courseItem(item: PlanResponse) {
         Column() {
             Row() {
                 Column() {
@@ -314,7 +321,7 @@ export struct HomePage {
                         Text(`${item.amount} ${item.type}`)
                             .margin({ left: '10vp' })
                             .fontSize(14)
-                            .fontColor('#007DFF')
+                            .fontColor($r('sys.color.brand'))
                             .backgroundColor('#E6F3FF')
                             .padding({ left: 8, right: 8, top: 4, bottom: 4 })
                             .borderRadius(4)
@@ -330,12 +337,50 @@ export struct HomePage {
                 Button(item.is_checked ? '撤销打卡' : '打卡')
                     .type(ButtonType.Capsule)
                     .fontSize(15)
-                    .fontColor('#FFFFFF')
+                    .fontColor($r('sys.color.comp_background_list_card'))
                     .backgroundColor(item.is_checked ? '#FF9500' : '#34C759')
                     .padding({ left: 20, right: 20 })
                     .onClick(() => {
                         // TODO: 打卡逻辑
-                        item.is_checked = item.is_checked ? 0 : 1;
+                        // item.is_checked = item.is_checked ? 0 : 1;
+                        console.info('is_checked: ', item.is_checked)
+                        AlertDialog.show({
+                            message: item.is_checked ? `确定要撤销这次打卡吗？` : `要开始打卡了吗？`,
+                            buttons: [
+                                { value: '取消', action: () => {} },
+                                { value: '确认', action: async () => {
+                                    try {
+                                        const data = {
+                                            id: item.record_id,
+                                            actual_time: this.formatDateTimeWithSelectedDate(),
+                                            is_checked: item.is_checked === 0 ? 1 : 0,
+                                            plan_id: item.plan_id,
+                                        } as PutRecordRequest
+
+                                        const res = await recordManager.updateRecordCheckIn(data)
+                                        if (res) {
+                                            await this.loadData();
+                                            promptAction.showToast({
+                                                message: '打卡成功',
+                                                duration: 2000
+                                            });
+                                        } else {
+                                            promptAction.showToast({
+                                                message: '打卡失败，请重试',
+                                                duration: 2000
+                                            });
+                                        }
+
+                                    } catch (error) {
+                                        console.error('打卡失败:', error);
+                                        promptAction.showToast({
+                                            message: '操作失败，请重试',
+                                            duration: 2000
+                                        });
+                                    }
+                                } }
+                            ]
+                        })
                     })
             }
             .justifyContent(FlexAlign.SpaceBetween)

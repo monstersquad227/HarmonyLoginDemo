@@ -1,4 +1,4 @@
-import { recordApiService, RecordResponse } from "../api/RecordApiService";
+import { PutRecordRequest, recordApiService, RecordResponse } from "../api/RecordApiService";
 
 export class RecordManager {
     private static instance: RecordManager;
@@ -17,6 +17,15 @@ export class RecordManager {
         } catch (err) {
             console.error('加载记录列表失败:', err)
             return []
+        }
+    }
+
+    async updateRecordCheckIn(data: PutRecordRequest): Promise<boolean> {
+        try {
+            return await recordApiService.putRecordCheckIn(data);
+        } catch (err) {
+            console.error('更新打卡失败:', err);
+            return false;
         }
     }
 }
