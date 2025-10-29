@@ -13,6 +13,7 @@ export struct HomePage {
     @State currentDate: Date = new Date();
     @State selectedDate: Date = new Date();
     @State planData: PlanResponse[] = [];
+    @State isRefreshing: boolean = false;
 
     // 定义事件 ID（与 MainTabs 中一致）
     private readonly SWITCH_TAB_EVENT_ID = 1001;
@@ -48,6 +49,28 @@ export struct HomePage {
     aboutToDisappear() {
         // 取消订阅
         emitter.off(this.SWITCH_TAB_EVENT_ID);
+    }
+
+    // 刷新数据
+    async handleRefresh() {
+        if (this.isRefreshing) return;
+
+        this.isRefreshing = true;
+        try {
+            await this.loadData();
+            promptAction.showToast({
+                message: '刷新成功',
+                duration: 1500
+            });
+        } catch (error) {
+            console.error('Refresh failed:', error);
+            promptAction.showToast({
+                message: '刷新失败，请重试',
+                duration: 2000
+            });
+        } finally {
+            this.isRefreshing = false;
+        }
     }
 
     // 获取月份的天数
@@ -240,25 +263,35 @@ export struct HomePage {
 
             // 底部内容
             if (this.planData.length != 0) {
-                List({ space: '14.00vp' }) {
-                    ForEach(this.planData, (item: PlanResponse) => {
-                        ListItem() {
-                            this.courseItem(item)
-                        }
-                        .width('92%')
-                        .margin({ left: '4%', right: '4%' })
-                        .backgroundColor($r('sys.color.comp_background_list_card'))
-                        .borderRadius(12)
-                        .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
-                    })
+                Refresh({ refreshing: this.isRefreshing }) {
+                    List({ space: '14.00vp' }) {
+                        ForEach(this.planData, (item: PlanResponse) => {
+                            ListItem() {
+                                this.courseItem(item)
+                            }
+                            .width('92%')
+                            .margin({ left: '4%', right: '4%' })
+                            .backgroundColor($r('sys.color.comp_background_list_card'))
+                            .borderRadius(12)
+                            .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
+                        })
+                    }
+                    .margin({ top: '8.00vp', bottom: '16.00vp' })
                 }
                 .layoutWeight(1)
-                .margin({ top: '8.00vp', bottom: '16.00vp' })
+                .onRefreshing(async () => {
+                    await this.handleRefresh();
+                })
             } else {
-                Text('明日再来')
-                    .fontSize(16)
-                    .fontColor('#999999')
-                    .margin({ top: 40 })
+                Refresh({ refreshing: this.isRefreshing }) {
+                    Text('明日再来')
+                        .fontSize(16)
+                        .fontColor('#999999')
+                        .margin({ top: 40 })
+                }
+                .onRefreshing(async () => {
+                    await this.handleRefresh();
+                })
             }
         }
         .width('100%')
