@@ -150,18 +150,6 @@ export struct PlanAddPage {
             console.log('添加用药方案数据:', JSON.stringify(request));
             await courseManager.createCourse(request);
 
-            // TODO: 调用 API 添加用药方案
-            // const request: PostCourseRequest = {
-            //     medicine_name: this.medicineName,
-            //     frequency: this.dailyCount,
-            //     medicine_type: this.medicineType,
-            //     medicine_timing: this.medicineTiming,
-            //     amount: parseFloat(this.amount),
-            //     type: this.unit,
-            //     plan_times: this.dailyTimes.join(',')
-            // };
-            // await courseManager.addCourse(request);
-
             // 设置刷新标记
             AppStorage.setOrCreate('shouldRefreshCourse', true);
 

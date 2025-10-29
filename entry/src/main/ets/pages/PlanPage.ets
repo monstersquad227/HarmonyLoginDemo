@@ -1,4 +1,4 @@
-import { CourseResponse, PutCourseRequest } from "../api/CourseApiService";
+import { CourseResponse, DeleteCourseRequest, PutCourseRequest } from "../api/CourseApiService";
 import { courseManager } from "../manager/CourseManager";
 import { PlanUpdatePage } from "./PlanUpdatePage";
 import { promptAction } from "@kit.ArkUI";
@@ -99,7 +99,11 @@ export struct PlanPage {
                     try {
                         console.log('结束用药: ', item.course_id);
                         // 调用 API 删除/结束用药
-                        // await courseManager.deleteCourse(item.course_id);
+                        const request: DeleteCourseRequest =  {
+                            user_id: Number(AppStorage.get('login_user_id')),
+                            medicine_name: item.medicine_name
+                        }
+                        await courseManager.removeCourse(request)
                         // 刷新列表
                         await this.loadData();
                         // 提示成功
