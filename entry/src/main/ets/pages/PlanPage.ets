@@ -8,6 +8,7 @@ import { PlanAddPage } from "./PlanAddPage";
 @Component
 export struct PlanPage {
     @State courseData: CourseResponse[] = [];
+    @State isRefreshing: boolean = false;
     @StorageLink('shouldRefreshCourse') @Watch('onShouldRefreshChanged') shouldRefreshCourse: boolean = false;
     @StorageLink('editingCourse') editingCourse: Object | null = null;
     private navPathStack: NavPathStack = new NavPathStack();
@@ -38,6 +39,19 @@ export struct PlanPage {
         } catch (error) {
             console.error('Failed to load course data:', error);
             this.courseData = [];
+        }
+    }
+
+    async handleRefresh() {
+        this.isRefreshing = true;
+        try {
+            await this.loadData();
+            promptAction.showToast({
+                message: '刷新成功',
+                duration: 1500
+            });
+        } finally {
+            this.isRefreshing = false;
         }
     }
 
@@ -111,32 +125,43 @@ export struct PlanPage {
             Column() {
                 // 列表区域
                 if (this.courseData.length > 0) {
-                    List({ space: '14.00vp' }) {
-                        ForEach(this.courseData, (item: CourseResponse) => {
-                            ListItem() {
-                                this.PlanItem(item)
-                            }
-                            .width('92%')
-                            .margin({ left: '4%', right: '4%' })
-                            .backgroundColor($r('sys.color.comp_background_list_card'))
-                            .borderRadius(12)
-                            .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
-                        })
+                    Refresh({ refreshing: this.isRefreshing}) {
+                        List({ space: '14.00vp' }) {
+                            ForEach(this.courseData, (item: CourseResponse) => {
+                                ListItem() {
+                                    this.PlanItem(item)
+                                }
+                                .width('92%')
+                                .margin({ left: '4%', right: '4%' })
+                                .backgroundColor($r('sys.color.comp_background_list_card'))
+                                .borderRadius(12)
+                                .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
+                            })
+                        }
+
+                        .margin({ top: '12.00vp' })
                     }
                     .layoutWeight(1)
-                    .margin({ top: '12.00vp' })
+                    .onRefreshing(async () => {
+                        await this.handleRefresh();
+                    })
                 } else {
-                    Column() {
-                        Text('暂无用药方案')
-                            .fontSize(16)
-                            .fontColor('#999999')
-                        Text('点击下方按钮添加')
-                            .fontSize(14)
-                            .fontColor('#CCCCCC')
-                            .margin({ top: 8 })
+                    Refresh({ refreshing: this.isRefreshing }) {
+                        Column() {
+                            Text('暂无用药方案')
+                                .fontSize(16)
+                                .fontColor('#999999')
+                            Text('点击下方按钮添加')
+                                .fontSize(14)
+                                .fontColor('#CCCCCC')
+                                .margin({ top: 8 })
+                        }
+                        .justifyContent(FlexAlign.Center)
                     }
                     .layoutWeight(1)
-                    .justifyContent(FlexAlign.Center)
+                    .onRefreshing(async () => {
+                        await this.handleRefresh();
+                    })
                 }
 
                 // 底部按钮
