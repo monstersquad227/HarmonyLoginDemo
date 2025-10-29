@@ -1,5 +1,7 @@
 import { promptAction } from "@kit.ArkUI";
 import { JSON } from "@kit.ArkTS";
+import { CreateCourseRequest } from "../api/CourseApiService";
+import { courseManager } from "../manager/CourseManager";
 
 interface SaveData {
     medicineName: string;
@@ -19,7 +21,7 @@ interface SaveData {
 export struct PlanAddPage {
     @State medicineName: string = '';
     @State mode: number = 0; // 0:每日, 1:间隔
-    @State dailyCount: number = 3;
+    @State dailyCount: number = 0;
     @State intervalDays: number = 2;
     @State intervalCount: number = 1;
     @State amount: string = '';
@@ -30,6 +32,30 @@ export struct PlanAddPage {
     @State intervalTimes: string[] = ['08:00'];
     @StorageProp('planNavStack') planNavStackObj: Object | null = null;
 
+    private generateCourseStartTime(): string {
+        const date = new Date();
+        let yearStr = date.getFullYear().toString()
+        let year = String(yearStr).padStart(2, '0')
+        let monthStr = (date.getMonth() + 1).toString()
+        let month = String(monthStr).padStart(2, '0')
+        let dayStr = date.getDate().toString()
+        let day = String(dayStr).padStart(2, '0')
+        let time = this.dailyTimes[0]
+        return `${year}-${month}-${day} ${time}`
+    }
+
+    private generateTime(date: string): string {
+        let time = date.split(' ')
+        if (time.length !== 2) {
+            return '';
+        }
+        let timePart = time[1];
+        let timeParts = timePart.split(':');
+        if (timeParts.length < 2) {
+            return '';
+        }
+        return `${timeParts[0]}:${timeParts[1]}`;
+    }
 
     private updateTimeCount(count: number, isDaily: boolean = true): void {
         if (isDaily) {
@@ -106,21 +132,23 @@ export struct PlanAddPage {
         }
 
         try {
-            const saveData: SaveData = {
-                medicineName: this.medicineName,
-                mode: this.mode,
-                dailyCount: this.dailyCount,
-                intervalDays: this.intervalDays,
-                intervalCount: this.intervalCount,
-                amount: this.amount,
-                unit: this.unit,
-                medicineType: this.medicineType,
-                medicineTiming: this.medicineTiming,
-                dailyTimes: this.dailyTimes,
-                intervalTimes: this.intervalTimes
+            const request: CreateCourseRequest = {
+                user_id: Number(AppStorage.get('login_user_id')), // 1
+                medicine_name: this.medicineName, // 厄贝沙坦氢氟噻嗪片
+                medicine_image: '', // ''
+                medicine_type: this.medicineType, // 0 外用； 1 内用
+                medicine_timing: this.medicineTiming, // 0 不限; 1 饭前用药; 2 饭后用药; 3 随餐用药; 4 睡前用药;
+                course_start_time: this.generateCourseStartTime(), // 开始日期  2025-05-27 19:00:00
+                course_start_times: this.dailyTimes,
+                status: 0, //方案状态 0 生效， 废弃； 创建时激活
+                amount: parseInt(this.amount), // 用药数量
+                type: this.unit, // 剂量单位
+                plan_time: this.generateTime(this.generateCourseStartTime()),
+                frequency: this.dailyCount,
             };
 
-            console.log('添加用药方案数据:', JSON.stringify(saveData));
+            console.log('添加用药方案数据:', JSON.stringify(request));
+            await courseManager.createCourse(request);
 
             // TODO: 调用 API 添加用药方案
             // const request: PostCourseRequest = {
@@ -234,22 +262,6 @@ export struct PlanAddPage {
                                 if (this.dailyCount < 1) {
                                     this.dailyCount = 3;
                                     this.updateTimeCount(this.dailyCount, true);
-                                }
-                            })
-
-                        Button('间隔')
-                            .layoutWeight(1)
-                            .height(42)
-                            .stateEffect(this.mode === 1)
-                            .backgroundColor(this.mode === 1 ? '#007DFF' : '#FFFFFF')
-                            .fontColor(this.mode === 1 ? '#FFFFFF' : '#007DFF')
-                            .fontSize(15)
-                            .border({ width: 1, color: '#007DFF', radius: 8 })
-                            .onClick(() => {
-                                this.mode = 1;
-                                if (this.intervalCount < 1) {
-                                    this.intervalCount = 1;
-                                    this.updateTimeCount(this.intervalCount, false);
                                 }
                             })
                     }
