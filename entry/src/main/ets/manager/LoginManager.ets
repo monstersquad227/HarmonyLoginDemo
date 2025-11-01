@@ -1,4 +1,6 @@
-import { CreateLoginRequest, loginApiService } from "../api/LoginApiService";
+import { CreateLoginRequest, CreatePushTokenRequest, loginApiService } from "../api/LoginApiService";
+import { JSON } from "@kit.ArkTS";
+import { data } from "@kit.TelephonyKit";
 
 export interface UserInfo {
     username: string;
@@ -163,6 +165,21 @@ export class LoginManager {
         } catch (error) {
             console.error('Failed to get remaining days:', error);
             return 0;
+        }
+    }
+
+    // 获取消息推送Token
+    async createPushToken(data: CreatePushTokenRequest): Promise<boolean> {
+        try {
+            const result = await loginApiService.updateUserNotificationToken(data)
+            if (result) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            console.error('createPushToken failed: ', JSON.stringify(err));
+            return false;
         }
     }
 }

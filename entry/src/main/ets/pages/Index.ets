@@ -1,4 +1,4 @@
-import { LoginManager } from '../manager/LoginManager';
+import { loginManager, LoginManager } from '../manager/LoginManager';
 import { HomePage } from './HomePage';
 import { PlanPage } from './PlanPage';
 import { ProfilePage } from './ProfilePage';
@@ -10,6 +10,9 @@ import { PrivacyPolicyPage } from './PrivacyPolicyPage';
 import { HuaweiAuthenticationProtocolPage } from './HuaweiAuthenticationProtocolPage';
 import { emitter } from '@kit.BasicServicesKit';
 import { notificationManager } from '@kit.NotificationKit';
+import { data } from '@kit.TelephonyKit';
+import { CreatePushTokenRequest } from '../api/LoginApiService';
+import { pushService } from '@kit.PushKit';
 
 @Entry
 @Component
@@ -269,11 +272,16 @@ struct MainTabs {
     async checkNotificationEnabled() {
         try {
             const isEnabled = await notificationManager.isNotificationEnabled();
-            console.log('notificationManager: ', isEnabled)
-            AppStorage.setOrCreate('NOTIFICATION', isEnabled)
+            console.log('notification: ', isEnabled)
+            if (isEnabled === false) {
+                const pushToken = await pushService.getToken()
+                const data = {
+                    push_token: pushToken
+                } as CreatePushTokenRequest;
+                await loginManager.createPushToken(data)
+            }
         } catch (err) {
-            console.error('notification 检查通知权限失败: ' + JSON.stringify(err));
-            AppStorage.setOrCreate('NOTIFICATION', false)
+            console.error('notification 未开启通知: ' + JSON.stringify(err));
         }
     }
 
