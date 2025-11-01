@@ -9,6 +9,7 @@ import { UserAgreementPage } from './UserAgreementPage';
 import { PrivacyPolicyPage } from './PrivacyPolicyPage';
 import { HuaweiAuthenticationProtocolPage } from './HuaweiAuthenticationProtocolPage';
 import { emitter } from '@kit.BasicServicesKit';
+import { notificationManager } from '@kit.NotificationKit';
 
 @Entry
 @Component
@@ -263,6 +264,19 @@ struct MainTabs {
         emitter.off(this.SWITCH_TAB_EVENT_ID);
     }
 
+
+    // 检查通知权限状态
+    async checkNotificationEnabled() {
+        try {
+            const isEnabled = await notificationManager.isNotificationEnabled();
+            console.log('notificationManager: ', isEnabled)
+            AppStorage.setOrCreate('NOTIFICATION', isEnabled)
+        } catch (err) {
+            console.error('notification 检查通知权限失败: ' + JSON.stringify(err));
+            AppStorage.setOrCreate('NOTIFICATION', false)
+        }
+    }
+
     build() {
         Tabs({ barPosition: BarPosition.End, controller: this.tabsController }) {
             TabContent() {
@@ -283,10 +297,17 @@ struct MainTabs {
             TabContent() {
                 ProfilePage()
             }
+            .onAppear(() => {
+                this.checkNotificationEnabled();
+            })
             .tabBar(this.TabBuilder('我的', 3, $r("app.media.me")))
         }
         .onChange((index: number) => {
             this.currentTabIndex = index;
+
+            if (index === 3) {
+                this.checkNotificationEnabled();
+            }
         })
         .barBackgroundColor($r('sys.color.comp_background_list_card'))
         .barMode(BarMode.Fixed)
