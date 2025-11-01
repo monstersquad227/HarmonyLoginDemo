@@ -15,7 +15,8 @@ export class LoginManager {
     private readonly LOGIN_TOKEN = 'login_token';
     private readonly LOGIN_USER_ID = 'login_user_id';
     private readonly LOGIN_HUAWEI_ID = 'login_huawei_id';
-    private  readonly LOGIN_PHONE = 'login_phone';
+    private readonly LOGIN_PHONE = 'login_phone';
+    private readonly NOTIFICATION = 'notification'
 
     private readonly LOGIN_EXPIRY_DAYS = 20;
     private readonly USERNAME_KEY = 'login_username';
@@ -39,6 +40,7 @@ export class LoginManager {
             PersistentStorage.persistProp(this.LOGIN_USER_ID, '')
             PersistentStorage.persistProp(this.LOGIN_HUAWEI_ID, '')
             PersistentStorage.persistProp(this.LOGIN_PHONE, '')
+            PersistentStorage.persistProp(this.NOTIFICATION, false)
 
             PersistentStorage.persistProp(this.USERNAME_KEY, '');
             PersistentStorage.persistProp(this.PASSWORD_KEY, '');
@@ -164,3 +166,5 @@ export class LoginManager {
         }
     }
 }
+
+export const loginManager = LoginManager.getInstance();
