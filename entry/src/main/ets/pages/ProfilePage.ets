@@ -1,10 +1,12 @@
-import { LoginManager, UserInfo } from '../manager/LoginManager';
 import { PersonalInfoPage, PersonalInfoParam } from './PersonalInfoPage';
 import { NoticePage } from './NoticePage';
 import { FeedbackPage } from './FeedbackPage';
 import { router } from '@kit.ArkUI';
 import { authentication } from '@kit.AccountKit';
 import { util } from '@kit.ArkTS';
+import { notificationManager } from '@kit.NotificationKit';
+import { common } from '@kit.AbilityKit';
+import { loginManager } from '../manager/LoginManager';
 
 @Entry
 @Component
@@ -13,13 +15,11 @@ export struct ProfilePage {
     @State nickname: string | undefined = '';
     @State openID: string | undefined = '';
     @State email: string | undefined = '';
-    // @State userInfo: UserInfo | null = null;
-    // @State remainingDays: number = 0;
-    private loginManager: LoginManager = LoginManager.getInstance();
+    @StorageLink('NOTIFICATION') isNotificationEnabled: boolean = false;
     private navPathStack: NavPathStack = new NavPathStack();
 
-    aboutToAppear() {
-        this.loadUserInfo();
+    async aboutToAppear() {
+        await this.loadUserInfo();
     }
 
     loadUserInfo() {
@@ -43,20 +43,61 @@ export struct ProfilePage {
             this.nickname = authorizationWithHuaweiIDCredential?.nickName;
             this.openID = authorizationWithHuaweiIDCredential?.openID;
             this.email = authorizationWithHuaweiIDCredential?.email;
-            // console.info('profileInfo email: ', authorizationWithHuaweiIDCredential?.email)
-            // console.info('profileInfo idToken: ', authorizationWithHuaweiIDCredential?.idToken)
-            // console.info('profileInfo unionID: ', authorizationWithHuaweiIDCredential?.unionID)
-            // console.info('profileInfo extraInfo: ', authorizationWithHuaweiIDCredential?.extraInfo)
-            // console.info('profileInfo openID: ', authorizationWithHuaweiIDCredential?.openID)
         })
     }
 
+    onPageShow(): void {
+        console.log('pageShow')
+    }
+
+    // 请求通知权限
+    async requestNotificationPermission() {
+        try {
+            const context = getContext(this) as common.UIAbilityContext;
+            await notificationManager.requestEnableNotification(context);
+
+            // 权限请求后由 MainTabs 的 onAppear 来检查并更新 AppStorage
+            AlertDialog.show({
+                message: '通知权限已开启,您将收到按时吃药的提醒',
+                buttons: [{ value: '知道了', action: () => {} }]
+            });
+        } catch (err) {
+            console.error('notification 请求通知权限失败:' + JSON.stringify(err));
+            // 用户拒绝了权限请求,引导去系统设置
+            this.openSystemSettings();
+        }
+    }
+
+    // 跳转到系统设置
+    openSystemSettings() {
+        AlertDialog.show({
+            title: '通知权限未开启',
+            message: '为了接收服药提醒,请前往设置打开通知权限',
+            primaryButton: {
+                value: '前往设置',
+                action: () => {
+                    try {
+                        const context = getContext(this) as common.UIAbilityContext;
+                        notificationManager.openNotificationSettings(context);
+                        // 用户从设置返回后，再次切换到该 Tab 时会自动检查权限
+                    } catch (err) {
+                        console.error('notification 打开设置失败:' + JSON.stringify(err));
+                    }
+                }
+            },
+            secondaryButton: {
+                value: '取消',
+                action: () => {
+                    // 用户取消后恢复 Toggle 状态
+                    this.isNotificationEnabled = AppStorage.get('NOTIFICATION') || false;
+                }
+            }
+        });
+    }
+
     handleLogout() {
-        this.loginManager.logout();
+        loginManager.logout();
         router.replaceUrl({ url: 'pages/Index' })
-        // 重启应用
-        // const context = getContext(this) as common.UIAbilityContext;
-        // context.startAbility(Want.prototype);
     }
 
     build() {
@@ -73,22 +114,16 @@ export struct ProfilePage {
                         .border({ width: 3, color: '#E6F3FF' })
 
                     // 用户名
-                    // Text(this.userInfo?.username || '用户8271034905')
                     Text(this.nickname? this.nickname : '用户8271034905')
                         .fontSize(20)
                         .fontWeight(FontWeight.Bold)
                         .fontColor('#111111')
                         .margin({ bottom: 8 })
-
-                    // 用户ID或其他信息（可选）
-                    // Text(this.email ? this.email : 'ID: 8271034905')
-                    //     .fontSize(14)
-                    //     .fontColor('#999999')
                 }
                 .width('92%')
                 .margin({ left: '4%', right: '4%', top: 12, bottom: 16 })
                 .padding({ top: 30, bottom: 30 })
-                .backgroundColor('#FFFFFF')
+                .backgroundColor($r('sys.color.comp_background_list_card'))
                 .borderRadius(12)
                 .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
 
@@ -120,7 +155,7 @@ export struct ProfilePage {
                 }
                 .width('92%')
                 .margin({ left: '4%', right: '4%', bottom: 16 })
-                .backgroundColor('#FFFFFF')
+                .backgroundColor($r('sys.color.comp_background_list_card'))
                 .borderRadius(12)
                 .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
 
@@ -132,7 +167,7 @@ export struct ProfilePage {
                     .fontSize(16)
                     .fontWeight(FontWeight.Medium)
                     .fontColor('#FF3B30')
-                    .backgroundColor('#FFFFFF')
+                    .backgroundColor($r('sys.color.comp_background_list_card'))
                     .border({ width: 1, color: '#FF3B30', radius: 24 })
                     .onClick(() => {
                         AlertDialog.show({
@@ -173,7 +208,6 @@ export struct ProfilePage {
     @Builder
     SettingItem(title: string, onClick: () => void) {
         Row() {
-            // 图标占位（可以根据不同项目添加不同图标）
             Row()
                 .width(32)
                 .height(32)
