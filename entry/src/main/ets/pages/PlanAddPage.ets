@@ -3,20 +3,6 @@ import { JSON } from "@kit.ArkTS";
 import { CreateCourseRequest } from "../api/CourseApiService";
 import { courseManager } from "../manager/CourseManager";
 
-interface SaveData {
-    medicineName: string;
-    mode: number;
-    dailyCount: number;
-    intervalDays: number;
-    intervalCount: number;
-    amount: string;
-    unit: string;
-    medicineType: number;
-    medicineTiming: number;
-    dailyTimes: string[];
-    intervalTimes: string[];
-}
-
 @Component
 export struct PlanAddPage {
     @State medicineName: string = '';
