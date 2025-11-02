@@ -284,7 +284,7 @@ export struct HomePage {
                 })
             } else {
                 Refresh({ refreshing: this.isRefreshing }) {
-                    Text('明日再来')
+                    Text('暂无用药方案')
                         .fontSize(16)
                         .fontColor('#999999')
                         .margin({ top: 40 })
