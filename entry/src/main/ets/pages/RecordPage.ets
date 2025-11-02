@@ -188,6 +188,7 @@ export struct RecordPage {
                             .fontSize(16)
                             .fontColor('#999999')
                     }
+                    .margin({ top: 40 })
                     .justifyContent(FlexAlign.Center)
                 }
                 .layoutWeight(1)

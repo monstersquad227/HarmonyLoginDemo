@@ -160,6 +160,7 @@ export struct PlanPage {
                                 .fontColor('#CCCCCC')
                                 .margin({ top: 8 })
                         }
+                        .margin({ top: 40})
                         .justifyContent(FlexAlign.Center)
                     }
                     .layoutWeight(1)
