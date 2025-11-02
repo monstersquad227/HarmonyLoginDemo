@@ -46,10 +46,10 @@ export struct PlanPage {
         this.isRefreshing = true;
         try {
             await this.loadData();
-            promptAction.showToast({
-                message: '刷新成功',
-                duration: 1500
-            });
+            // promptAction.showToast({
+            //     message: '刷新成功',
+            //     duration: 1500
+            // });
         } finally {
             this.isRefreshing = false;
         }

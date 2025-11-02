@@ -58,16 +58,16 @@ export struct HomePage {
         this.isRefreshing = true;
         try {
             await this.loadData();
-            promptAction.showToast({
-                message: '刷新成功',
-                duration: 1500
-            });
+            // promptAction.showToast({
+            //     message: '刷新成功',
+            //     duration: 1500
+            // });
         } catch (error) {
             console.error('Refresh failed:', error);
-            promptAction.showToast({
-                message: '刷新失败，请重试',
-                duration: 2000
-            });
+            // promptAction.showToast({
+            //     message: '刷新失败，请重试',
+            //     duration: 2000
+            // });
         } finally {
             this.isRefreshing = false;
         }
