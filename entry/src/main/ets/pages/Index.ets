@@ -29,7 +29,7 @@ struct Index {
             .setAgreementStatus(loginComponentManager.AgreementStatus.NOT_ACCEPTED)
             .onClickLoginWithHuaweiIDButton(async (error, res) => {
                 if (error) {
-                    promptAction.showToast({ message: error.message })
+                    promptAction.showToast({ message: '请先阅读并同意隐私协议' })
                     console.error('一键登陆失败: '+ error.message)
                 } else {
                     // console.info('华为登录成功');
@@ -232,7 +232,7 @@ struct Index {
     }
 
     @Builder
-    navDestinationBuilder(name: string, param: Object) {
+    navDestinationBuilder(name: string) {
         if (name === 'UserAgreementPage') {
             UserAgreementPage()
         } else if (name === 'PrivacyPolicyPage') {
