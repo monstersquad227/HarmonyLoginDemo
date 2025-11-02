@@ -296,16 +296,17 @@ struct MainTabs {
     async checkNotificationEnabled() {
         try {
             const isEnabled = await notificationManager.isNotificationEnabled();
-            console.log('notification: ', isEnabled)
-            if (isEnabled === true) {
-                const pushToken = await pushService.getToken()
-                const data = {
-                    push_token: pushToken
-                } as CreatePushTokenRequest;
-                await loginManager.createPushToken(data)
-            }
+            const pushToken = await pushService.getToken();
+
+            const data = {
+                push_token: pushToken,
+                notify_enabled: isEnabled
+            } as CreatePushTokenRequest;
+
+            await loginManager.createPushToken(data);
+            console.log('notification enabled: ', isEnabled);
         } catch (err) {
-            console.error('notification 未开启通知: ' + JSON.stringify(err));
+            console.error('notification failed: ' + JSON.stringify(err));
         }
     }
 

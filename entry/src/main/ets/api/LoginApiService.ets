@@ -27,7 +27,8 @@ interface LoginUserInfo {
 
 // PushToken
 export interface CreatePushTokenRequest {
-    push_token: string
+    push_token: string,
+    notify_enabled: boolean,
 }
 interface PushTokenApiResponse {
     code: number;
