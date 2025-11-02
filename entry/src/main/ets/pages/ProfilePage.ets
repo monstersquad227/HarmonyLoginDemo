@@ -46,55 +46,6 @@ export struct ProfilePage {
         })
     }
 
-    onPageShow(): void {
-        console.log('pageShow')
-    }
-
-    // 请求通知权限
-    async requestNotificationPermission() {
-        try {
-            const context = getContext(this) as common.UIAbilityContext;
-            await notificationManager.requestEnableNotification(context);
-
-            // 权限请求后由 MainTabs 的 onAppear 来检查并更新 AppStorage
-            AlertDialog.show({
-                message: '通知权限已开启,您将收到按时吃药的提醒',
-                buttons: [{ value: '知道了', action: () => {} }]
-            });
-        } catch (err) {
-            console.error('notification 请求通知权限失败:' + JSON.stringify(err));
-            // 用户拒绝了权限请求,引导去系统设置
-            this.openSystemSettings();
-        }
-    }
-
-    // 跳转到系统设置
-    openSystemSettings() {
-        AlertDialog.show({
-            title: '通知权限未开启',
-            message: '为了接收服药提醒,请前往设置打开通知权限',
-            primaryButton: {
-                value: '前往设置',
-                action: () => {
-                    try {
-                        const context = getContext(this) as common.UIAbilityContext;
-                        notificationManager.openNotificationSettings(context);
-                        // 用户从设置返回后，再次切换到该 Tab 时会自动检查权限
-                    } catch (err) {
-                        console.error('notification 打开设置失败:' + JSON.stringify(err));
-                    }
-                }
-            },
-            secondaryButton: {
-                value: '取消',
-                action: () => {
-                    // 用户取消后恢复 Toggle 状态
-                    this.isNotificationEnabled = AppStorage.get('NOTIFICATION') || false;
-                }
-            }
-        });
-    }
-
     handleLogout() {
         loginManager.logout();
         router.replaceUrl({ url: 'pages/Index' })
@@ -129,7 +80,7 @@ export struct ProfilePage {
 
                 // 设置列表
                 Column() {
-                    this.SettingItem('个人信息', () => {
+                    this.SettingItem('个人信息', $r('app.media.me'), () => {
                         this.navPathStack.pushPath({ name: 'PersonalInfoPage', param: {
                             avatar: this.avatar,
                             nickname: this.nickname,
@@ -141,7 +92,7 @@ export struct ProfilePage {
                         .color('#F0F0F0')
                         .margin({ left: 52 })
 
-                    this.SettingItem('常见问题', () => {
+                    this.SettingItem('常见问题', $r('app.media.question'), () => {
                         this.navPathStack.pushPath({ name: 'NoticePage' });
                     })
 
@@ -149,7 +100,7 @@ export struct ProfilePage {
                         .color('#F0F0F0')
                         .margin({ left: 52 })
 
-                    this.SettingItem('功能反馈', () => {
+                    this.SettingItem('功能反馈', $r('app.media.feedback'), () => {
                         this.navPathStack.pushPath({ name: 'FeedbackPage' });
                     })
                 }
@@ -206,12 +157,14 @@ export struct ProfilePage {
     }
 
     @Builder
-    SettingItem(title: string, onClick: () => void) {
+    SettingItem(title: string, icon: Resource, onClick: () => void) {
         Row() {
-            Row()
+            Image(icon)
                 .width(32)
                 .height(32)
+                .fillColor('#007DFF')
                 .backgroundColor('#E6F3FF')
+                .padding(4)
                 .borderRadius(8)
                 .margin({ right: 12 })
 
