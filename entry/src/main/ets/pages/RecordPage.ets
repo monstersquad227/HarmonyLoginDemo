@@ -8,9 +8,9 @@ import { promptAction } from "@kit.ArkUI";
 export struct RecordPage {
     @State recordData: RecordResponse[] = [];
     @State isRefreshing: boolean = false
-
     // 定义事件 ID（与 MainTabs 中一致）
     private readonly SWITCH_TAB_EVENT_ID = 1001;
+    private readonly REFRESH_RECORD_EVENT_ID = 2003;
 
     private translateStatusAndIsChecked(status: number, isChecked: number): string {
         if (isChecked === 1 && status === 0) {
@@ -43,7 +43,15 @@ export struct RecordPage {
     }
 
     async aboutToAppear() {
+        emitter.on({ eventId: this.REFRESH_RECORD_EVENT_ID }, async () => {
+            console.info('RecordPage received refresh event from tab switch');
+            await this.loadData();
+        });
         await this.loadData();
+    }
+
+    async aboutToDisappear() {
+        emitter.off(this.REFRESH_RECORD_EVENT_ID);
     }
 
     async loadData() {
@@ -62,16 +70,16 @@ export struct RecordPage {
         this.isRefreshing = true;
         try {
             await this.loadData();
-            promptAction.showToast({
-                message: '刷新成功',
-                duration: 1500
-            });
+            // promptAction.showToast({
+            //     message: '刷新成功',
+            //     duration: 1500
+            // });
         } catch (error) {
             console.error('Refresh failed:', error);
-            promptAction.showToast({
-                message: '刷新失败，请重试',
-                duration: 2000
-            });
+            // promptAction.showToast({
+            //     message: '刷新失败，请重试',
+            //     duration: 2000
+            // });
         } finally {
             this.isRefreshing = false;
         }
@@ -188,6 +196,7 @@ export struct RecordPage {
                             .fontSize(16)
                             .fontColor('#999999')
                     }
+                    .margin({ top: 40 })
                     .justifyContent(FlexAlign.Center)
                 }
                 .layoutWeight(1)
@@ -209,9 +218,9 @@ export struct RecordPage {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
-        const hour = String(date.getHours()).padStart(2, '0');
-        const minute = String(date.getMinutes()).padStart(2, '0');
+        // const hour = String(date.getHours()).padStart(2, '0');
+        // const minute = String(date.getMinutes()).padStart(2, '0');
 
-        return `${year}年${month}月${day}日 ${hour}:${minute}`;
+        return `${year}年${month}月${day}日`;
     }
 }

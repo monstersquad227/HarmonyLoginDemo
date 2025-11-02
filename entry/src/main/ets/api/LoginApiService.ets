@@ -25,6 +25,17 @@ interface LoginUserInfo {
     updated_at: string
 }
 
+// PushToken
+export interface CreatePushTokenRequest {
+    push_token: string,
+    notify_enabled: boolean,
+}
+interface PushTokenApiResponse {
+    code: number;
+    message: string;
+    result: boolean;
+}
+
 export class LoginApiService {
     private static instance: LoginApiService;
 
@@ -52,6 +63,20 @@ export class LoginApiService {
             return apiResponse.result as LoginResponse;
         }
         throw new Error('登录失败: ' + (apiResponse?.message || 'Unknown error'));
+    }
+
+    /**
+     * 获取用户通知Token
+     * @param data
+     * @returns Promise<>
+     */
+    async updateUserNotificationToken(data: CreatePushTokenRequest): Promise<boolean> {
+        const res = await httpClient.put('/user', data);
+        const apiResponse = res.result as PushTokenApiResponse;
+        if (apiResponse && apiResponse.code === 0 && apiResponse.result) {
+            return true;
+        }
+        throw new Error('PushToken失败: ' + (apiResponse?.message || 'Unknown error'));
     }
 }
 

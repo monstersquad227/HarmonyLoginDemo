@@ -3,7 +3,6 @@
     "pages/Index",
     "pages/HomePage",
     "pages/ProfilePage",
-    "pages/PersonalInfoPage",
     "pages/NoticePage",
     "pages/FeedbackPage",
     "pages/RecordPage",

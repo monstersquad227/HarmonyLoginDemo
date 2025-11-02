@@ -1,10 +1,12 @@
-import { LoginManager, UserInfo } from '../manager/LoginManager';
 import { PersonalInfoPage, PersonalInfoParam } from './PersonalInfoPage';
 import { NoticePage } from './NoticePage';
 import { FeedbackPage } from './FeedbackPage';
 import { router } from '@kit.ArkUI';
 import { authentication } from '@kit.AccountKit';
 import { util } from '@kit.ArkTS';
+import { notificationManager } from '@kit.NotificationKit';
+import { common } from '@kit.AbilityKit';
+import { loginManager } from '../manager/LoginManager';
 
 @Entry
 @Component
@@ -13,13 +15,11 @@ export struct ProfilePage {
     @State nickname: string | undefined = '';
     @State openID: string | undefined = '';
     @State email: string | undefined = '';
-    // @State userInfo: UserInfo | null = null;
-    // @State remainingDays: number = 0;
-    private loginManager: LoginManager = LoginManager.getInstance();
+    @StorageLink('NOTIFICATION') isNotificationEnabled: boolean = false;
     private navPathStack: NavPathStack = new NavPathStack();
 
-    aboutToAppear() {
-        this.loadUserInfo();
+    async aboutToAppear() {
+        await this.loadUserInfo();
     }
 
     loadUserInfo() {
@@ -43,20 +43,12 @@ export struct ProfilePage {
             this.nickname = authorizationWithHuaweiIDCredential?.nickName;
             this.openID = authorizationWithHuaweiIDCredential?.openID;
             this.email = authorizationWithHuaweiIDCredential?.email;
-            // console.info('profileInfo email: ', authorizationWithHuaweiIDCredential?.email)
-            // console.info('profileInfo idToken: ', authorizationWithHuaweiIDCredential?.idToken)
-            // console.info('profileInfo unionID: ', authorizationWithHuaweiIDCredential?.unionID)
-            // console.info('profileInfo extraInfo: ', authorizationWithHuaweiIDCredential?.extraInfo)
-            // console.info('profileInfo openID: ', authorizationWithHuaweiIDCredential?.openID)
         })
     }
 
     handleLogout() {
-        this.loginManager.logout();
+        loginManager.logout();
         router.replaceUrl({ url: 'pages/Index' })
-        // 重启应用
-        // const context = getContext(this) as common.UIAbilityContext;
-        // context.startAbility(Want.prototype);
     }
 
     build() {
@@ -73,28 +65,22 @@ export struct ProfilePage {
                         .border({ width: 3, color: '#E6F3FF' })
 
                     // 用户名
-                    // Text(this.userInfo?.username || '用户8271034905')
                     Text(this.nickname? this.nickname : '用户8271034905')
                         .fontSize(20)
                         .fontWeight(FontWeight.Bold)
                         .fontColor('#111111')
                         .margin({ bottom: 8 })
-
-                    // 用户ID或其他信息（可选）
-                    // Text(this.email ? this.email : 'ID: 8271034905')
-                    //     .fontSize(14)
-                    //     .fontColor('#999999')
                 }
                 .width('92%')
                 .margin({ left: '4%', right: '4%', top: 12, bottom: 16 })
                 .padding({ top: 30, bottom: 30 })
-                .backgroundColor('#FFFFFF')
+                .backgroundColor($r('sys.color.comp_background_list_card'))
                 .borderRadius(12)
                 .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
 
                 // 设置列表
                 Column() {
-                    this.SettingItem('个人信息', () => {
+                    this.SettingItem('个人信息', $r('app.media.me'), () => {
                         this.navPathStack.pushPath({ name: 'PersonalInfoPage', param: {
                             avatar: this.avatar,
                             nickname: this.nickname,
@@ -106,7 +92,7 @@ export struct ProfilePage {
                         .color('#F0F0F0')
                         .margin({ left: 52 })
 
-                    this.SettingItem('常见问题', () => {
+                    this.SettingItem('常见问题', $r('app.media.question'), () => {
                         this.navPathStack.pushPath({ name: 'NoticePage' });
                     })
 
@@ -114,13 +100,13 @@ export struct ProfilePage {
                         .color('#F0F0F0')
                         .margin({ left: 52 })
 
-                    this.SettingItem('功能反馈', () => {
+                    this.SettingItem('功能反馈', $r('app.media.feedback'), () => {
                         this.navPathStack.pushPath({ name: 'FeedbackPage' });
                     })
                 }
                 .width('92%')
                 .margin({ left: '4%', right: '4%', bottom: 16 })
-                .backgroundColor('#FFFFFF')
+                .backgroundColor($r('sys.color.comp_background_list_card'))
                 .borderRadius(12)
                 .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
 
@@ -132,7 +118,7 @@ export struct ProfilePage {
                     .fontSize(16)
                     .fontWeight(FontWeight.Medium)
                     .fontColor('#FF3B30')
-                    .backgroundColor('#FFFFFF')
+                    .backgroundColor($r('sys.color.comp_background_list_card'))
                     .border({ width: 1, color: '#FF3B30', radius: 24 })
                     .onClick(() => {
                         AlertDialog.show({
@@ -171,13 +157,14 @@ export struct ProfilePage {
     }
 
     @Builder
-    SettingItem(title: string, onClick: () => void) {
+    SettingItem(title: string, icon: Resource, onClick: () => void) {
         Row() {
-            // 图标占位（可以根据不同项目添加不同图标）
-            Row()
+            Image(icon)
                 .width(32)
                 .height(32)
+                .fillColor('#007DFF')
                 .backgroundColor('#E6F3FF')
+                .padding(4)
                 .borderRadius(8)
                 .margin({ right: 12 })
 

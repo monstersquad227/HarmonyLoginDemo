@@ -1,4 +1,4 @@
-import { LoginManager } from '../manager/LoginManager';
+import { loginManager, LoginManager } from '../manager/LoginManager';
 import { HomePage } from './HomePage';
 import { PlanPage } from './PlanPage';
 import { ProfilePage } from './ProfilePage';
@@ -9,6 +9,10 @@ import { UserAgreementPage } from './UserAgreementPage';
 import { PrivacyPolicyPage } from './PrivacyPolicyPage';
 import { HuaweiAuthenticationProtocolPage } from './HuaweiAuthenticationProtocolPage';
 import { emitter } from '@kit.BasicServicesKit';
+import { notificationManager } from '@kit.NotificationKit';
+import { data } from '@kit.TelephonyKit';
+import { CreatePushTokenRequest } from '../api/LoginApiService';
+import { pushService } from '@kit.PushKit';
 
 @Entry
 @Component
@@ -25,7 +29,7 @@ struct Index {
             .setAgreementStatus(loginComponentManager.AgreementStatus.NOT_ACCEPTED)
             .onClickLoginWithHuaweiIDButton(async (error, res) => {
                 if (error) {
-                    promptAction.showToast({ message: error.message })
+                    promptAction.showToast({ message: '请先阅读并同意隐私协议' })
                     console.error('一键登陆失败: '+ error.message)
                 } else {
                     // console.info('华为登录成功');
@@ -228,7 +232,7 @@ struct Index {
     }
 
     @Builder
-    navDestinationBuilder(name: string, param: Object) {
+    navDestinationBuilder(name: string) {
         if (name === 'UserAgreementPage') {
             UserAgreementPage()
         } else if (name === 'PrivacyPolicyPage') {
@@ -242,8 +246,11 @@ struct Index {
 @Component
 struct MainTabs {
     private tabsController: TabsController = new TabsController()
-    @State currentTabIndex: number = 0;
+    @Watch('onTabChange') @State currentTabIndex: number = 0;
     private readonly SWITCH_TAB_EVENT_ID = 1001;
+    private readonly REFRESH_HOME_EVENT_ID = 2001;
+    private readonly REFRESH_PLAN_EVENT_ID = 2002;
+    private readonly REFRESH_RECORD_EVENT_ID = 2003;
 
     aboutToAppear(): void {
         // 订阅切换 Tab 的事件
@@ -258,9 +265,49 @@ struct MainTabs {
             }
         });
     }
+
     aboutToDisappear(): void {
-        // 取消订阅
+        // 取消所有订阅
         emitter.off(this.SWITCH_TAB_EVENT_ID);
+        emitter.off(this.REFRESH_HOME_EVENT_ID);
+        emitter.off(this.REFRESH_PLAN_EVENT_ID);
+        emitter.off(this.REFRESH_RECORD_EVENT_ID);
+    }
+
+    onTabChange() {
+        // Tab 切换时发送对应事件
+        switch (this.currentTabIndex) {
+            case 0: // 首页
+                emitter.emit({ eventId: this.REFRESH_HOME_EVENT_ID });
+                break;
+            case 1: // 方案
+                emitter.emit({ eventId: this.REFRESH_PLAN_EVENT_ID });
+                break;
+            case 2: // 记录
+                emitter.emit({ eventId: this.REFRESH_RECORD_EVENT_ID });
+                break;
+            case 3: // 我的
+                this.checkNotificationEnabled();
+                break;
+        }
+    }
+
+    // 检查通知权限状态
+    async checkNotificationEnabled() {
+        try {
+            const isEnabled = await notificationManager.isNotificationEnabled();
+            const pushToken = await pushService.getToken();
+
+            const data = {
+                push_token: pushToken,
+                notify_enabled: isEnabled
+            } as CreatePushTokenRequest;
+
+            await loginManager.createPushToken(data);
+            console.log('notification enabled: ', isEnabled);
+        } catch (err) {
+            console.error('notification failed: ' + JSON.stringify(err));
+        }
     }
 
     build() {
@@ -283,10 +330,17 @@ struct MainTabs {
             TabContent() {
                 ProfilePage()
             }
+            .onAppear(() => {
+                this.checkNotificationEnabled();
+            })
             .tabBar(this.TabBuilder('我的', 3, $r("app.media.me")))
         }
         .onChange((index: number) => {
             this.currentTabIndex = index;
+        //
+        //     if (index === 3) {
+        //         this.checkNotificationEnabled();
+        //     }
         })
         .barBackgroundColor($r('sys.color.comp_background_list_card'))
         .barMode(BarMode.Fixed)

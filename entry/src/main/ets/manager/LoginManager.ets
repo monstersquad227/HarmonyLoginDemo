@@ -1,4 +1,6 @@
-import { CreateLoginRequest, loginApiService } from "../api/LoginApiService";
+import { CreateLoginRequest, CreatePushTokenRequest, loginApiService } from "../api/LoginApiService";
+import { JSON } from "@kit.ArkTS";
+import { data } from "@kit.TelephonyKit";
 
 export interface UserInfo {
     username: string;
@@ -15,7 +17,8 @@ export class LoginManager {
     private readonly LOGIN_TOKEN = 'login_token';
     private readonly LOGIN_USER_ID = 'login_user_id';
     private readonly LOGIN_HUAWEI_ID = 'login_huawei_id';
-    private  readonly LOGIN_PHONE = 'login_phone';
+    private readonly LOGIN_PHONE = 'login_phone';
+    private readonly NOTIFICATION = 'notification'
 
     private readonly LOGIN_EXPIRY_DAYS = 20;
     private readonly USERNAME_KEY = 'login_username';
@@ -39,6 +42,7 @@ export class LoginManager {
             PersistentStorage.persistProp(this.LOGIN_USER_ID, '')
             PersistentStorage.persistProp(this.LOGIN_HUAWEI_ID, '')
             PersistentStorage.persistProp(this.LOGIN_PHONE, '')
+            PersistentStorage.persistProp(this.NOTIFICATION, false)
 
             PersistentStorage.persistProp(this.USERNAME_KEY, '');
             PersistentStorage.persistProp(this.PASSWORD_KEY, '');
@@ -163,4 +167,21 @@ export class LoginManager {
             return 0;
         }
     }
+
+    // 获取消息推送Token
+    async createPushToken(data: CreatePushTokenRequest): Promise<boolean> {
+        try {
+            const result = await loginApiService.updateUserNotificationToken(data)
+            if (result) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (err) {
+            console.error('createPushToken failed: ', JSON.stringify(err));
+            return false;
+        }
+    }
 }
+
+export const loginManager = LoginManager.getInstance();
