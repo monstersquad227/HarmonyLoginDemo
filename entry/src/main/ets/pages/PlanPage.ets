@@ -3,6 +3,7 @@ import { courseManager } from "../manager/CourseManager";
 import { PlanUpdatePage } from "./PlanUpdatePage";
 import { promptAction } from "@kit.ArkUI";
 import { PlanAddPage } from "./PlanAddPage";
+import { emitter } from "@kit.BasicServicesKit";
 
 @Entry
 @Component
@@ -12,12 +13,22 @@ export struct PlanPage {
     @StorageLink('shouldRefreshCourse') @Watch('onShouldRefreshChanged') shouldRefreshCourse: boolean = false;
     @StorageLink('editingCourse') editingCourse: Object | null = null;
     private navPathStack: NavPathStack = new NavPathStack();
-
+    private readonly REFRESH_PLAN_EVENT_ID = 2002;
 
     async aboutToAppear() {
         // 初始化时存储 navPathStack
         AppStorage.setOrCreate('planNavStack', this.navPathStack);
+        // 订阅 Tab 切换刷新事件
+        emitter.on({ eventId: this.REFRESH_PLAN_EVENT_ID }, async () => {
+            console.info('PlanPage received refresh event from tab switch');
+            await this.loadData();
+        });
         await this.loadData();
+    }
+
+    aboutToDisappear() {
+        // 取消订阅
+        emitter.off(this.REFRESH_PLAN_EVENT_ID);
     }
 
     // 监听刷新标记变化

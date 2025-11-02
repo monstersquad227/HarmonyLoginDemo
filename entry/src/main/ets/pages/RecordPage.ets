@@ -8,9 +8,9 @@ import { promptAction } from "@kit.ArkUI";
 export struct RecordPage {
     @State recordData: RecordResponse[] = [];
     @State isRefreshing: boolean = false
-
     // 定义事件 ID（与 MainTabs 中一致）
     private readonly SWITCH_TAB_EVENT_ID = 1001;
+    private readonly REFRESH_RECORD_EVENT_ID = 2003;
 
     private translateStatusAndIsChecked(status: number, isChecked: number): string {
         if (isChecked === 1 && status === 0) {
@@ -43,7 +43,15 @@ export struct RecordPage {
     }
 
     async aboutToAppear() {
+        emitter.on({ eventId: this.REFRESH_RECORD_EVENT_ID }, async () => {
+            console.info('RecordPage received refresh event from tab switch');
+            await this.loadData();
+        });
         await this.loadData();
+    }
+
+    async aboutToDisappear() {
+        emitter.off(this.REFRESH_RECORD_EVENT_ID);
     }
 
     async loadData() {

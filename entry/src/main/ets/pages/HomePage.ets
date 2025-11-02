@@ -17,6 +17,7 @@ export struct HomePage {
 
     // 定义事件 ID（与 MainTabs 中一致）
     private readonly SWITCH_TAB_EVENT_ID = 1001;
+    private readonly REFRESH_HOME_EVENT_ID = 2001;
 
     async aboutToAppear() {
         // 订阅切换事件，直接在 HomePage 接收
@@ -41,6 +42,12 @@ export struct HomePage {
                 }
             }
         });
+
+        // 订阅tab切换事件
+        emitter.on({ eventId: this.REFRESH_HOME_EVENT_ID }, async () => {
+            console.info('HomePage received refresh event from tab switch');
+            await this.loadData();
+        });
         // 初始加载
         this.selectedDate = new Date(this.currentDate);
         await this.loadData();
@@ -49,6 +56,7 @@ export struct HomePage {
     aboutToDisappear() {
         // 取消订阅
         emitter.off(this.SWITCH_TAB_EVENT_ID);
+        emitter.off(this.REFRESH_HOME_EVENT_ID);
     }
 
     // 刷新数据
