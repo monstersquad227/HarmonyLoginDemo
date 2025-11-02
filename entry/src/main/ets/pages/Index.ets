@@ -273,7 +273,7 @@ struct MainTabs {
         try {
             const isEnabled = await notificationManager.isNotificationEnabled();
             console.log('notification: ', isEnabled)
-            if (isEnabled === false) {
+            if (isEnabled === true) {
                 const pushToken = await pushService.getToken()
                 const data = {
                     push_token: pushToken
