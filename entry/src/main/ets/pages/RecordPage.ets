@@ -26,7 +26,7 @@ export struct RecordPage {
         if (isChecked === 1 && status === 0) {
             return '#34C759' // 绿色 - 正常
         } else if (isChecked === 1 && status === 1) {
-            return '#FF9500' // 橙色 - 异常
+            return '#FFCC00' // 黄色 - 异常
         } else {
             return '#FF3B30' // 红色 - 未打卡
         }
