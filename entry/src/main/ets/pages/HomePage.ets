@@ -126,6 +126,20 @@ export struct HomePage {
         await this.loadData();
     }
 
+    // 上一个月
+    async previousMonth() {
+        const newDate = new Date(this.currentDate);
+        const currentDay = newDate.getDate();
+        newDate.setMonth(newDate.getMonth() - 1);
+        // 如果日期发生了意外变化（如1月31日变成3月3日），修正到上月最后一天
+        if (newDate.getDate() !== currentDay) {
+            newDate.setDate(0); // 设置为上个月的最后一天
+        }
+        this.currentDate = newDate;
+        this.selectedDate = newDate;
+        await this.loadData();
+    }
+
     // 今天
     async goToToday() {
         const today = new Date();
@@ -138,6 +152,20 @@ export struct HomePage {
     async nextDay() {
         const newDate = new Date(this.currentDate);
         newDate.setDate(newDate.getDate() + 1);
+        this.currentDate = newDate;
+        this.selectedDate = newDate;
+        await this.loadData();
+    }
+
+    // 下一个月
+    async nextMonth() {
+        const newDate = new Date(this.currentDate);
+        const currentDay = newDate.getDate();
+        newDate.setMonth(newDate.getMonth() + 1);
+        // 如果日期发生了意外变化，修正到当月最后一天
+        if (newDate.getDate() < currentDay) {
+            newDate.setDate(0); // 设置为当月的最后一天
+        }
         this.currentDate = newDate;
         this.selectedDate = newDate;
         await this.loadData();
@@ -192,7 +220,7 @@ export struct HomePage {
                 .backgroundColor('#F5F5F5')
                 .borderRadius(20)
                 .onClick(async () => {
-                    await this.previousDay();
+                    await this.previousMonth();
                 })
 
                 Text(this.formatDateHeader())
@@ -220,7 +248,7 @@ export struct HomePage {
                 .backgroundColor('#F5F5F5')
                 .borderRadius(20)
                 .onClick(async () => {
-                    await this.nextDay();
+                    await this.nextMonth();
                 })
             }
             .width('100%')
