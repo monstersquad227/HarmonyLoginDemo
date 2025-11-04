@@ -11,6 +11,7 @@ export interface RecordResponseContents {
     medicine_name: string,
     memo?: string,
     status: number,
+    time: string,
     is_checked: number,
 }
 

@@ -12,11 +12,13 @@ export struct RecordPage {
     private readonly SWITCH_TAB_EVENT_ID = 1001;
     private readonly REFRESH_RECORD_EVENT_ID = 2003;
 
-    private translateStatusAndIsChecked(status: number, isChecked: number): string {
+    private translateStatusAndIsChecked(status: number, isChecked: number, time: string): string {
         if (isChecked === 1 && status === 0) {
-            return '打卡正常'
+            // return '打卡正常'
+            return time
         } else if (isChecked === 1 && status === 1) {
-            return '时间异常'
+            // return '时间异常'
+            return time
         } else {
             return '未打卡'
         }
@@ -26,7 +28,7 @@ export struct RecordPage {
         if (isChecked === 1 && status === 0) {
             return '#34C759' // 绿色 - 正常
         } else if (isChecked === 1 && status === 1) {
-            return '#FFCC00' // 黄色 - 异常
+            return '#FF9500' // 橙色 - 异常
         } else {
             return '#FF3B30' // 红色 - 未打卡
         }
@@ -147,7 +149,7 @@ export struct RecordPage {
                                                     .fontColor('#333333')
                                                     .layoutWeight(1)
 
-                                                Text(this.translateStatusAndIsChecked(item.status, item.is_checked))
+                                                Text(this.translateStatusAndIsChecked(item.status, item.is_checked, item.time))
                                                     .fontSize(14)
                                                     .fontColor(this.translateStatusAndIsCheckedColor(item.status, item.is_checked))
                                                     .backgroundColor(this.translateStatusBgColor(item.status, item.is_checked))
