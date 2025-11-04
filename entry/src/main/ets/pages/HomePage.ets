@@ -189,6 +189,7 @@ export struct HomePage {
     // 点击日期
     async onDateClick(day: number) {
         this.selectedDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), day);
+        this.currentDate = this.selectedDate
         await this.loadData();
     }
 
