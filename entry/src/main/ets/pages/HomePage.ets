@@ -4,8 +4,11 @@ import { emitter } from "@kit.BasicServicesKit";
 import { recordManager } from "../manager/RecordManager";
 import { PutRecordRequest } from "../api/RecordApiService";
 import { promptAction } from "@kit.ArkUI";
-import { JSON } from "@kit.ArkTS";
 
+interface validateCheckInResponse {
+    isValid: boolean;
+    message: string;
+}
 
 @Entry
 @Component
@@ -191,6 +194,62 @@ export struct HomePage {
         this.selectedDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), day);
         this.currentDate = this.selectedDate
         await this.loadData();
+    }
+
+    // 验证打卡条件
+    validateCheckIn(item: PlanResponse): validateCheckInResponse {
+        const today = new Date();
+        const selectedDate = this.selectedDate;
+
+        // 判断1: 不能打不是今日的卡（打卡和撤销打卡都需要验证）
+        const isSameDay = today.getFullYear() === selectedDate.getFullYear() &&
+            today.getMonth() === selectedDate.getMonth() &&
+            today.getDate() === selectedDate.getDate();
+
+        if (!isSameDay) {
+            return { isValid: false, message: item.is_checked === 1 ? '只能撤销今日的打卡' : '只能打今日的卡' };
+        }
+
+        // 如果是撤销打卡，只需验证日期，无需验证时间
+        if (item.is_checked === 1) {
+            return { isValid: true, message: '' };
+        }
+
+        // 判断2: 在计划打卡时间前15分钟内才可以打卡
+        // 解析 plan_time 格式 "HH:mm"
+        const planTimeParts = item.plan_time.split(':');
+        if (planTimeParts.length !== 2) {
+            return { isValid: false, message: '计划时间格式错误' };
+        }
+
+        const planHour = parseInt(planTimeParts[0]);
+        const planMinute = parseInt(planTimeParts[1]);
+
+        // 创建计划时间的 Date 对象
+        const planDateTime = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate(),
+            planHour,
+            planMinute,
+            0
+        );
+
+        // 计算提前15分钟的时间
+        const earliestCheckInTime = new Date(planDateTime.getTime() - 15 * 60 * 1000);
+
+        // 当前时间
+        const now = new Date();
+
+        if (now < earliestCheckInTime) {
+            const minutesUntil = Math.ceil((earliestCheckInTime.getTime() - now.getTime()) / (60 * 1000));
+            return {
+                isValid: false,
+                message: `距离打卡时间还有${minutesUntil}分钟，请在 ${item.plan_time} 前15分钟内打卡`
+            };
+        }
+
+        return { isValid: true, message: '' };
     }
 
     async loadData() {
@@ -411,6 +470,15 @@ export struct HomePage {
                     .backgroundColor(item.is_checked ? '#FF9500' : '#34C759')
                     .padding({ left: 20, right: 20 })
                     .onClick(() => {
+                        // 验证打卡条件
+                        const validationResult = this.validateCheckIn(item);
+                        if (!validationResult.isValid) {
+                            promptAction.showToast({
+                                message: validationResult.message,
+                                duration: 2000
+                            });
+                            return;
+                        }
                         // TODO: 打卡逻辑
                         // item.is_checked = item.is_checked ? 0 : 1;
                         console.info('is_checked: ', item.is_checked)
