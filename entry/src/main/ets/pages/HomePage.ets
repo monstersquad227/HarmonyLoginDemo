@@ -199,21 +199,21 @@ export struct HomePage {
     // 验证打卡条件
     validateCheckIn(item: PlanResponse): validateCheckInResponse {
         const today = new Date();
-        const selectedDate = this.selectedDate;
+        // const selectedDate = this.selectedDate;
 
         // 判断1: 不能打不是今日的卡（打卡和撤销打卡都需要验证）
-        const isSameDay = today.getFullYear() === selectedDate.getFullYear() &&
-            today.getMonth() === selectedDate.getMonth() &&
-            today.getDate() === selectedDate.getDate();
-
-        if (!isSameDay) {
-            return { isValid: false, message: item.is_checked === 1 ? '只能撤销今日的打卡' : '只能打今日的卡' };
-        }
+        // const isSameDay = today.getFullYear() === selectedDate.getFullYear() &&
+        //     today.getMonth() === selectedDate.getMonth() &&
+        //     today.getDate() === selectedDate.getDate();
+        //
+        // if (!isSameDay) {
+        //     return { isValid: false, message: item.is_checked === 1 ? '只能撤销今日的打卡' : '只能打今日的卡' };
+        // }
 
         // 如果是撤销打卡，只需验证日期，无需验证时间
-        if (item.is_checked === 1) {
-            return { isValid: true, message: '' };
-        }
+        // if (item.is_checked === 1) {
+        //     return { isValid: true, message: '' };
+        // }
 
         // 判断2: 在计划打卡时间前15分钟内才可以打卡
         // 解析 plan_time 格式 "HH:mm"
@@ -242,14 +242,24 @@ export struct HomePage {
         const now = new Date();
 
         if (now < earliestCheckInTime) {
-            const minutesUntil = Math.ceil((earliestCheckInTime.getTime() - now.getTime()) / (60 * 1000));
+            // const minutesUntil = Math.ceil((earliestCheckInTime.getTime() - now.getTime()) / (60 * 1000));
             return {
                 isValid: false,
-                message: `距离打卡时间还有${minutesUntil}分钟，请在 ${item.plan_time} 前15分钟内打卡`
+                message: `请在规定时间内打卡`
             };
         }
 
         return { isValid: true, message: '' };
+    }
+
+    // 检查是否是过去的日期（用于按钮置灰）
+    isPastDate(selectedDate: Date): boolean {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const selected = new Date(selectedDate);
+        selected.setHours(0, 0, 0, 0);
+
+        return selected < today;
     }
 
     async loadData() {
@@ -463,11 +473,14 @@ export struct HomePage {
                 }
                 .alignItems(HorizontalAlign.Start)
 
-                Button(item.is_checked ? '撤销打卡' : '打卡')
+                Button(item.is_checked ? '已打卡' : '打卡')
                     .type(ButtonType.Capsule)
                     .fontSize(15)
-                    .fontColor($r('sys.color.comp_background_list_card'))
-                    .backgroundColor(item.is_checked ? '#FF9500' : '#34C759')
+                    .fontColor(this.isPastDate(this.selectedDate) ? '#666666' : $r('sys.color.comp_background_list_card'))
+                    .backgroundColor(this.isPastDate(this.selectedDate) ? '#E5E5E5' :
+                        (item.is_checked ? '#FF9500' : '#34C759'))
+                    .enabled(!this.isPastDate(this.selectedDate))
+                    .opacity(this.isPastDate(this.selectedDate) ? 0.8 : 1)
                     .padding({ left: 20, right: 20 })
                     .onClick(() => {
                         // 验证打卡条件
