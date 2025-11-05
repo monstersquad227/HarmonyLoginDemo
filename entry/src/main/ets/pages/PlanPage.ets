@@ -111,8 +111,8 @@ export struct PlanPage {
                         console.log('结束用药: ', item.course_id);
                         // 调用 API 删除/结束用药
                         const request: DeleteCourseRequest =  {
-                            user_id: Number(AppStorage.get('login_user_id')),
-                            medicine_name: item.medicine_name
+                            id: item.course_id,
+                            status: 1
                         }
                         await courseManager.removeCourse(request)
                         // 刷新列表

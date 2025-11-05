@@ -36,8 +36,8 @@ interface CreateCourseApiResponse {
 }
 
 export interface DeleteCourseRequest {
-    user_id?: number,
-    medicine_name: string
+    id: number,
+    status: number
 }
 
 interface DeleteCourseApiResponse {
