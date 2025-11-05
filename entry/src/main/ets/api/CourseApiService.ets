@@ -10,6 +10,7 @@ export interface CourseResponse {
     frequency: number,
     plan_times: string,
     type: string,
+    status: number,
     amount: number
 }
 

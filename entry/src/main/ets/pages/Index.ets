@@ -164,7 +164,7 @@ struct Index {
                             .width(80)
                             .margin({ bottom: 20 })
 
-                        Text('按时吃药')
+                        Text('按时用药')
                             .fontSize(28)
                             .fontWeight(FontWeight.Bold)
                             .margin({ bottom: 12 })
