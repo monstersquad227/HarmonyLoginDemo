@@ -151,6 +151,7 @@ export struct PlanPage {
                                 .backgroundColor($r('sys.color.comp_background_list_card'))
                                 .borderRadius(12)
                                 .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
+                                .opacity(item.status === 1 ? 0.4 : 1) // 不可用时整体透明度降低
                             })
                         }
 
@@ -208,11 +209,24 @@ export struct PlanPage {
         Column() {
             // 顶部标题与副标题
             Column() {
-                Text(item.medicine_name)
-                    .fontSize(18)
-                    .fontWeight(FontWeight.Bold)
-                    .fontColor('#111111')
-                    .alignSelf(ItemAlign.Start)
+                Row() {
+                    Text(item.medicine_name)
+                        .fontSize(18)
+                        .fontWeight(FontWeight.Bold)
+                        .fontColor(item.status === 1 ? '#999999' : '#111111')
+                        .alignSelf(ItemAlign.Start)
+
+                    // 不可用状态标签
+                    if (item.status === 1) {
+                        Text('已停用')
+                            .fontSize(12)
+                            .fontColor('#FF3B30')
+                            .backgroundColor('#FFE5E5')
+                            .borderRadius(4)
+                            .padding({ left: 8, right: 8, top: 2, bottom: 2 })
+                    }
+                }
+                .width('100%')
 
                 Text(this.splitDate(item.course_start_time) + ' 开始')
                     .fontSize(14)
@@ -228,8 +242,8 @@ export struct PlanPage {
                 // 次数标签
                 Text('每日 ' + item.frequency + ' 次')
                     .fontSize(14)
-                    .fontColor($r('sys.color.brand'))
-                    .backgroundColor('#E6F3FF')
+                    .fontColor(item.status === 1 ? '#999999' : $r('sys.color.brand'))
+                    .backgroundColor(item.status === 1 ? '#F5F5F5' : '#E6F3FF')
                     .borderRadius(4)
                     .padding({ left: 8, right: 8, top: 4, bottom: 4 })
 
@@ -247,8 +261,8 @@ export struct PlanPage {
                 // 类型标签右侧展示
                 Text(this.translateType(item.medicine_type.toString()))
                     .fontSize(14)
-                    .fontColor('#34C759')
-                    .backgroundColor('#E8F8ED')
+                    .fontColor(item.status === 1 ? '#999999' : '#34C759')
+                    .backgroundColor(item.status === 1 ? '#F5F5F5' : '#E8F8ED')
                     .borderRadius(4)
                     .padding({ left: 8, right: 8, top: 4, bottom: 4 })
             }
@@ -261,43 +275,62 @@ export struct PlanPage {
                 .margin({ left: 16, right: 16, top: 14, bottom: 12 })
 
             // 按钮区
-            Row() {
-                Button('修改方案')
-                    .height(38)
-                    .layoutWeight(1)
-                    .backgroundColor($r('sys.color.comp_background_list_card'))
-                    .border({ width: 1, color: '#E0E0E0', radius: 8 })
-                    .fontColor($r('sys.color.brand'))
-                    .fontSize(15)
-                    .onClick(() => {
-                        // this.onModifyScheme(item);
-                        this.navPathStack.pushPath({ name: 'PlanUpdatePage', param: {
-                            course_id: item.course_id,
-                            medicine_name: item.medicine_name,
-                            medicine_type: item.medicine_type,
-                            medicine_timing: item.medicine_timing,
-                            course_start_time: item.course_start_time,
-                            amount: item.amount,
-                            type: item.type,
-                            plan_time: item.plan_times.toString(),
-                            frequency: item.frequency
-                        } as PutCourseRequest });
-                    })
+            if (item.status === 0) {
+                Row() {
+                    Button('修改方案')
+                        .height(38)
+                        .layoutWeight(1)
+                        .backgroundColor($r('sys.color.comp_background_list_card'))
+                        .border({ width: 1, color: '#E0E0E0', radius: 8 })
+                        .fontColor($r('sys.color.brand'))
+                        .fontSize(15)
+                        .onClick(() => {
+                            // this.onModifyScheme(item);
+                            this.navPathStack.pushPath({ name: 'PlanUpdatePage', param: {
+                                course_id: item.course_id,
+                                medicine_name: item.medicine_name,
+                                medicine_type: item.medicine_type,
+                                medicine_timing: item.medicine_timing,
+                                course_start_time: item.course_start_time,
+                                amount: item.amount,
+                                type: item.type,
+                                plan_time: item.plan_times.toString(),
+                                frequency: item.frequency
+                            } as PutCourseRequest });
+                        })
 
-                Button('结束用药')
-                    .height(38)
-                    .layoutWeight(1)
-                    .backgroundColor($r('sys.color.comp_background_list_card'))
-                    .border({ width: 1, color: '#E0E0E0', radius: 8 })
-                    .fontColor('#FF3B30')
-                    .fontSize(15)
-                    .onClick(async () => {
-                        await this.onEndMedicine(item);
-                    })
-                    .margin({ left: 12 })
+                    Button('结束用药')
+                        .height(38)
+                        .layoutWeight(1)
+                        .backgroundColor($r('sys.color.comp_background_list_card'))
+                        .border({ width: 1, color: '#E0E0E0', radius: 8 })
+                        .fontColor('#FF3B30')
+                        .fontSize(15)
+                        .onClick(async () => {
+                            await this.onEndMedicine(item);
+                        })
+                        .margin({ left: 12 })
+                }
+                .width('100%')
+                .padding({ left: 16, right: 16, bottom: 16 })
+            } else {
+                // 不可用状态：只显示恢复按钮
+                Row() {
+                    Button('恢复方案')
+                        .height(38)
+                        .width('100%')
+                        .backgroundColor($r('sys.color.brand'))
+                        .fontColor($r('sys.color.comp_background_list_card'))
+                        .fontSize(15)
+                        .borderRadius(8)
+                        .onClick(async () => {
+                            // await this.onRestoreCourse(item);
+                        })
+                }
+                .width('100%')
+                .padding({ left: 16, right: 16, bottom: 16 })
             }
-            .width('100%')
-            .padding({ left: 16, right: 16, bottom: 16 })
+
         }
     }
 
