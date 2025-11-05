@@ -151,7 +151,6 @@ export struct PlanPage {
                                 .backgroundColor($r('sys.color.comp_background_list_card'))
                                 .borderRadius(12)
                                 .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
-                                .opacity(item.status === 1 ? 0.4 : 1) // 不可用时整体透明度降低
                             })
                         }
 
@@ -207,67 +206,72 @@ export struct PlanPage {
     @Builder
     PlanItem(item: CourseResponse) {
         Column() {
-            // 顶部标题与副标题
+            // 置灰部分
             Column() {
-                Row() {
-                    Text(item.medicine_name)
-                        .fontSize(18)
-                        .fontWeight(FontWeight.Bold)
-                        .fontColor(item.status === 1 ? '#999999' : '#111111')
-                        .alignSelf(ItemAlign.Start)
+                // 顶部标题与副标题
+                Column() {
+                    Row() {
+                        Text(item.medicine_name)
+                            .fontSize(18)
+                            .fontWeight(FontWeight.Bold)
+                            .fontColor(item.status === 1 ? '#999999' : '#111111')
+                            .alignSelf(ItemAlign.Start)
 
-                    // 不可用状态标签
-                    if (item.status === 1) {
-                        Text('已停用')
-                            .fontSize(12)
-                            .fontColor('#FF3B30')
-                            .backgroundColor('#FFE5E5')
-                            .borderRadius(4)
-                            .padding({ left: 8, right: 8, top: 2, bottom: 2 })
+                        // 不可用状态标签
+                        if (item.status === 1) {
+                            Text('已停用')
+                                .fontSize(12)
+                                .fontColor('#FF3B30')
+                                .backgroundColor('#FFE5E5')
+                                .borderRadius(4)
+                                .padding({ left: 8, right: 8, top: 2, bottom: 2 })
+                        }
                     }
+                    .width('100%')
+
+                    Text(this.splitDate(item.course_start_time) + ' 开始')
+                        .fontSize(14)
+                        .fontColor('#999999')
+                        .alignSelf(ItemAlign.Start)
+                        .margin({ top: 6 })
                 }
                 .width('100%')
+                .padding({ top: 16, left: 16, right: 16 })
 
-                Text(this.splitDate(item.course_start_time) + ' 开始')
-                    .fontSize(14)
-                    .fontColor('#999999')
-                    .alignSelf(ItemAlign.Start)
-                    .margin({ top: 6 })
+                // 信息标签区
+                Row() {
+                    // 次数标签
+                    Text('每日 ' + item.frequency + ' 次')
+                        .fontSize(14)
+                        .fontColor(item.status === 1 ? '#999999' : $r('sys.color.brand'))
+                        .backgroundColor(item.status === 1 ? '#F5F5F5' : '#E6F3FF')
+                        .borderRadius(4)
+                        .padding({ left: 8, right: 8, top: 4, bottom: 4 })
+
+                    // 时机标签
+                    Text(this.translateMedicineTime(item.medicine_timing?.toString()))
+                        .fontSize(14)
+                        .fontColor('#666666')
+                        .backgroundColor('#F5F5F5')
+                        .borderRadius(4)
+                        .padding({ left: 8, right: 8, top: 4, bottom: 4 })
+                        .margin({ left: 8 })
+
+                    Blank().layoutWeight(1)
+
+                    // 类型标签右侧展示
+                    Text(this.translateType(item.medicine_type.toString()))
+                        .fontSize(14)
+                        .fontColor(item.status === 1 ? '#999999' : '#34C759')
+                        .backgroundColor(item.status === 1 ? '#F5F5F5' : '#E8F8ED')
+                        .borderRadius(4)
+                        .padding({ left: 8, right: 8, top: 4, bottom: 4 })
+                }
+                .width('100%')
+                .padding({ left: 16, right: 16, top: 12 })
             }
             .width('100%')
-            .padding({ top: 16, left: 16, right: 16 })
-
-            // 信息标签区
-            Row() {
-                // 次数标签
-                Text('每日 ' + item.frequency + ' 次')
-                    .fontSize(14)
-                    .fontColor(item.status === 1 ? '#999999' : $r('sys.color.brand'))
-                    .backgroundColor(item.status === 1 ? '#F5F5F5' : '#E6F3FF')
-                    .borderRadius(4)
-                    .padding({ left: 8, right: 8, top: 4, bottom: 4 })
-
-                // 时机标签
-                Text(this.translateMedicineTime(item.medicine_timing?.toString()))
-                    .fontSize(14)
-                    .fontColor('#666666')
-                    .backgroundColor('#F5F5F5')
-                    .borderRadius(4)
-                    .padding({ left: 8, right: 8, top: 4, bottom: 4 })
-                    .margin({ left: 8 })
-
-                Blank().layoutWeight(1)
-
-                // 类型标签右侧展示
-                Text(this.translateType(item.medicine_type.toString()))
-                    .fontSize(14)
-                    .fontColor(item.status === 1 ? '#999999' : '#34C759')
-                    .backgroundColor(item.status === 1 ? '#F5F5F5' : '#E8F8ED')
-                    .borderRadius(4)
-                    .padding({ left: 8, right: 8, top: 4, bottom: 4 })
-            }
-            .width('100%')
-            .padding({ left: 16, right: 16, top: 12 })
+            .opacity(item.status === 1 ? 0.5 : 1)
 
             // 分隔线
             Divider()
