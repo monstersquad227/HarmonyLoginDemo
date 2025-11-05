@@ -8,7 +8,7 @@ import { promptAction } from '@kit.ArkUI';
 import { UserAgreementPage } from './UserAgreementPage';
 import { PrivacyPolicyPage } from './PrivacyPolicyPage';
 import { HuaweiAuthenticationProtocolPage } from './HuaweiAuthenticationProtocolPage';
-import { emitter } from '@kit.BasicServicesKit';
+import { BusinessError, emitter } from '@kit.BasicServicesKit';
 import { notificationManager } from '@kit.NotificationKit';
 import { data } from '@kit.TelephonyKit';
 import { CreatePushTokenRequest } from '../api/LoginApiService';
@@ -29,8 +29,10 @@ struct Index {
             .setAgreementStatus(loginComponentManager.AgreementStatus.NOT_ACCEPTED)
             .onClickLoginWithHuaweiIDButton(async (error, res) => {
                 if (error) {
-                    promptAction.showToast({ message: '请先阅读并同意隐私协议' })
-                    console.error('一键登陆失败: '+ error.message)
+                    // 细分错误处理
+                    this.handleLoginError(error);
+                    // promptAction.showToast({ message: '请先阅读并同意隐私协议' })
+                    // console.error('一键登陆失败: '+ error.message)
                 } else {
                     // console.info('华为登录成功');
                     // console.info('res.authorizationCode: ' + res.authorizationCode);
@@ -56,6 +58,67 @@ struct Index {
         tag: '华为账号用户认证协议',
         type: loginComponentManager.TextType.RICH_TEXT
     }];
+
+    // 新增：处理登录错误的方法
+    private handleLoginError(error: BusinessError) {
+        console.error('华为登录错误:', JSON.stringify(error));
+        let errorMessage = '登录失败，请重试';
+
+        // 根据错误码细分处理
+        if (error.code) {
+            switch (error.code) {
+                case 1001502001: // 账号未登录
+                    errorMessage = '请先登录华为账号';
+                    break;
+                case 1001502005: // 网络错误
+                    errorMessage = '网络丢失，请检查网络';
+                    break;
+                case 1001502009: // 内部错误
+                    errorMessage = '内部错误';
+                    break;
+                case 1001502012: // 用户取消授权
+                    errorMessage = '取消授权';
+                    break;
+                case 12300001: // 系统服务异常
+                    errorMessage = '系统服务异常';
+                    break;
+                case 1005300001: // 用户未同意用户协议
+                    errorMessage = '请先阅读并同意隐私协议';
+                    break;
+                case 1001500002: // 重复请求
+                    errorMessage = '重复请求';
+                    break;
+                default:
+                // 使用错误消息或默认消息
+                    errorMessage = error.message || '登录失败，请重试';
+                    console.error('未知错误码:', error.code);
+            }
+        } else if (error.message) {
+            // 如果没有错误码但有错误消息
+            if (error.message.includes('cancel')) {
+                errorMessage = '您已取消登录';
+            } else if (error.message.includes('network')) {
+                errorMessage = '网络连接失败，请检查网络';
+            } else if (error.message.includes('agreement')) {
+                errorMessage = '请先阅读并同意隐私协议';
+            } else {
+                errorMessage = error.message;
+            }
+        }
+
+        // 显示错误提示
+        promptAction.showToast({
+            message: errorMessage,
+            duration: 2500
+        });
+
+        // 记录详细错误信息供调试
+        console.error('登录失败详情:', {
+            code: error.code,
+            message: error.message,
+            fullError: error
+        });
+    }
 
     aboutToAppear() {
         // 初始化LoginManager
