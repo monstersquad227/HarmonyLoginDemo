@@ -323,10 +323,10 @@ export struct PlanPage {
                     Button('恢复方案')
                         .height(38)
                         .width('100%')
-                        .backgroundColor($r('sys.color.brand'))
-                        .fontColor($r('sys.color.comp_background_list_card'))
+                        .backgroundColor($r('sys.color.comp_background_list_card'))
+                        .fontColor($r('sys.color.brand'))
                         .fontSize(15)
-                        .borderRadius(8)
+                        .border({ width: 1, color: '#E0E0E0', radius: 8 })
                         .onClick(async () => {
                             // await this.onRestoreCourse(item);
                         })

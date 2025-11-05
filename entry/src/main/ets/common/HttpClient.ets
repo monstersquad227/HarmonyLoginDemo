@@ -12,8 +12,8 @@ export interface HttpClientApiResponse {
 // 简单的HTTP客户端
 export class HttpClient {
     private static instance: HttpClient;
-    // private baseURL: string = 'http://api.monstersquad.cn:15080/medicine';
-    private baseURL: string = 'http://10.11.11.166:8080/medicine';
+    private baseURL: string = 'http://api.monstersquad.cn:15080/medicine';
+    // private baseURL: string = 'http://10.11.11.166:8080/medicine';
     // private loginManager: LoginManager = LoginManager.getInstance();
 
     private constructor() {}
