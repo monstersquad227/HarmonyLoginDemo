@@ -4,6 +4,7 @@ import { emitter } from "@kit.BasicServicesKit";
 import { recordManager } from "../manager/RecordManager";
 import { PutRecordRequest } from "../api/RecordApiService";
 import { promptAction } from "@kit.ArkUI";
+import { vibrator } from "@kit.SensorServiceKit";
 
 interface validateCheckInResponse {
     isValid: boolean;
@@ -483,6 +484,18 @@ export struct HomePage {
                     .opacity(this.isPastDate(this.selectedDate) ? 0.8 : 1)
                     .padding({ left: 20, right: 20 })
                     .onClick(() => {
+                        // 触发震动反馈
+                        try {
+                            vibrator.startVibration({
+                                type: 'time',
+                                duration: 50  // 震动50毫秒，轻微震动
+                            }, {
+                                usage: 'touch'  // 触摸反馈类型
+                            });
+                        } catch (error) {
+                            console.error('Vibration failed:', error);
+                        }
+
                         // 验证打卡条件
                         const validationResult = this.validateCheckIn(item);
                         if (!validationResult.isValid) {
