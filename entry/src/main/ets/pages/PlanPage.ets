@@ -135,6 +135,39 @@ export struct PlanPage {
         });
     }
 
+    // 新增：恢复方案
+    async onRestoreCourse(item: CourseResponse) {
+        AlertDialog.show({
+            message: '确定恢复 ' + item.medicine_name + ' 用药方案吗？',
+            buttons: [
+                { value: '取消', action: () => { console.log('取消恢复方案'); } },
+                { value: '确定', fontColor: $r('sys.color.brand'), action: async () => {
+                    try {
+                        console.log('恢复方案: ', item.course_id);
+                        // TODO: 调用恢复方案的 API
+                        // 示例：await courseManager.restoreCourse(item.course_id)
+
+                        // 临时修改本地状态用于演示
+                        // item.status = 0;
+
+                        await this.loadData();
+                        promptAction.showToast({
+                            message: '方案已恢复',
+                            duration: 2000
+                        });
+                    } catch (error) {
+                        console.error('恢复方案失败:', error);
+                        promptAction.showToast({
+                            message: '操作失败，请重试',
+                            duration: 2000
+                        });
+                    }
+                }
+                }
+            ]
+        });
+    }
+
     build() {
         Navigation(this.navPathStack) {
             Column() {
@@ -328,7 +361,7 @@ export struct PlanPage {
                         .fontSize(15)
                         .border({ width: 1, color: '#E0E0E0', radius: 8 })
                         .onClick(async () => {
-                            // await this.onRestoreCourse(item);
+                            await this.onRestoreCourse(item);
                         })
                 }
                 .width('100%')
