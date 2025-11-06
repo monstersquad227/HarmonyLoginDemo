@@ -474,7 +474,10 @@ export struct HomePage {
                 }
                 .alignItems(HorizontalAlign.Start)
 
-                Button(item.is_checked ? '已打卡' : '打卡')
+                Button(
+                  item.is_checked
+                      ? (this.isPastDate(this.selectedDate) ? '已打卡' : '已打卡')
+                      : (this.isPastDate(this.selectedDate) ? '未打卡' : '打卡'))
                     .type(ButtonType.Capsule)
                     .fontSize(15)
                     .fontColor(this.isPastDate(this.selectedDate) ? '#666666' : $r('sys.color.comp_background_list_card'))
