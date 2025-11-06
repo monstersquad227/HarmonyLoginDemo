@@ -492,7 +492,9 @@ export struct HomePage {
                       : (this.isPastDate(this.selectedDate) ? '未打卡' : '打卡'))
                     .type(ButtonType.Capsule)
                     .fontSize(15)
-                    .fontColor(this.isPastDate(this.selectedDate) ? '#666666' : $r('sys.color.comp_background_list_card'))
+                    .fontColor(this.isPastDate(this.selectedDate)
+                        ? (item.is_checked ? (item.record_status === 1 ? '#FF9500' : '#34C759') : '#FF3B30')
+                        : $r('sys.color.comp_background_list_card'))
                     .backgroundColor(this.isPastDate(this.selectedDate) ? '#E5E5E5' :
                         (item.is_checked ? '#FF9500' : '#34C759'))
                     .enabled(!this.isPastDate(this.selectedDate))
