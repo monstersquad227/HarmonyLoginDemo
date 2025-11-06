@@ -1,4 +1,4 @@
-import { CourseResponse, DeleteCourseRequest, PutCourseRequest } from "../api/CourseApiService";
+import { CourseResponse, DeleteCourseRequest, PutCourseRequest, RestoreCourseRequest } from "../api/CourseApiService";
 import { courseManager } from "../manager/CourseManager";
 import { PlanUpdatePage } from "./PlanUpdatePage";
 import { promptAction } from "@kit.ArkUI";
@@ -144,12 +144,21 @@ export struct PlanPage {
                 { value: '取消', action: () => { console.log('取消恢复方案'); } },
                 { value: '确定', fontColor: $r('sys.color.brand'), action: async () => {
                     try {
-                        console.log('恢复方案: ', item.course_id);
+                        // console.log('恢复方案: ', item.course_id);
                         // TODO: 调用恢复方案的 API
                         // 示例：await courseManager.restoreCourse(item.course_id)
 
+                        const data = {
+                            id: item.course_id,
+                            user_id: Number(AppStorage.get('login_user_id')),
+                            medicine_name: item.medicine_name,
+                            status: 0
+                        } as RestoreCourseRequest
+
+                        // console.info('恢复方案data: ', JSON.stringify(data))
                         // 临时修改本地状态用于演示
                         // item.status = 0;
+                        await courseManager.restoreCourse(data)
 
                         await this.loadData();
                         promptAction.showToast({
