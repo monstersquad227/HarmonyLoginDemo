@@ -29,6 +29,19 @@ export interface CreateCourseRequest {
     frequency: number
 }
 
+export interface RestoreCourseRequest {
+    id: number;
+    user_id: number;
+    medicine_name: string;
+    status: number
+}
+
+interface PostRestoreCourseApiResponse {
+    code: number;
+    message: string;
+    result: number;
+}
+
 interface CreateCourseApiResponse {
     code: number;
     message: string;
@@ -141,6 +154,20 @@ export class CourseApiService {
             return ;
         }
         throw new Error('修改方案列表失败: ' + (putCourseApiResponse?.message || 'Unknown error'));
+    }
+
+    /**
+     * 恢复方案
+     * @param RestoreCourseRequest
+     * @returns Promise<CourseResponse>
+     */
+    async postRestoreCourse(data: RestoreCourseRequest): Promise<void> {
+        const res = await httpClient.post('/course/restore', data);
+        const postRestoreCourseApiResponse = res.result as PostRestoreCourseApiResponse;
+        if (postRestoreCourseApiResponse && postRestoreCourseApiResponse.code === 0 && postRestoreCourseApiResponse.result) {
+            return;
+        }
+        throw new Error('恢复方案失败: ' + (postRestoreCourseApiResponse?.message || 'Unknown error'))
     }
 }
 

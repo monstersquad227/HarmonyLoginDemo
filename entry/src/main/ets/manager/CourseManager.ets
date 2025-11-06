@@ -1,6 +1,7 @@
 import { courseApiService, CourseResponse, CreateCourseRequest,
     DeleteCourseRequest,
-    PutCourseRequest } from "../api/CourseApiService";
+    PutCourseRequest,
+    RestoreCourseRequest} from "../api/CourseApiService";
 
 
 export class CourseManager {
@@ -58,6 +59,18 @@ export class CourseManager {
             return await courseApiService.deleteCourse(data);
         } catch (err) {
             console.error('方案删除失败', err);
+            return;
+        }
+    }
+
+    /**
+     * 删除方案
+     */
+    async restoreCourse(data: RestoreCourseRequest): Promise<void> {
+        try {
+            return await courseApiService.postRestoreCourse(data)
+        } catch (err) {
+            console.error('方案恢复失败', err);
             return;
         }
     }
