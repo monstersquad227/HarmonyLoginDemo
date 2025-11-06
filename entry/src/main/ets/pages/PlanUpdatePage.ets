@@ -1,6 +1,7 @@
 import { PutCourseRequest } from "../api/CourseApiService";
 import { JSON } from "@kit.ArkTS";
 import { courseManager } from "../manager/CourseManager";
+import { VibrationUtil } from "../common/VibrationUtil";
 
 interface GeneratedObjectLiteralInterface_1 {
     medicineName: string;
@@ -202,6 +203,11 @@ export struct PlanUpdatePage {
                     this.updateTimeCount(this.dailyCount, true);
                 }
             }
+        })
+        .onBackPressed(() => {
+            // 触发震动反馈
+            VibrationUtil.light();
+            return false;
         })
     }
 
@@ -460,6 +466,11 @@ export struct PlanUpdatePage {
             .fontColor($r('sys.color.comp_background_list_card'))
             .backgroundColor($r('sys.color.brand'))
             .borderRadius(24)
-            .onClick(() => { this.handleSave(); })
+            .onClick(() => {
+                // 触发震动反馈
+                VibrationUtil.light();
+
+                this.handleSave();
+            })
     }
 }

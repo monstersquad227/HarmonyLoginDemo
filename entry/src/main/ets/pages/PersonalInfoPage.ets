@@ -1,3 +1,5 @@
+import { VibrationUtil } from "../common/VibrationUtil";
+
 export interface PersonalInfoParam {
     avatar: string;
     nickname: string;
@@ -142,6 +144,8 @@ export struct PersonalInfoPage {
         }
         .title('个人信息')
         .onBackPressed(() => {
+            // 触发震动反馈
+            VibrationUtil.light();
             return false;
         })
     }

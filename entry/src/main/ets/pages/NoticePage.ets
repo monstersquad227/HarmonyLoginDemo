@@ -1,3 +1,5 @@
+import { VibrationUtil } from "../common/VibrationUtil";
+
 @Entry
 @Component
 export struct NoticePage {
@@ -77,6 +79,11 @@ export struct NoticePage {
             .backgroundColor('#F7F8FA')
         }
         .title('常见问题')
+        .onBackPressed(() => {
+            // 触发震动反馈
+            VibrationUtil.light();
+            return false;
+        })
     }
 }
 

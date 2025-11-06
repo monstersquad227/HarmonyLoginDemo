@@ -13,6 +13,8 @@ import { notificationManager } from '@kit.NotificationKit';
 import { data } from '@kit.TelephonyKit';
 import { CreatePushTokenRequest } from '../api/LoginApiService';
 import { pushService } from '@kit.PushKit';
+import { vibrator } from '@kit.SensorServiceKit';
+import { VibrationUtil } from '../common/VibrationUtil';
 
 @Entry
 @Component
@@ -400,11 +402,14 @@ struct MainTabs {
         }
         .onChange((index: number) => {
             this.currentTabIndex = index;
-        //
+            // 触发震动反馈
+            VibrationUtil.light()
+
         //     if (index === 3) {
         //         this.checkNotificationEnabled();
         //     }
         })
+        .scrollable(false)
         .barBackgroundColor($r('sys.color.comp_background_list_card'))
         .barMode(BarMode.Fixed)
     }

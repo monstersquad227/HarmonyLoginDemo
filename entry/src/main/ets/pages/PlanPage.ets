@@ -4,6 +4,7 @@ import { PlanUpdatePage } from "./PlanUpdatePage";
 import { promptAction } from "@kit.ArkUI";
 import { PlanAddPage } from "./PlanAddPage";
 import { emitter } from "@kit.BasicServicesKit";
+import { VibrationUtil } from "../common/VibrationUtil";
 
 @Entry
 @Component
@@ -135,6 +136,39 @@ export struct PlanPage {
         });
     }
 
+    // 新增：恢复方案
+    async onRestoreCourse(item: CourseResponse) {
+        AlertDialog.show({
+            message: '确定恢复 ' + item.medicine_name + ' 用药方案吗？',
+            buttons: [
+                { value: '取消', action: () => { console.log('取消恢复方案'); } },
+                { value: '确定', fontColor: $r('sys.color.brand'), action: async () => {
+                    try {
+                        console.log('恢复方案: ', item.course_id);
+                        // TODO: 调用恢复方案的 API
+                        // 示例：await courseManager.restoreCourse(item.course_id)
+
+                        // 临时修改本地状态用于演示
+                        // item.status = 0;
+
+                        await this.loadData();
+                        promptAction.showToast({
+                            message: '方案已恢复',
+                            duration: 2000
+                        });
+                    } catch (error) {
+                        console.error('恢复方案失败:', error);
+                        promptAction.showToast({
+                            message: '操作失败，请重试',
+                            duration: 2000
+                        });
+                    }
+                }
+                }
+            ]
+        });
+    }
+
     build() {
         Navigation(this.navPathStack) {
             Column() {
@@ -153,11 +187,13 @@ export struct PlanPage {
                                 .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
                             })
                         }
-
                         .margin({ top: '12.00vp' })
                     }
                     .layoutWeight(1)
                     .onRefreshing(async () => {
+                        // 触发震动反馈
+                        VibrationUtil.light()
+
                         await this.handleRefresh();
                     })
                 } else {
@@ -176,6 +212,9 @@ export struct PlanPage {
                     }
                     .layoutWeight(1)
                     .onRefreshing(async () => {
+                        // 触发震动反馈
+                        VibrationUtil.light()
+
                         await this.handleRefresh();
                     })
                 }
@@ -192,6 +231,9 @@ export struct PlanPage {
                     .onClick(() => {
                         // TODO: 添加方案逻辑
                         console.log('添加方案');
+                        // 触发震动反馈
+                        VibrationUtil.light()
+
                         this.navPathStack.pushPath({ name: 'PlanAddPage' })
                     })
             }
@@ -289,6 +331,9 @@ export struct PlanPage {
                         .fontColor($r('sys.color.brand'))
                         .fontSize(15)
                         .onClick(() => {
+                            // 触发震动反馈
+                            VibrationUtil.medium()
+
                             // this.onModifyScheme(item);
                             this.navPathStack.pushPath({ name: 'PlanUpdatePage', param: {
                                 course_id: item.course_id,
@@ -311,6 +356,9 @@ export struct PlanPage {
                         .fontColor('#FF3B30')
                         .fontSize(15)
                         .onClick(async () => {
+                            // 触发震动反馈
+                            VibrationUtil.medium()
+
                             await this.onEndMedicine(item);
                         })
                         .margin({ left: 12 })
@@ -323,12 +371,15 @@ export struct PlanPage {
                     Button('恢复方案')
                         .height(38)
                         .width('100%')
-                        .backgroundColor($r('sys.color.brand'))
-                        .fontColor($r('sys.color.comp_background_list_card'))
+                        .backgroundColor($r('sys.color.comp_background_list_card'))
+                        .fontColor($r('sys.color.brand'))
                         .fontSize(15)
-                        .borderRadius(8)
+                        .border({ width: 1, color: '#E0E0E0', radius: 8 })
                         .onClick(async () => {
-                            // await this.onRestoreCourse(item);
+                            // 触发震动反馈
+                            VibrationUtil.light()
+
+                            await this.onRestoreCourse(item);
                         })
                 }
                 .width('100%')

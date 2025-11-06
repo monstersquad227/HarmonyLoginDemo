@@ -5,6 +5,7 @@ import { recordManager } from "../manager/RecordManager";
 import { PutRecordRequest } from "../api/RecordApiService";
 import { promptAction } from "@kit.ArkUI";
 import { vibrator } from "@kit.SensorServiceKit";
+import { VibrationUtil } from "../common/VibrationUtil";
 
 interface validateCheckInResponse {
     isValid: boolean;
@@ -291,6 +292,8 @@ export struct HomePage {
                 .backgroundColor('#F5F5F5')
                 .borderRadius(20)
                 .onClick(async () => {
+                    // 触发震动反馈
+                    VibrationUtil.light()
                     await this.previousMonth();
                 })
 
@@ -305,6 +308,8 @@ export struct HomePage {
                     .fontColor('#333333')
                     .borderRadius(20)
                     .onClick(async () => {
+                        // 触发震动反馈
+                        VibrationUtil.light()
                         await this.goToToday()
                     })
 
@@ -319,6 +324,8 @@ export struct HomePage {
                 .backgroundColor('#F5F5F5')
                 .borderRadius(20)
                 .onClick(async () => {
+                    // 触发震动反馈
+                    VibrationUtil.light()
                     await this.nextMonth();
                 })
             }
@@ -357,6 +364,8 @@ export struct HomePage {
                                 .fontWeight(day > 0 && (this.isSelectedDate(day) || this.isToday(day)) ? FontWeight.Bold : FontWeight.Normal)
                                 .onClick(async () => {
                                     if (day > 0) {
+                                        // 触发震动反馈
+                                        VibrationUtil.light()
                                         await this.onDateClick(day);
                                     }
                                 })
@@ -387,6 +396,9 @@ export struct HomePage {
                 }
                 .layoutWeight(1)
                 .onRefreshing(async () => {
+                    // 触发震动反馈
+                    VibrationUtil.light()
+
                     await this.handleRefresh();
                 })
             } else {
@@ -474,7 +486,10 @@ export struct HomePage {
                 }
                 .alignItems(HorizontalAlign.Start)
 
-                Button(item.is_checked ? '已打卡' : '打卡')
+                Button(
+                  item.is_checked
+                      ? (this.isPastDate(this.selectedDate) ? '已打卡' : '已打卡')
+                      : (this.isPastDate(this.selectedDate) ? '未打卡' : '打卡'))
                     .type(ButtonType.Capsule)
                     .fontSize(15)
                     .fontColor(this.isPastDate(this.selectedDate) ? '#666666' : $r('sys.color.comp_background_list_card'))
@@ -485,16 +500,7 @@ export struct HomePage {
                     .padding({ left: 20, right: 20 })
                     .onClick(() => {
                         // 触发震动反馈
-                        try {
-                            vibrator.startVibration({
-                                type: 'time',
-                                duration: 50  // 震动50毫秒，轻微震动
-                            }, {
-                                usage: 'touch'  // 触摸反馈类型
-                            });
-                        } catch (error) {
-                            console.error('Vibration failed:', error);
-                        }
+                        VibrationUtil.medium()
 
                         // 验证打卡条件
                         const validationResult = this.validateCheckIn(item);

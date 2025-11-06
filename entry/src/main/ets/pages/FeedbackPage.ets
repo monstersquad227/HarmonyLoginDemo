@@ -1,4 +1,5 @@
 import { webview } from "@kit.ArkWeb";
+import { VibrationUtil } from "../common/VibrationUtil";
 
 @Entry
 @Component
@@ -14,7 +15,7 @@ export struct FeedbackPage {
                 if (this.isLoading && !this.loadError) {
                     Column() {
                         LoadingProgress()
-                            .color('#007DFF')
+                            .color($r('sys.color.brand'))
                             .width(50)
                             .height(50)
                             .margin({ bottom: 16 })
@@ -89,5 +90,10 @@ export struct FeedbackPage {
             .backgroundColor('#F7F8FA')
         }
         .title('功能反馈')
+        .onBackPressed(() => {
+            // 触发震动反馈
+            VibrationUtil.light();
+            return false;
+        })
     }
 }
