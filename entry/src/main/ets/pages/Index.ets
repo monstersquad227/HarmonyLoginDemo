@@ -13,6 +13,7 @@ import { notificationManager } from '@kit.NotificationKit';
 import { data } from '@kit.TelephonyKit';
 import { CreatePushTokenRequest } from '../api/LoginApiService';
 import { pushService } from '@kit.PushKit';
+import { vibrator } from '@kit.SensorServiceKit';
 
 @Entry
 @Component
@@ -400,6 +401,17 @@ struct MainTabs {
         }
         .onChange((index: number) => {
             this.currentTabIndex = index;
+            // 触发震动反馈
+            try {
+                vibrator.startVibration({
+                    type: 'time',
+                    duration: 50  // 震动50毫秒，轻微震动
+                }, {
+                    usage: 'touch'  // 触摸反馈类型
+                });
+            } catch (error) {
+                console.error('Vibration failed:', error);
+            }
         //
         //     if (index === 3) {
         //         this.checkNotificationEnabled();

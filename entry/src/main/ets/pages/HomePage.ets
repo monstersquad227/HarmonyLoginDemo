@@ -291,6 +291,17 @@ export struct HomePage {
                 .backgroundColor('#F5F5F5')
                 .borderRadius(20)
                 .onClick(async () => {
+                    // 触发震动反馈
+                    try {
+                        vibrator.startVibration({
+                            type: 'time',
+                            duration: 20  // 震动50毫秒，轻微震动
+                        }, {
+                            usage: 'touch'  // 触摸反馈类型
+                        });
+                    } catch (error) {
+                        console.error('Vibration failed:', error);
+                    }
                     await this.previousMonth();
                 })
 
@@ -305,6 +316,17 @@ export struct HomePage {
                     .fontColor('#333333')
                     .borderRadius(20)
                     .onClick(async () => {
+                        // 触发震动反馈
+                        try {
+                            vibrator.startVibration({
+                                type: 'time',
+                                duration: 20  // 震动50毫秒，轻微震动
+                            }, {
+                                usage: 'touch'  // 触摸反馈类型
+                            });
+                        } catch (error) {
+                            console.error('Vibration failed:', error);
+                        }
                         await this.goToToday()
                     })
 
@@ -319,6 +341,17 @@ export struct HomePage {
                 .backgroundColor('#F5F5F5')
                 .borderRadius(20)
                 .onClick(async () => {
+                    // 触发震动反馈
+                    try {
+                        vibrator.startVibration({
+                            type: 'time',
+                            duration: 20  // 震动50毫秒，轻微震动
+                        }, {
+                            usage: 'touch'  // 触摸反馈类型
+                        });
+                    } catch (error) {
+                        console.error('Vibration failed:', error);
+                    }
                     await this.nextMonth();
                 })
             }
@@ -357,6 +390,17 @@ export struct HomePage {
                                 .fontWeight(day > 0 && (this.isSelectedDate(day) || this.isToday(day)) ? FontWeight.Bold : FontWeight.Normal)
                                 .onClick(async () => {
                                     if (day > 0) {
+                                        // 触发震动反馈
+                                        try {
+                                            vibrator.startVibration({
+                                                type: 'time',
+                                                duration: 20  // 震动50毫秒，轻微震动
+                                            }, {
+                                                usage: 'touch'  // 触摸反馈类型
+                                            });
+                                        } catch (error) {
+                                            console.error('Vibration failed:', error);
+                                        }
                                         await this.onDateClick(day);
                                     }
                                 })
