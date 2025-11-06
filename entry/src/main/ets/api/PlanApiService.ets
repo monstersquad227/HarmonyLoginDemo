@@ -9,7 +9,8 @@ export interface PlanResponse {
     amount: number,
     type: string,
     plan_time: string,
-    record_id: number
+    record_id: number,
+    record_status?: number
 }
 
 // Api接口返回数据
