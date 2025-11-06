@@ -2,6 +2,7 @@ import { promptAction } from "@kit.ArkUI";
 import { JSON } from "@kit.ArkTS";
 import { CreateCourseRequest } from "../api/CourseApiService";
 import { courseManager } from "../manager/CourseManager";
+import { VibrationUtil } from "../common/VibrationUtil";
 
 @Component
 export struct PlanAddPage {
@@ -187,6 +188,11 @@ export struct PlanAddPage {
             .backgroundColor('#F7F8FA')
         }
         .title('添加用药方案')
+        .onBackPressed(() => {
+            // 触发震动反馈
+            VibrationUtil.light();
+            return false;
+        })
     }
 
     @Builder
@@ -542,6 +548,10 @@ export struct PlanAddPage {
             .fontColor($r('sys.color.comp_background_list_card'))
             .backgroundColor($r('sys.color.brand'))
             .borderRadius(24)
-            .onClick(() => { this.handleSave(); })
+            .onClick(() => {
+                // 触发震动反馈
+                VibrationUtil.light();
+                this.handleSave();
+            })
     }
 }

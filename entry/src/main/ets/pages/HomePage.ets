@@ -5,6 +5,7 @@ import { recordManager } from "../manager/RecordManager";
 import { PutRecordRequest } from "../api/RecordApiService";
 import { promptAction } from "@kit.ArkUI";
 import { vibrator } from "@kit.SensorServiceKit";
+import { VibrationUtil } from "../common/VibrationUtil";
 
 interface validateCheckInResponse {
     isValid: boolean;
@@ -292,16 +293,7 @@ export struct HomePage {
                 .borderRadius(20)
                 .onClick(async () => {
                     // 触发震动反馈
-                    try {
-                        vibrator.startVibration({
-                            type: 'time',
-                            duration: 20  // 震动50毫秒，轻微震动
-                        }, {
-                            usage: 'touch'  // 触摸反馈类型
-                        });
-                    } catch (error) {
-                        console.error('Vibration failed:', error);
-                    }
+                    VibrationUtil.light()
                     await this.previousMonth();
                 })
 
@@ -317,16 +309,7 @@ export struct HomePage {
                     .borderRadius(20)
                     .onClick(async () => {
                         // 触发震动反馈
-                        try {
-                            vibrator.startVibration({
-                                type: 'time',
-                                duration: 20  // 震动50毫秒，轻微震动
-                            }, {
-                                usage: 'touch'  // 触摸反馈类型
-                            });
-                        } catch (error) {
-                            console.error('Vibration failed:', error);
-                        }
+                        VibrationUtil.light()
                         await this.goToToday()
                     })
 
@@ -342,16 +325,7 @@ export struct HomePage {
                 .borderRadius(20)
                 .onClick(async () => {
                     // 触发震动反馈
-                    try {
-                        vibrator.startVibration({
-                            type: 'time',
-                            duration: 20  // 震动50毫秒，轻微震动
-                        }, {
-                            usage: 'touch'  // 触摸反馈类型
-                        });
-                    } catch (error) {
-                        console.error('Vibration failed:', error);
-                    }
+                    VibrationUtil.light()
                     await this.nextMonth();
                 })
             }
@@ -391,16 +365,7 @@ export struct HomePage {
                                 .onClick(async () => {
                                     if (day > 0) {
                                         // 触发震动反馈
-                                        try {
-                                            vibrator.startVibration({
-                                                type: 'time',
-                                                duration: 20  // 震动50毫秒，轻微震动
-                                            }, {
-                                                usage: 'touch'  // 触摸反馈类型
-                                            });
-                                        } catch (error) {
-                                            console.error('Vibration failed:', error);
-                                        }
+                                        VibrationUtil.light()
                                         await this.onDateClick(day);
                                     }
                                 })
@@ -431,6 +396,9 @@ export struct HomePage {
                 }
                 .layoutWeight(1)
                 .onRefreshing(async () => {
+                    // 触发震动反馈
+                    VibrationUtil.light()
+
                     await this.handleRefresh();
                 })
             } else {
@@ -532,16 +500,7 @@ export struct HomePage {
                     .padding({ left: 20, right: 20 })
                     .onClick(() => {
                         // 触发震动反馈
-                        try {
-                            vibrator.startVibration({
-                                type: 'time',
-                                duration: 50  // 震动50毫秒，轻微震动
-                            }, {
-                                usage: 'touch'  // 触摸反馈类型
-                            });
-                        } catch (error) {
-                            console.error('Vibration failed:', error);
-                        }
+                        VibrationUtil.medium()
 
                         // 验证打卡条件
                         const validationResult = this.validateCheckIn(item);

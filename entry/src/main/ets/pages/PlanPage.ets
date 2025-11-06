@@ -4,6 +4,7 @@ import { PlanUpdatePage } from "./PlanUpdatePage";
 import { promptAction } from "@kit.ArkUI";
 import { PlanAddPage } from "./PlanAddPage";
 import { emitter } from "@kit.BasicServicesKit";
+import { VibrationUtil } from "../common/VibrationUtil";
 
 @Entry
 @Component
@@ -186,11 +187,13 @@ export struct PlanPage {
                                 .shadow({ radius: 8, color: '#12000000', offsetX: 0, offsetY: 2 })
                             })
                         }
-
                         .margin({ top: '12.00vp' })
                     }
                     .layoutWeight(1)
                     .onRefreshing(async () => {
+                        // 触发震动反馈
+                        VibrationUtil.light()
+
                         await this.handleRefresh();
                     })
                 } else {
@@ -209,6 +212,9 @@ export struct PlanPage {
                     }
                     .layoutWeight(1)
                     .onRefreshing(async () => {
+                        // 触发震动反馈
+                        VibrationUtil.light()
+
                         await this.handleRefresh();
                     })
                 }
@@ -225,6 +231,9 @@ export struct PlanPage {
                     .onClick(() => {
                         // TODO: 添加方案逻辑
                         console.log('添加方案');
+                        // 触发震动反馈
+                        VibrationUtil.light()
+
                         this.navPathStack.pushPath({ name: 'PlanAddPage' })
                     })
             }
@@ -322,6 +331,9 @@ export struct PlanPage {
                         .fontColor($r('sys.color.brand'))
                         .fontSize(15)
                         .onClick(() => {
+                            // 触发震动反馈
+                            VibrationUtil.medium()
+
                             // this.onModifyScheme(item);
                             this.navPathStack.pushPath({ name: 'PlanUpdatePage', param: {
                                 course_id: item.course_id,
@@ -344,6 +356,9 @@ export struct PlanPage {
                         .fontColor('#FF3B30')
                         .fontSize(15)
                         .onClick(async () => {
+                            // 触发震动反馈
+                            VibrationUtil.medium()
+
                             await this.onEndMedicine(item);
                         })
                         .margin({ left: 12 })
@@ -361,6 +376,9 @@ export struct PlanPage {
                         .fontSize(15)
                         .border({ width: 1, color: '#E0E0E0', radius: 8 })
                         .onClick(async () => {
+                            // 触发震动反馈
+                            VibrationUtil.light()
+
                             await this.onRestoreCourse(item);
                         })
                 }

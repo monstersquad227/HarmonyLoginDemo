@@ -2,6 +2,7 @@ import { RecordResponse, RecordResponseContents } from "../api/RecordApiService"
 import { recordManager } from "../manager/RecordManager"
 import { emitter } from "@kit.BasicServicesKit"
 import { promptAction } from "@kit.ArkUI";
+import { VibrationUtil } from "../common/VibrationUtil";
 
 @Entry
 @Component
@@ -132,7 +133,10 @@ export struct RecordPage {
                                     .backgroundColor($r('sys.color.comp_background_list_card'))
                                     .borderRadius({ topLeft: 12, topRight: 12 })
                                     .onClick(() => {
-                                        this.switchToHomeTab(group.actual_time)
+                                        // 触发震动反馈
+                                        VibrationUtil.light();
+
+                                        this.switchToHomeTab(group.actual_time);
                                     })
 
                                     // 分隔线
@@ -189,6 +193,9 @@ export struct RecordPage {
                 }
                 .layoutWeight(1)
                 .onRefreshing(async () => {
+                    // 触发震动反馈
+                    VibrationUtil.light();
+
                     await this.refreshData();
                 })
             } else {
@@ -203,6 +210,9 @@ export struct RecordPage {
                 }
                 .layoutWeight(1)
                 .onRefreshing(async () => {
+                    // 触发震动反馈
+                    VibrationUtil.light();
+
                     await this.refreshData();
                 })
             }
