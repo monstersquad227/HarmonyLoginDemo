@@ -134,7 +134,7 @@ export struct RecordPage {
                                     .borderRadius({ topLeft: 12, topRight: 12 })
                                     .onClick(() => {
                                         // 触发震动反馈
-                                        VibrationUtil.light();
+                                        VibrationUtil.medium();
 
                                         this.switchToHomeTab(group.actual_time);
                                     })
@@ -194,7 +194,7 @@ export struct RecordPage {
                 .layoutWeight(1)
                 .onRefreshing(async () => {
                     // 触发震动反馈
-                    VibrationUtil.light();
+                    VibrationUtil.medium();
 
                     await this.refreshData();
                 })
@@ -211,8 +211,7 @@ export struct RecordPage {
                 .layoutWeight(1)
                 .onRefreshing(async () => {
                     // 触发震动反馈
-                    VibrationUtil.light();
-
+                    VibrationUtil.medium();
                     await this.refreshData();
                 })
             }

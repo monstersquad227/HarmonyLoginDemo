@@ -293,7 +293,7 @@ export struct HomePage {
                 .borderRadius(20)
                 .onClick(async () => {
                     // 触发震动反馈
-                    VibrationUtil.light()
+                    VibrationUtil.medium()
                     await this.previousMonth();
                 })
 
@@ -309,7 +309,7 @@ export struct HomePage {
                     .borderRadius(20)
                     .onClick(async () => {
                         // 触发震动反馈
-                        VibrationUtil.light()
+                        VibrationUtil.medium()
                         await this.goToToday()
                     })
 
@@ -325,7 +325,7 @@ export struct HomePage {
                 .borderRadius(20)
                 .onClick(async () => {
                     // 触发震动反馈
-                    VibrationUtil.light()
+                    VibrationUtil.medium()
                     await this.nextMonth();
                 })
             }
@@ -365,7 +365,7 @@ export struct HomePage {
                                 .onClick(async () => {
                                     if (day > 0) {
                                         // 触发震动反馈
-                                        VibrationUtil.light()
+                                        VibrationUtil.medium()
                                         await this.onDateClick(day);
                                     }
                                 })
@@ -397,8 +397,7 @@ export struct HomePage {
                 .layoutWeight(1)
                 .onRefreshing(async () => {
                     // 触发震动反馈
-                    VibrationUtil.light()
-
+                    VibrationUtil.medium()
                     await this.handleRefresh();
                 })
             } else {

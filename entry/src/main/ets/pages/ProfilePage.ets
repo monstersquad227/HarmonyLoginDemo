@@ -83,7 +83,7 @@ export struct ProfilePage {
                 Column() {
                     this.SettingItem('个人信息', $r('app.media.me'), () => {
                         // 触发震动反馈
-                        VibrationUtil.light();
+                        VibrationUtil.medium();
                         this.navPathStack.pushPath({ name: 'PersonalInfoPage', param: {
                             avatar: this.avatar,
                             nickname: this.nickname,
@@ -97,7 +97,7 @@ export struct ProfilePage {
 
                     this.SettingItem('常见问题', $r('app.media.question'), () => {
                         // 触发震动反馈
-                        VibrationUtil.light();
+                        VibrationUtil.medium();
                         this.navPathStack.pushPath({ name: 'NoticePage' });
                     })
 
@@ -107,7 +107,7 @@ export struct ProfilePage {
 
                     this.SettingItem('功能反馈', $r('app.media.feedback'), () => {
                         // 触发震动反馈
-                        VibrationUtil.light();
+                        VibrationUtil.medium();
                         this.navPathStack.pushPath({ name: 'FeedbackPage' });
                     })
                 }

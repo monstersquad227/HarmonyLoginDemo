@@ -190,7 +190,7 @@ export struct PlanAddPage {
         .title('添加用药方案')
         .onBackPressed(() => {
             // 触发震动反馈
-            VibrationUtil.light();
+            VibrationUtil.medium();
             return false;
         })
     }
@@ -550,7 +550,7 @@ export struct PlanAddPage {
             .borderRadius(24)
             .onClick(() => {
                 // 触发震动反馈
-                VibrationUtil.light();
+                VibrationUtil.medium();
                 this.handleSave();
             })
     }

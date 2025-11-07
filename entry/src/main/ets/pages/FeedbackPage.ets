@@ -92,7 +92,7 @@ export struct FeedbackPage {
         .title('功能反馈')
         .onBackPressed(() => {
             // 触发震动反馈
-            VibrationUtil.light();
+            VibrationUtil.medium();
             return false;
         })
     }
