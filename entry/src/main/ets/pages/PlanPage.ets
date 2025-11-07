@@ -201,7 +201,7 @@ export struct PlanPage {
                     .layoutWeight(1)
                     .onRefreshing(async () => {
                         // 触发震动反馈
-                        VibrationUtil.light()
+                        VibrationUtil.medium()
 
                         await this.handleRefresh();
                     })
@@ -222,8 +222,7 @@ export struct PlanPage {
                     .layoutWeight(1)
                     .onRefreshing(async () => {
                         // 触发震动反馈
-                        VibrationUtil.light()
-
+                        VibrationUtil.medium()
                         await this.handleRefresh();
                     })
                 }
@@ -241,8 +240,7 @@ export struct PlanPage {
                         // TODO: 添加方案逻辑
                         console.log('添加方案');
                         // 触发震动反馈
-                        VibrationUtil.light()
-
+                        VibrationUtil.medium()
                         this.navPathStack.pushPath({ name: 'PlanAddPage' })
                     })
             }
@@ -386,8 +384,7 @@ export struct PlanPage {
                         .border({ width: 1, color: '#E0E0E0', radius: 8 })
                         .onClick(async () => {
                             // 触发震动反馈
-                            VibrationUtil.light()
-
+                            VibrationUtil.medium()
                             await this.onRestoreCourse(item);
                         })
                 }

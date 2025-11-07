@@ -206,7 +206,7 @@ export struct PlanUpdatePage {
         })
         .onBackPressed(() => {
             // 触发震动反馈
-            VibrationUtil.light();
+            VibrationUtil.medium();
             return false;
         })
     }
@@ -468,8 +468,7 @@ export struct PlanUpdatePage {
             .borderRadius(24)
             .onClick(() => {
                 // 触发震动反馈
-                VibrationUtil.light();
-
+                VibrationUtil.medium();
                 this.handleSave();
             })
     }

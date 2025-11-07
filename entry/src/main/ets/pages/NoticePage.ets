@@ -81,7 +81,7 @@ export struct NoticePage {
         .title('常见问题')
         .onBackPressed(() => {
             // 触发震动反馈
-            VibrationUtil.light();
+            VibrationUtil.medium();
             return false;
         })
     }

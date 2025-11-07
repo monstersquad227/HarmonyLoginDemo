@@ -145,7 +145,7 @@ export struct PersonalInfoPage {
         .title('个人信息')
         .onBackPressed(() => {
             // 触发震动反馈
-            VibrationUtil.light();
+            VibrationUtil.medium();
             return false;
         })
     }

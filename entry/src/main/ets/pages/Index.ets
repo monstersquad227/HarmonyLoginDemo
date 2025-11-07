@@ -399,7 +399,7 @@ struct MainTabs {
         .onChange((index: number) => {
             this.currentTabIndex = index;
             // 触发震动反馈
-            VibrationUtil.light()
+            VibrationUtil.medium()
         })
         .scrollable(false)
         .barBackgroundColor($r('sys.color.comp_background_list_card'))
